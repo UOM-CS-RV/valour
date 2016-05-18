@@ -1,0 +1,4 @@
+include 'valour'
+include 'valour.ide'
+include 'valour.idea'
+include 'valour.web'
