@@ -35,7 +35,7 @@ FormalParameters:
 	(parameters+=FullJvmFormalParameter (',' parameters+=FullJvmFormalParameter)*)?;
 
 ActualParameters:
-	(parameters+=JvmFormalParameter (',' parameters+=JvmFormalParameter)*)?;
+	(parameters+=XExpression (',' parameters+=XExpression)*)?;
 
 EventBody:
 	trigger=SimpleTrigger (=>additionalTrigger=AdditionalTrigger)?
