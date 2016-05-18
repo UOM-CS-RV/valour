@@ -29,7 +29,7 @@ Category:
 	'category' name=ID 'indexed' 'by' keyType=JvmTypeReference;
 
 Event:
-	'event' name=ID '('eventFormalParameters=FormalParameters')' '=' eventBody=EventBody;
+	'event' name=ID '('eventFormalParameters=FormalParameters')' '=' '{' eventBody=EventBody '}';
 
 FormalParameters:
 	(parameters+=FullJvmFormalParameter (',' parameters+=FullJvmFormalParameter)*)?;
