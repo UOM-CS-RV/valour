@@ -185,7 +185,7 @@ StateBlock:
 //TODO - can we use the var/var declation in xtext ? - https://eclipse.org/xtend/documentation/203_xtend_expressions.html
 StateDeclaration :
 //	dec=XVariableDeclaration
-	type=JvmTypeReference name=ValidID ('=' right=XExpression)?
+	type=JvmTypeReference name=ValidID '=' (simple=SimpleValueExpression | complex=ComplexValueExpression)
 ;
 
 

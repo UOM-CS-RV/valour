@@ -153,7 +153,8 @@
     <genClasses ecoreClass="Valour.ecore#//StateDeclaration">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Valour.ecore#//StateDeclaration/type"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Valour.ecore#//StateDeclaration/name"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Valour.ecore#//StateDeclaration/right"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Valour.ecore#//StateDeclaration/simple"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Valour.ecore#//StateDeclaration/complex"/>
     </genClasses>
     <genClasses ecoreClass="Valour.ecore#//ForEach">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Valour.ecore#//ForEach/stateDec"/>
