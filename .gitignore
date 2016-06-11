@@ -3,3 +3,7 @@ out
 **/.gradle
 **/build
 **/xtext-gen
+**/.settings
+**/.project
+**/.classpath
+**/target
