@@ -4,16 +4,16 @@
 package mt.edu.um.cs.rv.idea.completion;
 
 import mt.edu.um.cs.rv.idea.completion.AbstractValourCompletionContributor;
-import mt.edu.um.cs.rv.idea.lang.ValourLanguage;
-import org.eclipse.xtext.idea.lang.AbstractXtextLanguage;
 
 @SuppressWarnings("all")
 public class ValourCompletionContributor extends AbstractValourCompletionContributor {
   public ValourCompletionContributor() {
-    this(ValourLanguage.INSTANCE);
+    throw new Error("Unresolved compilation problems:"
+      + "\nThe constructor ValourCompletionContributor(AbstractXtextLanguage) refers to the missing type AbstractXtextLanguage");
   }
   
-  public ValourCompletionContributor(final AbstractXtextLanguage lang) {
-    super(lang);
+  public ValourCompletionContributor(final /* AbstractXtextLanguage */Object lang) {
+    throw new Error("Unresolved compilation problems:"
+      + "\nThe method super(AbstractXtextLanguage) is undefined");
   }
 }

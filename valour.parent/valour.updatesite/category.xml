@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/valour.sdk_0.0.0.jar" id="valour.sdk" version="0.0.0">
+      <category name="valour"/>
+   </feature>
+   <category-def name="valour" label="Valour Language"/>
+</site>

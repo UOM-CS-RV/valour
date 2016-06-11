@@ -3,21 +3,13 @@
  */
 package mt.edu.um.cs.rv.idea;
 
-import com.google.inject.Injector;
-import mt.edu.um.cs.rv.idea.ValourStandaloneSetupIdea;
-import org.eclipse.xtext.ISetup;
-import org.eclipse.xtext.idea.extensions.EcoreGlobalRegistries;
-
 @SuppressWarnings("all")
-public class ValourIdeaSetup implements ISetup {
+public class ValourIdeaSetup /* implements ISetup  */{
   @Override
-  public Injector createInjectorAndDoEMFRegistration() {
-    Injector _xblockexpression = null;
-    {
-      EcoreGlobalRegistries.ensureInitialized();
-      ValourStandaloneSetupIdea _valourStandaloneSetupIdea = new ValourStandaloneSetupIdea();
-      _xblockexpression = _valourStandaloneSetupIdea.createInjector();
-    }
-    return _xblockexpression;
+  public Object createInjectorAndDoEMFRegistration() {
+    throw new Error("Unresolved compilation problems:"
+      + "\nThe method or field EcoreGlobalRegistries is undefined"
+      + "\nThe method createInjector() from the type ValourStandaloneSetupIdea refers to the missing type Object"
+      + "\nensureInitialized cannot be resolved");
   }
 }

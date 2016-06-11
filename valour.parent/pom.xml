@@ -21,6 +21,8 @@
 		<module>valour.target</module>
 		<module>valour.tests</module>
 		<module>valour.ui.tests</module>
+		<module>valour.sdk</module>
+		<module>valour.updatesite</module>
 	</modules>
 	<build>
 		<plugins>

@@ -3,21 +3,15 @@
  */
 package mt.edu.um.cs.rv.idea;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Module;
-import mt.edu.um.cs.rv.ValourRuntimeModule;
-import mt.edu.um.cs.rv.ValourStandaloneSetupGenerated;
-import mt.edu.um.cs.rv.idea.ValourIdeaModule;
-import org.eclipse.xtext.util.Modules2;
-
 @SuppressWarnings("all")
-public class ValourStandaloneSetupIdea extends ValourStandaloneSetupGenerated {
+public class ValourStandaloneSetupIdea /* implements ValourStandaloneSetupGenerated  */{
   @Override
-  public Injector createInjector() {
-    final ValourRuntimeModule runtimeModule = new ValourRuntimeModule();
-    final ValourIdeaModule ideaModule = new ValourIdeaModule();
-    final Module mergedModule = Modules2.mixin(runtimeModule, ideaModule);
-    return Guice.createInjector(mergedModule);
+  public Object createInjector() {
+    throw new Error("Unresolved compilation problems:"
+      + "\nValourRuntimeModule cannot be resolved."
+      + "\nThe method or field Modules2 is undefined"
+      + "\nThe method or field Guice is undefined"
+      + "\nmixin cannot be resolved"
+      + "\ncreateInjector cannot be resolved");
   }
 }

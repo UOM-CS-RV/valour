@@ -4,13 +4,13 @@
 package mt.edu.um.cs.rv.idea.lang;
 
 import mt.edu.um.cs.rv.idea.lang.AbstractValourFileType;
-import mt.edu.um.cs.rv.idea.lang.ValourLanguage;
 
 @SuppressWarnings("all")
 public class ValourFileType extends AbstractValourFileType {
   public final static ValourFileType INSTANCE = new ValourFileType();
   
   public ValourFileType() {
-    super(ValourLanguage.INSTANCE);
+    throw new Error("Unresolved compilation problems:"
+      + "\nThe method super(ValourLanguage) is undefined");
   }
 }
