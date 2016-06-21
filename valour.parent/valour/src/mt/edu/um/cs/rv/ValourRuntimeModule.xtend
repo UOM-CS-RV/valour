@@ -8,4 +8,5 @@ package mt.edu.um.cs.rv
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */
 class ValourRuntimeModule extends AbstractValourRuntimeModule {
+	
 }

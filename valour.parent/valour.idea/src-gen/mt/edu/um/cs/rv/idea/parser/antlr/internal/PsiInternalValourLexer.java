@@ -2196,10 +2196,10 @@ public class PsiInternalValourLexer extends Lexer {
         try {
             int _type = RULE_HEX;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // PsiInternalValour.g:8799:10: ( ( '0x' | '0X' ) ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' | '_' )+ ( '#' ( ( 'b' | 'B' ) ( 'i' | 'I' ) | ( 'l' | 'L' ) ) )? )
-            // PsiInternalValour.g:8799:12: ( '0x' | '0X' ) ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' | '_' )+ ( '#' ( ( 'b' | 'B' ) ( 'i' | 'I' ) | ( 'l' | 'L' ) ) )?
+            // PsiInternalValour.g:8863:10: ( ( '0x' | '0X' ) ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' | '_' )+ ( '#' ( ( 'b' | 'B' ) ( 'i' | 'I' ) | ( 'l' | 'L' ) ) )? )
+            // PsiInternalValour.g:8863:12: ( '0x' | '0X' ) ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' | '_' )+ ( '#' ( ( 'b' | 'B' ) ( 'i' | 'I' ) | ( 'l' | 'L' ) ) )?
             {
-            // PsiInternalValour.g:8799:12: ( '0x' | '0X' )
+            // PsiInternalValour.g:8863:12: ( '0x' | '0X' )
             int alt1=2;
             int LA1_0 = input.LA(1);
 
@@ -2227,7 +2227,7 @@ public class PsiInternalValourLexer extends Lexer {
             }
             switch (alt1) {
                 case 1 :
-                    // PsiInternalValour.g:8799:13: '0x'
+                    // PsiInternalValour.g:8863:13: '0x'
                     {
                     match("0x"); 
 
@@ -2235,7 +2235,7 @@ public class PsiInternalValourLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // PsiInternalValour.g:8799:18: '0X'
+                    // PsiInternalValour.g:8863:18: '0X'
                     {
                     match("0X"); 
 
@@ -2245,7 +2245,7 @@ public class PsiInternalValourLexer extends Lexer {
 
             }
 
-            // PsiInternalValour.g:8799:24: ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' | '_' )+
+            // PsiInternalValour.g:8863:24: ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' | '_' )+
             int cnt2=0;
             loop2:
             do {
@@ -2283,7 +2283,7 @@ public class PsiInternalValourLexer extends Lexer {
                 cnt2++;
             } while (true);
 
-            // PsiInternalValour.g:8799:58: ( '#' ( ( 'b' | 'B' ) ( 'i' | 'I' ) | ( 'l' | 'L' ) ) )?
+            // PsiInternalValour.g:8863:58: ( '#' ( ( 'b' | 'B' ) ( 'i' | 'I' ) | ( 'l' | 'L' ) ) )?
             int alt4=2;
             int LA4_0 = input.LA(1);
 
@@ -2292,10 +2292,10 @@ public class PsiInternalValourLexer extends Lexer {
             }
             switch (alt4) {
                 case 1 :
-                    // PsiInternalValour.g:8799:59: '#' ( ( 'b' | 'B' ) ( 'i' | 'I' ) | ( 'l' | 'L' ) )
+                    // PsiInternalValour.g:8863:59: '#' ( ( 'b' | 'B' ) ( 'i' | 'I' ) | ( 'l' | 'L' ) )
                     {
                     match('#'); 
-                    // PsiInternalValour.g:8799:63: ( ( 'b' | 'B' ) ( 'i' | 'I' ) | ( 'l' | 'L' ) )
+                    // PsiInternalValour.g:8863:63: ( ( 'b' | 'B' ) ( 'i' | 'I' ) | ( 'l' | 'L' ) )
                     int alt3=2;
                     int LA3_0 = input.LA(1);
 
@@ -2313,7 +2313,7 @@ public class PsiInternalValourLexer extends Lexer {
                     }
                     switch (alt3) {
                         case 1 :
-                            // PsiInternalValour.g:8799:64: ( 'b' | 'B' ) ( 'i' | 'I' )
+                            // PsiInternalValour.g:8863:64: ( 'b' | 'B' ) ( 'i' | 'I' )
                             {
                             if ( input.LA(1)=='B'||input.LA(1)=='b' ) {
                                 input.consume();
@@ -2337,7 +2337,7 @@ public class PsiInternalValourLexer extends Lexer {
                             }
                             break;
                         case 2 :
-                            // PsiInternalValour.g:8799:84: ( 'l' | 'L' )
+                            // PsiInternalValour.g:8863:84: ( 'l' | 'L' )
                             {
                             if ( input.LA(1)=='L'||input.LA(1)=='l' ) {
                                 input.consume();
@@ -2376,11 +2376,11 @@ public class PsiInternalValourLexer extends Lexer {
         try {
             int _type = RULE_INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // PsiInternalValour.g:8801:10: ( '0' .. '9' ( '0' .. '9' | '_' )* )
-            // PsiInternalValour.g:8801:12: '0' .. '9' ( '0' .. '9' | '_' )*
+            // PsiInternalValour.g:8865:10: ( '0' .. '9' ( '0' .. '9' | '_' )* )
+            // PsiInternalValour.g:8865:12: '0' .. '9' ( '0' .. '9' | '_' )*
             {
             matchRange('0','9'); 
-            // PsiInternalValour.g:8801:21: ( '0' .. '9' | '_' )*
+            // PsiInternalValour.g:8865:21: ( '0' .. '9' | '_' )*
             loop5:
             do {
                 int alt5=2;
@@ -2429,11 +2429,11 @@ public class PsiInternalValourLexer extends Lexer {
         try {
             int _type = RULE_DECIMAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // PsiInternalValour.g:8803:14: ( RULE_INT ( ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )? ( ( 'b' | 'B' ) ( 'i' | 'I' | 'd' | 'D' ) | ( 'l' | 'L' | 'd' | 'D' | 'f' | 'F' ) )? )
-            // PsiInternalValour.g:8803:16: RULE_INT ( ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )? ( ( 'b' | 'B' ) ( 'i' | 'I' | 'd' | 'D' ) | ( 'l' | 'L' | 'd' | 'D' | 'f' | 'F' ) )?
+            // PsiInternalValour.g:8867:14: ( RULE_INT ( ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )? ( ( 'b' | 'B' ) ( 'i' | 'I' | 'd' | 'D' ) | ( 'l' | 'L' | 'd' | 'D' | 'f' | 'F' ) )? )
+            // PsiInternalValour.g:8867:16: RULE_INT ( ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )? ( ( 'b' | 'B' ) ( 'i' | 'I' | 'd' | 'D' ) | ( 'l' | 'L' | 'd' | 'D' | 'f' | 'F' ) )?
             {
             mRULE_INT(); 
-            // PsiInternalValour.g:8803:25: ( ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )?
+            // PsiInternalValour.g:8867:25: ( ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )?
             int alt7=2;
             int LA7_0 = input.LA(1);
 
@@ -2442,7 +2442,7 @@ public class PsiInternalValourLexer extends Lexer {
             }
             switch (alt7) {
                 case 1 :
-                    // PsiInternalValour.g:8803:26: ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT
+                    // PsiInternalValour.g:8867:26: ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT
                     {
                     if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                         input.consume();
@@ -2453,7 +2453,7 @@ public class PsiInternalValourLexer extends Lexer {
                         recover(mse);
                         throw mse;}
 
-                    // PsiInternalValour.g:8803:36: ( '+' | '-' )?
+                    // PsiInternalValour.g:8867:36: ( '+' | '-' )?
                     int alt6=2;
                     int LA6_0 = input.LA(1);
 
@@ -2486,7 +2486,7 @@ public class PsiInternalValourLexer extends Lexer {
 
             }
 
-            // PsiInternalValour.g:8803:58: ( ( 'b' | 'B' ) ( 'i' | 'I' | 'd' | 'D' ) | ( 'l' | 'L' | 'd' | 'D' | 'f' | 'F' ) )?
+            // PsiInternalValour.g:8867:58: ( ( 'b' | 'B' ) ( 'i' | 'I' | 'd' | 'D' ) | ( 'l' | 'L' | 'd' | 'D' | 'f' | 'F' ) )?
             int alt8=3;
             int LA8_0 = input.LA(1);
 
@@ -2498,7 +2498,7 @@ public class PsiInternalValourLexer extends Lexer {
             }
             switch (alt8) {
                 case 1 :
-                    // PsiInternalValour.g:8803:59: ( 'b' | 'B' ) ( 'i' | 'I' | 'd' | 'D' )
+                    // PsiInternalValour.g:8867:59: ( 'b' | 'B' ) ( 'i' | 'I' | 'd' | 'D' )
                     {
                     if ( input.LA(1)=='B'||input.LA(1)=='b' ) {
                         input.consume();
@@ -2522,7 +2522,7 @@ public class PsiInternalValourLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // PsiInternalValour.g:8803:87: ( 'l' | 'L' | 'd' | 'D' | 'f' | 'F' )
+                    // PsiInternalValour.g:8867:87: ( 'l' | 'L' | 'd' | 'D' | 'f' | 'F' )
                     {
                     if ( input.LA(1)=='D'||input.LA(1)=='F'||input.LA(1)=='L'||input.LA(1)=='d'||input.LA(1)=='f'||input.LA(1)=='l' ) {
                         input.consume();
@@ -2555,10 +2555,10 @@ public class PsiInternalValourLexer extends Lexer {
         try {
             int _type = RULE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // PsiInternalValour.g:8805:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '$' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '$' | '_' | '0' .. '9' )* )
-            // PsiInternalValour.g:8805:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '$' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '$' | '_' | '0' .. '9' )*
+            // PsiInternalValour.g:8869:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '$' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '$' | '_' | '0' .. '9' )* )
+            // PsiInternalValour.g:8869:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '$' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '$' | '_' | '0' .. '9' )*
             {
-            // PsiInternalValour.g:8805:11: ( '^' )?
+            // PsiInternalValour.g:8869:11: ( '^' )?
             int alt9=2;
             int LA9_0 = input.LA(1);
 
@@ -2567,7 +2567,7 @@ public class PsiInternalValourLexer extends Lexer {
             }
             switch (alt9) {
                 case 1 :
-                    // PsiInternalValour.g:8805:11: '^'
+                    // PsiInternalValour.g:8869:11: '^'
                     {
                     match('^'); 
 
@@ -2585,7 +2585,7 @@ public class PsiInternalValourLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // PsiInternalValour.g:8805:44: ( 'a' .. 'z' | 'A' .. 'Z' | '$' | '_' | '0' .. '9' )*
+            // PsiInternalValour.g:8869:44: ( 'a' .. 'z' | 'A' .. 'Z' | '$' | '_' | '0' .. '9' )*
             loop10:
             do {
                 int alt10=2;
@@ -2634,10 +2634,10 @@ public class PsiInternalValourLexer extends Lexer {
         try {
             int _type = RULE_STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // PsiInternalValour.g:8807:13: ( ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* ( '\"' )? | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* ( '\\'' )? ) )
-            // PsiInternalValour.g:8807:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* ( '\"' )? | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* ( '\\'' )? )
+            // PsiInternalValour.g:8871:13: ( ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* ( '\"' )? | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* ( '\\'' )? ) )
+            // PsiInternalValour.g:8871:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* ( '\"' )? | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* ( '\\'' )? )
             {
-            // PsiInternalValour.g:8807:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* ( '\"' )? | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* ( '\\'' )? )
+            // PsiInternalValour.g:8871:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* ( '\"' )? | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* ( '\\'' )? )
             int alt15=2;
             int LA15_0 = input.LA(1);
 
@@ -2655,10 +2655,10 @@ public class PsiInternalValourLexer extends Lexer {
             }
             switch (alt15) {
                 case 1 :
-                    // PsiInternalValour.g:8807:16: '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* ( '\"' )?
+                    // PsiInternalValour.g:8871:16: '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* ( '\"' )?
                     {
                     match('\"'); 
-                    // PsiInternalValour.g:8807:20: ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )*
+                    // PsiInternalValour.g:8871:20: ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )*
                     loop11:
                     do {
                         int alt11=3;
@@ -2674,7 +2674,7 @@ public class PsiInternalValourLexer extends Lexer {
 
                         switch (alt11) {
                     	case 1 :
-                    	    // PsiInternalValour.g:8807:21: '\\\\' .
+                    	    // PsiInternalValour.g:8871:21: '\\\\' .
                     	    {
                     	    match('\\'); 
                     	    matchAny(); 
@@ -2682,7 +2682,7 @@ public class PsiInternalValourLexer extends Lexer {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // PsiInternalValour.g:8807:28: ~ ( ( '\\\\' | '\"' ) )
+                    	    // PsiInternalValour.g:8871:28: ~ ( ( '\\\\' | '\"' ) )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -2702,7 +2702,7 @@ public class PsiInternalValourLexer extends Lexer {
                         }
                     } while (true);
 
-                    // PsiInternalValour.g:8807:44: ( '\"' )?
+                    // PsiInternalValour.g:8871:44: ( '\"' )?
                     int alt12=2;
                     int LA12_0 = input.LA(1);
 
@@ -2711,7 +2711,7 @@ public class PsiInternalValourLexer extends Lexer {
                     }
                     switch (alt12) {
                         case 1 :
-                            // PsiInternalValour.g:8807:44: '\"'
+                            // PsiInternalValour.g:8871:44: '\"'
                             {
                             match('\"'); 
 
@@ -2724,10 +2724,10 @@ public class PsiInternalValourLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // PsiInternalValour.g:8807:49: '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* ( '\\'' )?
+                    // PsiInternalValour.g:8871:49: '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* ( '\\'' )?
                     {
                     match('\''); 
-                    // PsiInternalValour.g:8807:54: ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )*
+                    // PsiInternalValour.g:8871:54: ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )*
                     loop13:
                     do {
                         int alt13=3;
@@ -2743,7 +2743,7 @@ public class PsiInternalValourLexer extends Lexer {
 
                         switch (alt13) {
                     	case 1 :
-                    	    // PsiInternalValour.g:8807:55: '\\\\' .
+                    	    // PsiInternalValour.g:8871:55: '\\\\' .
                     	    {
                     	    match('\\'); 
                     	    matchAny(); 
@@ -2751,7 +2751,7 @@ public class PsiInternalValourLexer extends Lexer {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // PsiInternalValour.g:8807:62: ~ ( ( '\\\\' | '\\'' ) )
+                    	    // PsiInternalValour.g:8871:62: ~ ( ( '\\\\' | '\\'' ) )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='&')||(input.LA(1)>='(' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -2771,7 +2771,7 @@ public class PsiInternalValourLexer extends Lexer {
                         }
                     } while (true);
 
-                    // PsiInternalValour.g:8807:79: ( '\\'' )?
+                    // PsiInternalValour.g:8871:79: ( '\\'' )?
                     int alt14=2;
                     int LA14_0 = input.LA(1);
 
@@ -2780,7 +2780,7 @@ public class PsiInternalValourLexer extends Lexer {
                     }
                     switch (alt14) {
                         case 1 :
-                            // PsiInternalValour.g:8807:79: '\\''
+                            // PsiInternalValour.g:8871:79: '\\''
                             {
                             match('\''); 
 
@@ -2811,12 +2811,12 @@ public class PsiInternalValourLexer extends Lexer {
         try {
             int _type = RULE_ML_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // PsiInternalValour.g:8809:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // PsiInternalValour.g:8809:19: '/*' ( options {greedy=false; } : . )* '*/'
+            // PsiInternalValour.g:8873:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // PsiInternalValour.g:8873:19: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); 
 
-            // PsiInternalValour.g:8809:24: ( options {greedy=false; } : . )*
+            // PsiInternalValour.g:8873:24: ( options {greedy=false; } : . )*
             loop16:
             do {
                 int alt16=2;
@@ -2841,7 +2841,7 @@ public class PsiInternalValourLexer extends Lexer {
 
                 switch (alt16) {
             	case 1 :
-            	    // PsiInternalValour.g:8809:52: .
+            	    // PsiInternalValour.g:8873:52: .
             	    {
             	    matchAny(); 
 
@@ -2871,12 +2871,12 @@ public class PsiInternalValourLexer extends Lexer {
         try {
             int _type = RULE_SL_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // PsiInternalValour.g:8811:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
-            // PsiInternalValour.g:8811:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
+            // PsiInternalValour.g:8875:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
+            // PsiInternalValour.g:8875:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
             {
             match("//"); 
 
-            // PsiInternalValour.g:8811:24: (~ ( ( '\\n' | '\\r' ) ) )*
+            // PsiInternalValour.g:8875:24: (~ ( ( '\\n' | '\\r' ) ) )*
             loop17:
             do {
                 int alt17=2;
@@ -2889,7 +2889,7 @@ public class PsiInternalValourLexer extends Lexer {
 
                 switch (alt17) {
             	case 1 :
-            	    // PsiInternalValour.g:8811:24: ~ ( ( '\\n' | '\\r' ) )
+            	    // PsiInternalValour.g:8875:24: ~ ( ( '\\n' | '\\r' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -2909,7 +2909,7 @@ public class PsiInternalValourLexer extends Lexer {
                 }
             } while (true);
 
-            // PsiInternalValour.g:8811:40: ( ( '\\r' )? '\\n' )?
+            // PsiInternalValour.g:8875:40: ( ( '\\r' )? '\\n' )?
             int alt19=2;
             int LA19_0 = input.LA(1);
 
@@ -2918,9 +2918,9 @@ public class PsiInternalValourLexer extends Lexer {
             }
             switch (alt19) {
                 case 1 :
-                    // PsiInternalValour.g:8811:41: ( '\\r' )? '\\n'
+                    // PsiInternalValour.g:8875:41: ( '\\r' )? '\\n'
                     {
-                    // PsiInternalValour.g:8811:41: ( '\\r' )?
+                    // PsiInternalValour.g:8875:41: ( '\\r' )?
                     int alt18=2;
                     int LA18_0 = input.LA(1);
 
@@ -2929,7 +2929,7 @@ public class PsiInternalValourLexer extends Lexer {
                     }
                     switch (alt18) {
                         case 1 :
-                            // PsiInternalValour.g:8811:41: '\\r'
+                            // PsiInternalValour.g:8875:41: '\\r'
                             {
                             match('\r'); 
 
@@ -2961,10 +2961,10 @@ public class PsiInternalValourLexer extends Lexer {
         try {
             int _type = RULE_WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // PsiInternalValour.g:8813:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
-            // PsiInternalValour.g:8813:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // PsiInternalValour.g:8877:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
+            // PsiInternalValour.g:8877:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             {
-            // PsiInternalValour.g:8813:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // PsiInternalValour.g:8877:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             int cnt20=0;
             loop20:
             do {
@@ -3018,8 +3018,8 @@ public class PsiInternalValourLexer extends Lexer {
         try {
             int _type = RULE_ANY_OTHER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // PsiInternalValour.g:8815:16: ( . )
-            // PsiInternalValour.g:8815:18: .
+            // PsiInternalValour.g:8879:16: ( . )
+            // PsiInternalValour.g:8879:18: .
             {
             matchAny(); 
 

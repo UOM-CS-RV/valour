@@ -15,10 +15,10 @@
 	</properties>
 	<modules>
 		<module>valour</module>
+		<module>valour.target</module>
 		<module>valour.ide</module>
 		<module>valour.ui</module>
 		<module>valour.web</module>
-		<module>valour.target</module>
 		<module>valour.tests</module>
 		<module>valour.ui.tests</module>
 		<module>valour.sdk</module>
@@ -218,5 +218,10 @@
 	</pluginRepositories>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.eclipse.xtend</groupId>
+			<artifactId>org.eclipse.xtend.lib</artifactId>
+			<version>2.9.2</version>
+		</dependency>
 	</dependencies>
 </project>

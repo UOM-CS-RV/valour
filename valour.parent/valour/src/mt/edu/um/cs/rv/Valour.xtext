@@ -39,14 +39,15 @@ ActualParameters:
 
 EventBody:
 	trigger=SimpleTrigger (=>additionalTrigger=AdditionalTrigger)?
+	(where=WhereClauses)?
 	(when=WhenClause)?
-	(where=WhereClause)?
 	(categorisation=CategorisationClause)?;
 
 SimpleTrigger:
-	ControlFlowTrigger |
-	EventTrigger |
-	MonitorTrigger
+	(controlFlowTrigger=ControlFlowTrigger |
+	eventTrigger=EventTrigger |
+	monitorTrigger=MonitorTrigger)
+	(=>whereClauses=WhereClauses)?
 ;
 
 ControlFlowTrigger:
@@ -64,12 +65,15 @@ MonitorTrigger:
 
 
 AdditionalTrigger:
-	(whereClause=WhereClause)? (=>'||') trigger=SimpleTrigger (=>additionalTrigger=AdditionalTrigger)?;
+	 (=>'||') trigger=SimpleTrigger (=>additionalTrigger=AdditionalTrigger)?;
 
+WhereClauses:
+	'where' (clauses+=WhereClause)+
+;
 
 //TODO cross reference event parameters - http://stackoverflow.com/questions/15511669/validate-number-of-function-parameters-in-xtext
 WhereClause:
-	'where' (whereId=ID '=' whereExpression=ValueExpression)*
+	whereId=ID '=' whereExpression=ValueExpression
 ;
 
 ValueExpression:
@@ -94,16 +98,16 @@ WhenClause:
 	'when' condition=ConditionExpression;
 
 ConditionExpression:
-	ConditionRefInvocation|ConditionBlock;
+	ref=ConditionRefInvocation|block=ConditionBlock;
 
 ConditionRefInvocation:
-	ref=ConditionRef'('params=FormalParameters')';
+	ref=ConditionRef'('params=ActualParameters')';
 
 ConditionRef hidden():
 	'#'ref=[Condition];
 
 ConditionBlock:
-	SimpleCondition | ComplexCondition;
+	simple=SimpleCondition | complex=ComplexCondition;
 
 //TODO - review this and make more restrictive?  Should always have a boolean result
 SimpleCondition:
@@ -132,9 +136,9 @@ Action:
 	'action' name=ID '('actionFormalParameters=FormalParameters')' '=' action=ActionBlock;
 
 RuleAction:
-	actionBlock=ActionBlock |
+	actionMonitorTriggerFire=MonitorTriggerFire |
 	actionRefInvocation=ActionRefInvocation |
-	actionMonitorTriggerFire=MonitorTriggerFire;
+	actionBlock=ActionBlock;
 
 //TODO, should allow reference to other actions and monitor trigger
 ActionBlock :
@@ -185,7 +189,7 @@ StateBlock:
 //TODO - can we use the var/var declation in xtext ? - https://eclipse.org/xtend/documentation/203_xtend_expressions.html
 StateDeclaration :
 //	dec=XVariableDeclaration
-	type=JvmTypeReference name=ValidID '=' (simple=SimpleValueExpression | complex=ComplexValueExpression)
+	type=JvmTypeReference name=ValidID '=' valueExpression=ValueExpression
 ;
 
 

@@ -113,10 +113,10 @@ public class ValourParserDefinition extends AbstractXtextParserDefinition {
 			if (elementType == elementTypeProvider.getEventBody_AdditionalTriggerAdditionalTriggerParserRuleCall_1_0ElementType()) {
 				return new PsiEObjectImpl(node) {};
 			}
-			if (elementType == elementTypeProvider.getEventBody_WhenWhenClauseParserRuleCall_2_0ElementType()) {
+			if (elementType == elementTypeProvider.getEventBody_WhereWhereClausesParserRuleCall_2_0ElementType()) {
 				return new PsiEObjectImpl(node) {};
 			}
-			if (elementType == elementTypeProvider.getEventBody_WhereWhereClauseParserRuleCall_3_0ElementType()) {
+			if (elementType == elementTypeProvider.getEventBody_WhenWhenClauseParserRuleCall_3_0ElementType()) {
 				return new PsiEObjectImpl(node) {};
 			}
 			if (elementType == elementTypeProvider.getEventBody_CategorisationCategorisationClauseParserRuleCall_4_0ElementType()) {
@@ -125,14 +125,17 @@ public class ValourParserDefinition extends AbstractXtextParserDefinition {
 			if (elementType == elementTypeProvider.getSimpleTriggerElementType()) {
 				return new PsiEObjectImpl(node) {};
 			}
-			if (elementType == elementTypeProvider.getSimpleTrigger_ControlFlowTriggerParserRuleCall_0ElementType()) {
+			if (elementType == elementTypeProvider.getSimpleTrigger_ControlFlowTriggerControlFlowTriggerParserRuleCall_0_0_0ElementType()) {
 				return new PsiEObjectImpl(node) {};
 			}
-			if (elementType == elementTypeProvider.getSimpleTrigger_EventTriggerParserRuleCall_1ElementType()) {
+			if (elementType == elementTypeProvider.getSimpleTrigger_EventTriggerEventTriggerParserRuleCall_0_1_0ElementType()) {
 				return new PsiEObjectImpl(node) {};
 			}
-			if (elementType == elementTypeProvider.getSimpleTrigger_MonitorTriggerParserRuleCall_2ElementType()) {
+			if (elementType == elementTypeProvider.getSimpleTrigger_MonitorTriggerMonitorTriggerParserRuleCall_0_2_0ElementType()) {
 				return new PsiNamedEObjectImpl(node) {};
+			}
+			if (elementType == elementTypeProvider.getSimpleTrigger_WhereClausesWhereClausesParserRuleCall_1_0ElementType()) {
+				return new PsiEObjectImpl(node) {};
 			}
 			if (elementType == elementTypeProvider.getControlFlowTriggerElementType()) {
 				return new PsiEObjectImpl(node) {};
@@ -158,19 +161,22 @@ public class ValourParserDefinition extends AbstractXtextParserDefinition {
 			if (elementType == elementTypeProvider.getAdditionalTriggerElementType()) {
 				return new PsiEObjectImpl(node) {};
 			}
-			if (elementType == elementTypeProvider.getAdditionalTrigger_WhereClauseWhereClauseParserRuleCall_0_0ElementType()) {
+			if (elementType == elementTypeProvider.getAdditionalTrigger_TriggerSimpleTriggerParserRuleCall_1_0ElementType()) {
 				return new PsiEObjectImpl(node) {};
 			}
-			if (elementType == elementTypeProvider.getAdditionalTrigger_TriggerSimpleTriggerParserRuleCall_2_0ElementType()) {
+			if (elementType == elementTypeProvider.getAdditionalTrigger_AdditionalTriggerAdditionalTriggerParserRuleCall_2_0ElementType()) {
 				return new PsiEObjectImpl(node) {};
 			}
-			if (elementType == elementTypeProvider.getAdditionalTrigger_AdditionalTriggerAdditionalTriggerParserRuleCall_3_0ElementType()) {
+			if (elementType == elementTypeProvider.getWhereClausesElementType()) {
+				return new PsiEObjectImpl(node) {};
+			}
+			if (elementType == elementTypeProvider.getWhereClauses_ClausesWhereClauseParserRuleCall_1_0ElementType()) {
 				return new PsiEObjectImpl(node) {};
 			}
 			if (elementType == elementTypeProvider.getWhereClauseElementType()) {
 				return new PsiEObjectImpl(node) {};
 			}
-			if (elementType == elementTypeProvider.getWhereClause_WhereExpressionValueExpressionParserRuleCall_1_2_0ElementType()) {
+			if (elementType == elementTypeProvider.getWhereClause_WhereExpressionValueExpressionParserRuleCall_2_0ElementType()) {
 				return new PsiEObjectImpl(node) {};
 			}
 			if (elementType == elementTypeProvider.getValueExpressionElementType()) {
@@ -209,10 +215,10 @@ public class ValourParserDefinition extends AbstractXtextParserDefinition {
 			if (elementType == elementTypeProvider.getConditionExpressionElementType()) {
 				return new PsiEObjectImpl(node) {};
 			}
-			if (elementType == elementTypeProvider.getConditionExpression_ConditionRefInvocationParserRuleCall_0ElementType()) {
+			if (elementType == elementTypeProvider.getConditionExpression_RefConditionRefInvocationParserRuleCall_0_0ElementType()) {
 				return new PsiEObjectImpl(node) {};
 			}
-			if (elementType == elementTypeProvider.getConditionExpression_ConditionBlockParserRuleCall_1ElementType()) {
+			if (elementType == elementTypeProvider.getConditionExpression_BlockConditionBlockParserRuleCall_1_0ElementType()) {
 				return new PsiEObjectImpl(node) {};
 			}
 			if (elementType == elementTypeProvider.getConditionRefInvocationElementType()) {
@@ -221,7 +227,7 @@ public class ValourParserDefinition extends AbstractXtextParserDefinition {
 			if (elementType == elementTypeProvider.getConditionRefInvocation_RefConditionRefParserRuleCall_0_0ElementType()) {
 				return new PsiEObjectImpl(node) {};
 			}
-			if (elementType == elementTypeProvider.getConditionRefInvocation_ParamsFormalParametersParserRuleCall_2_0ElementType()) {
+			if (elementType == elementTypeProvider.getConditionRefInvocation_ParamsActualParametersParserRuleCall_2_0ElementType()) {
 				return new PsiEObjectImpl(node) {};
 			}
 			if (elementType == elementTypeProvider.getConditionRefElementType()) {
@@ -230,10 +236,10 @@ public class ValourParserDefinition extends AbstractXtextParserDefinition {
 			if (elementType == elementTypeProvider.getConditionBlockElementType()) {
 				return new PsiEObjectImpl(node) {};
 			}
-			if (elementType == elementTypeProvider.getConditionBlock_SimpleConditionParserRuleCall_0ElementType()) {
+			if (elementType == elementTypeProvider.getConditionBlock_SimpleSimpleConditionParserRuleCall_0_0ElementType()) {
 				return new PsiEObjectImpl(node) {};
 			}
-			if (elementType == elementTypeProvider.getConditionBlock_ComplexConditionParserRuleCall_1ElementType()) {
+			if (elementType == elementTypeProvider.getConditionBlock_ComplexComplexConditionParserRuleCall_1_0ElementType()) {
 				return new PsiEObjectImpl(node) {};
 			}
 			if (elementType == elementTypeProvider.getSimpleConditionElementType()) {
@@ -284,13 +290,13 @@ public class ValourParserDefinition extends AbstractXtextParserDefinition {
 			if (elementType == elementTypeProvider.getRuleActionElementType()) {
 				return new PsiEObjectImpl(node) {};
 			}
-			if (elementType == elementTypeProvider.getRuleAction_ActionBlockActionBlockParserRuleCall_0_0ElementType()) {
+			if (elementType == elementTypeProvider.getRuleAction_ActionMonitorTriggerFireMonitorTriggerFireParserRuleCall_0_0ElementType()) {
 				return new PsiEObjectImpl(node) {};
 			}
 			if (elementType == elementTypeProvider.getRuleAction_ActionRefInvocationActionRefInvocationParserRuleCall_1_0ElementType()) {
 				return new PsiEObjectImpl(node) {};
 			}
-			if (elementType == elementTypeProvider.getRuleAction_ActionMonitorTriggerFireMonitorTriggerFireParserRuleCall_2_0ElementType()) {
+			if (elementType == elementTypeProvider.getRuleAction_ActionBlockActionBlockParserRuleCall_2_0ElementType()) {
 				return new PsiEObjectImpl(node) {};
 			}
 			if (elementType == elementTypeProvider.getActionBlockElementType()) {
@@ -380,10 +386,7 @@ public class ValourParserDefinition extends AbstractXtextParserDefinition {
 			if (elementType == elementTypeProvider.getStateDeclaration_TypeJvmTypeReferenceParserRuleCall_0_0ElementType()) {
 				return new PsiEObjectImpl(node) {};
 			}
-			if (elementType == elementTypeProvider.getStateDeclaration_SimpleSimpleValueExpressionParserRuleCall_3_0_0ElementType()) {
-				return new PsiEObjectImpl(node) {};
-			}
-			if (elementType == elementTypeProvider.getStateDeclaration_ComplexComplexValueExpressionParserRuleCall_3_1_0ElementType()) {
+			if (elementType == elementTypeProvider.getStateDeclaration_ValueExpressionValueExpressionParserRuleCall_3_0ElementType()) {
 				return new PsiEObjectImpl(node) {};
 			}
 			if (elementType == elementTypeProvider.getForEachElementType()) {

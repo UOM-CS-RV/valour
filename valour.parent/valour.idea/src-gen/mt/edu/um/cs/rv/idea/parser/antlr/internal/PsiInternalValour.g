@@ -587,9 +587,9 @@ ruleEventBody returns [Boolean current=false]
 		(
 			(
 				{
-					markComposite(elementTypeProvider.getEventBody_WhenWhenClauseParserRuleCall_2_0ElementType());
+					markComposite(elementTypeProvider.getEventBody_WhereWhereClausesParserRuleCall_2_0ElementType());
 				}
-				lv_when_2_0=ruleWhenClause
+				lv_where_2_0=ruleWhereClauses
 				{
 					doneComposite();
 					if(!$current) {
@@ -602,9 +602,9 @@ ruleEventBody returns [Boolean current=false]
 		(
 			(
 				{
-					markComposite(elementTypeProvider.getEventBody_WhereWhereClauseParserRuleCall_3_0ElementType());
+					markComposite(elementTypeProvider.getEventBody_WhenWhenClauseParserRuleCall_3_0ElementType());
 				}
-				lv_where_3_0=ruleWhereClause
+				lv_when_3_0=ruleWhenClause
 				{
 					doneComposite();
 					if(!$current) {
@@ -643,32 +643,74 @@ entryRuleSimpleTrigger returns [Boolean current=false]:
 ruleSimpleTrigger returns [Boolean current=false]
 :
 	(
-		{
-			markComposite(elementTypeProvider.getSimpleTrigger_ControlFlowTriggerParserRuleCall_0ElementType());
-		}
-		this_ControlFlowTrigger_0=ruleControlFlowTrigger
-		{
-			$current = $this_ControlFlowTrigger_0.current;
-			doneComposite();
-		}
-		    |
-		{
-			markComposite(elementTypeProvider.getSimpleTrigger_EventTriggerParserRuleCall_1ElementType());
-		}
-		this_EventTrigger_1=ruleEventTrigger
-		{
-			$current = $this_EventTrigger_1.current;
-			doneComposite();
-		}
-		    |
-		{
-			markComposite(elementTypeProvider.getSimpleTrigger_MonitorTriggerParserRuleCall_2ElementType());
-		}
-		this_MonitorTrigger_2=ruleMonitorTrigger
-		{
-			$current = $this_MonitorTrigger_2.current;
-			doneComposite();
-		}
+		(
+			(
+				(
+					{
+						markComposite(elementTypeProvider.getSimpleTrigger_ControlFlowTriggerControlFlowTriggerParserRuleCall_0_0_0ElementType());
+					}
+					lv_controlFlowTrigger_0_0=ruleControlFlowTrigger
+					{
+						doneComposite();
+						if(!$current) {
+							associateWithSemanticElement();
+							$current = true;
+						}
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						markComposite(elementTypeProvider.getSimpleTrigger_EventTriggerEventTriggerParserRuleCall_0_1_0ElementType());
+					}
+					lv_eventTrigger_1_0=ruleEventTrigger
+					{
+						doneComposite();
+						if(!$current) {
+							associateWithSemanticElement();
+							$current = true;
+						}
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						markComposite(elementTypeProvider.getSimpleTrigger_MonitorTriggerMonitorTriggerParserRuleCall_0_2_0ElementType());
+					}
+					lv_monitorTrigger_2_0=ruleMonitorTrigger
+					{
+						doneComposite();
+						if(!$current) {
+							associateWithSemanticElement();
+							$current = true;
+						}
+					}
+				)
+			)
+		)
+		(
+			((
+				ruleWhereClauses
+			)
+			)=>
+			(
+				{
+					markComposite(elementTypeProvider.getSimpleTrigger_WhereClausesWhereClausesParserRuleCall_1_0ElementType());
+				}
+				lv_whereClauses_3_0=ruleWhereClauses
+				{
+					doneComposite();
+					if(!$current) {
+						associateWithSemanticElement();
+						$current = true;
+					}
+				}
+			)
+		)?
 	)
 ;
 
@@ -911,36 +953,21 @@ ruleAdditionalTrigger returns [Boolean current=false]
 :
 	(
 		(
-			(
-				{
-					markComposite(elementTypeProvider.getAdditionalTrigger_WhereClauseWhereClauseParserRuleCall_0_0ElementType());
-				}
-				lv_whereClause_0_0=ruleWhereClause
-				{
-					doneComposite();
-					if(!$current) {
-						associateWithSemanticElement();
-						$current = true;
-					}
-				}
-			)
-		)?
-		(
 			('||')=>
 			{
-				markLeaf(elementTypeProvider.getAdditionalTrigger_VerticalLineVerticalLineKeyword_1ElementType());
+				markLeaf(elementTypeProvider.getAdditionalTrigger_VerticalLineVerticalLineKeyword_0ElementType());
 			}
-			otherlv_1='||'
+			otherlv_0='||'
 			{
-				doneLeaf(otherlv_1);
+				doneLeaf(otherlv_0);
 			}
 		)
 		(
 			(
 				{
-					markComposite(elementTypeProvider.getAdditionalTrigger_TriggerSimpleTriggerParserRuleCall_2_0ElementType());
+					markComposite(elementTypeProvider.getAdditionalTrigger_TriggerSimpleTriggerParserRuleCall_1_0ElementType());
 				}
-				lv_trigger_2_0=ruleSimpleTrigger
+				lv_trigger_1_0=ruleSimpleTrigger
 				{
 					doneComposite();
 					if(!$current) {
@@ -957,9 +984,9 @@ ruleAdditionalTrigger returns [Boolean current=false]
 			)=>
 			(
 				{
-					markComposite(elementTypeProvider.getAdditionalTrigger_AdditionalTriggerAdditionalTriggerParserRuleCall_3_0ElementType());
+					markComposite(elementTypeProvider.getAdditionalTrigger_AdditionalTriggerAdditionalTriggerParserRuleCall_2_0ElementType());
 				}
-				lv_additionalTrigger_3_0=ruleAdditionalTrigger
+				lv_additionalTrigger_2_0=ruleAdditionalTrigger
 				{
 					doneComposite();
 					if(!$current) {
@@ -969,6 +996,42 @@ ruleAdditionalTrigger returns [Boolean current=false]
 				}
 			)
 		)?
+	)
+;
+
+//Entry rule entryRuleWhereClauses
+entryRuleWhereClauses returns [Boolean current=false]:
+	{ markComposite(elementTypeProvider.getWhereClausesElementType()); }
+	iv_ruleWhereClauses=ruleWhereClauses
+	{ $current=$iv_ruleWhereClauses.current; }
+	EOF;
+
+// Rule WhereClauses
+ruleWhereClauses returns [Boolean current=false]
+:
+	(
+		{
+			markLeaf(elementTypeProvider.getWhereClauses_WhereKeyword_0ElementType());
+		}
+		otherlv_0='where'
+		{
+			doneLeaf(otherlv_0);
+		}
+		(
+			(
+				{
+					markComposite(elementTypeProvider.getWhereClauses_ClausesWhereClauseParserRuleCall_1_0ElementType());
+				}
+				lv_clauses_1_0=ruleWhereClause
+				{
+					doneComposite();
+					if(!$current) {
+						associateWithSemanticElement();
+						$current = true;
+					}
+				}
+			)
+		)+
 	)
 ;
 
@@ -983,54 +1046,45 @@ entryRuleWhereClause returns [Boolean current=false]:
 ruleWhereClause returns [Boolean current=false]
 :
 	(
+		(
+			(
+				{
+					markLeaf(elementTypeProvider.getWhereClause_WhereIdIDTerminalRuleCall_0_0ElementType());
+				}
+				lv_whereId_0_0=RULE_ID
+				{
+					if(!$current) {
+						associateWithSemanticElement();
+						$current = true;
+					}
+				}
+				{
+					doneLeaf(lv_whereId_0_0);
+				}
+			)
+		)
 		{
-			markLeaf(elementTypeProvider.getWhereClause_WhereKeyword_0ElementType());
+			markLeaf(elementTypeProvider.getWhereClause_EqualsSignKeyword_1ElementType());
 		}
-		otherlv_0='where'
+		otherlv_1='='
 		{
-			doneLeaf(otherlv_0);
+			doneLeaf(otherlv_1);
 		}
 		(
 			(
-				(
-					{
-						markLeaf(elementTypeProvider.getWhereClause_WhereIdIDTerminalRuleCall_1_0_0ElementType());
+				{
+					markComposite(elementTypeProvider.getWhereClause_WhereExpressionValueExpressionParserRuleCall_2_0ElementType());
+				}
+				lv_whereExpression_2_0=ruleValueExpression
+				{
+					doneComposite();
+					if(!$current) {
+						associateWithSemanticElement();
+						$current = true;
 					}
-					lv_whereId_1_0=RULE_ID
-					{
-						if(!$current) {
-							associateWithSemanticElement();
-							$current = true;
-						}
-					}
-					{
-						doneLeaf(lv_whereId_1_0);
-					}
-				)
+				}
 			)
-			{
-				markLeaf(elementTypeProvider.getWhereClause_EqualsSignKeyword_1_1ElementType());
-			}
-			otherlv_2='='
-			{
-				doneLeaf(otherlv_2);
-			}
-			(
-				(
-					{
-						markComposite(elementTypeProvider.getWhereClause_WhereExpressionValueExpressionParserRuleCall_1_2_0ElementType());
-					}
-					lv_whereExpression_3_0=ruleValueExpression
-					{
-						doneComposite();
-						if(!$current) {
-							associateWithSemanticElement();
-							$current = true;
-						}
-					}
-				)
-			)
-		)*
+		)
 	)
 ;
 
@@ -1254,23 +1308,37 @@ entryRuleConditionExpression returns [Boolean current=false]:
 ruleConditionExpression returns [Boolean current=false]
 :
 	(
-		{
-			markComposite(elementTypeProvider.getConditionExpression_ConditionRefInvocationParserRuleCall_0ElementType());
-		}
-		this_ConditionRefInvocation_0=ruleConditionRefInvocation
-		{
-			$current = $this_ConditionRefInvocation_0.current;
-			doneComposite();
-		}
+		(
+			(
+				{
+					markComposite(elementTypeProvider.getConditionExpression_RefConditionRefInvocationParserRuleCall_0_0ElementType());
+				}
+				lv_ref_0_0=ruleConditionRefInvocation
+				{
+					doneComposite();
+					if(!$current) {
+						associateWithSemanticElement();
+						$current = true;
+					}
+				}
+			)
+		)
 		    |
-		{
-			markComposite(elementTypeProvider.getConditionExpression_ConditionBlockParserRuleCall_1ElementType());
-		}
-		this_ConditionBlock_1=ruleConditionBlock
-		{
-			$current = $this_ConditionBlock_1.current;
-			doneComposite();
-		}
+		(
+			(
+				{
+					markComposite(elementTypeProvider.getConditionExpression_BlockConditionBlockParserRuleCall_1_0ElementType());
+				}
+				lv_block_1_0=ruleConditionBlock
+				{
+					doneComposite();
+					if(!$current) {
+						associateWithSemanticElement();
+						$current = true;
+					}
+				}
+			)
+		)
 	)
 ;
 
@@ -1310,9 +1378,9 @@ ruleConditionRefInvocation returns [Boolean current=false]
 		(
 			(
 				{
-					markComposite(elementTypeProvider.getConditionRefInvocation_ParamsFormalParametersParserRuleCall_2_0ElementType());
+					markComposite(elementTypeProvider.getConditionRefInvocation_ParamsActualParametersParserRuleCall_2_0ElementType());
 				}
-				lv_params_2_0=ruleFormalParameters
+				lv_params_2_0=ruleActualParameters
 				{
 					doneComposite();
 					if(!$current) {
@@ -1391,23 +1459,37 @@ entryRuleConditionBlock returns [Boolean current=false]:
 ruleConditionBlock returns [Boolean current=false]
 :
 	(
-		{
-			markComposite(elementTypeProvider.getConditionBlock_SimpleConditionParserRuleCall_0ElementType());
-		}
-		this_SimpleCondition_0=ruleSimpleCondition
-		{
-			$current = $this_SimpleCondition_0.current;
-			doneComposite();
-		}
+		(
+			(
+				{
+					markComposite(elementTypeProvider.getConditionBlock_SimpleSimpleConditionParserRuleCall_0_0ElementType());
+				}
+				lv_simple_0_0=ruleSimpleCondition
+				{
+					doneComposite();
+					if(!$current) {
+						associateWithSemanticElement();
+						$current = true;
+					}
+				}
+			)
+		)
 		    |
-		{
-			markComposite(elementTypeProvider.getConditionBlock_ComplexConditionParserRuleCall_1ElementType());
-		}
-		this_ComplexCondition_1=ruleComplexCondition
-		{
-			$current = $this_ComplexCondition_1.current;
-			doneComposite();
-		}
+		(
+			(
+				{
+					markComposite(elementTypeProvider.getConditionBlock_ComplexComplexConditionParserRuleCall_1_0ElementType());
+				}
+				lv_complex_1_0=ruleComplexCondition
+				{
+					doneComposite();
+					if(!$current) {
+						associateWithSemanticElement();
+						$current = true;
+					}
+				}
+			)
+		)
 	)
 ;
 
@@ -1816,9 +1898,9 @@ ruleRuleAction returns [Boolean current=false]
 		(
 			(
 				{
-					markComposite(elementTypeProvider.getRuleAction_ActionBlockActionBlockParserRuleCall_0_0ElementType());
+					markComposite(elementTypeProvider.getRuleAction_ActionMonitorTriggerFireMonitorTriggerFireParserRuleCall_0_0ElementType());
 				}
-				lv_actionBlock_0_0=ruleActionBlock
+				lv_actionMonitorTriggerFire_0_0=ruleMonitorTriggerFire
 				{
 					doneComposite();
 					if(!$current) {
@@ -1848,9 +1930,9 @@ ruleRuleAction returns [Boolean current=false]
 		(
 			(
 				{
-					markComposite(elementTypeProvider.getRuleAction_ActionMonitorTriggerFireMonitorTriggerFireParserRuleCall_2_0ElementType());
+					markComposite(elementTypeProvider.getRuleAction_ActionBlockActionBlockParserRuleCall_2_0ElementType());
 				}
-				lv_actionMonitorTriggerFire_2_0=ruleMonitorTriggerFire
+				lv_actionBlock_2_0=ruleActionBlock
 				{
 					doneComposite();
 					if(!$current) {
@@ -2503,35 +2585,17 @@ ruleStateDeclaration returns [Boolean current=false]
 		}
 		(
 			(
-				(
-					{
-						markComposite(elementTypeProvider.getStateDeclaration_SimpleSimpleValueExpressionParserRuleCall_3_0_0ElementType());
+				{
+					markComposite(elementTypeProvider.getStateDeclaration_ValueExpressionValueExpressionParserRuleCall_3_0ElementType());
+				}
+				lv_valueExpression_3_0=ruleValueExpression
+				{
+					doneComposite();
+					if(!$current) {
+						associateWithSemanticElement();
+						$current = true;
 					}
-					lv_simple_3_0=ruleSimpleValueExpression
-					{
-						doneComposite();
-						if(!$current) {
-							associateWithSemanticElement();
-							$current = true;
-						}
-					}
-				)
-			)
-			    |
-			(
-				(
-					{
-						markComposite(elementTypeProvider.getStateDeclaration_ComplexComplexValueExpressionParserRuleCall_3_1_0ElementType());
-					}
-					lv_complex_4_0=ruleComplexValueExpression
-					{
-						doneComposite();
-						if(!$current) {
-							associateWithSemanticElement();
-							$current = true;
-						}
-					}
-				)
+				}
 			)
 		)
 	)

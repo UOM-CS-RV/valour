@@ -410,17 +410,17 @@ public class ValourElementTypeProvider implements IElementTypeProvider {
 		public static IGrammarAwareElementType createEventBody_AdditionalTriggerAdditionalTriggerParserRuleCall_1_0ElementType() {
 			return new IGrammarAwareElementType("EventBody_AdditionalTriggerAdditionalTriggerParserRuleCall_1_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getEventBodyAccess().getAdditionalTriggerAdditionalTriggerParserRuleCall_1_0());
 		}
-		public static IGrammarAwareElementType createEventBody_WhenAssignment_2ElementType() {
-			return new IGrammarAwareElementType("EventBody_WhenAssignment_2_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getEventBodyAccess().getWhenAssignment_2());
+		public static IGrammarAwareElementType createEventBody_WhereAssignment_2ElementType() {
+			return new IGrammarAwareElementType("EventBody_WhereAssignment_2_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getEventBodyAccess().getWhereAssignment_2());
 		}
-		public static IGrammarAwareElementType createEventBody_WhenWhenClauseParserRuleCall_2_0ElementType() {
-			return new IGrammarAwareElementType("EventBody_WhenWhenClauseParserRuleCall_2_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getEventBodyAccess().getWhenWhenClauseParserRuleCall_2_0());
+		public static IGrammarAwareElementType createEventBody_WhereWhereClausesParserRuleCall_2_0ElementType() {
+			return new IGrammarAwareElementType("EventBody_WhereWhereClausesParserRuleCall_2_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getEventBodyAccess().getWhereWhereClausesParserRuleCall_2_0());
 		}
-		public static IGrammarAwareElementType createEventBody_WhereAssignment_3ElementType() {
-			return new IGrammarAwareElementType("EventBody_WhereAssignment_3_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getEventBodyAccess().getWhereAssignment_3());
+		public static IGrammarAwareElementType createEventBody_WhenAssignment_3ElementType() {
+			return new IGrammarAwareElementType("EventBody_WhenAssignment_3_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getEventBodyAccess().getWhenAssignment_3());
 		}
-		public static IGrammarAwareElementType createEventBody_WhereWhereClauseParserRuleCall_3_0ElementType() {
-			return new IGrammarAwareElementType("EventBody_WhereWhereClauseParserRuleCall_3_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getEventBodyAccess().getWhereWhereClauseParserRuleCall_3_0());
+		public static IGrammarAwareElementType createEventBody_WhenWhenClauseParserRuleCall_3_0ElementType() {
+			return new IGrammarAwareElementType("EventBody_WhenWhenClauseParserRuleCall_3_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getEventBodyAccess().getWhenWhenClauseParserRuleCall_3_0());
 		}
 		public static IGrammarAwareElementType createEventBody_CategorisationAssignment_4ElementType() {
 			return new IGrammarAwareElementType("EventBody_CategorisationAssignment_4_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getEventBodyAccess().getCategorisationAssignment_4());
@@ -442,13 +442,13 @@ public class ValourElementTypeProvider implements IElementTypeProvider {
 
 	public static final IGrammarAwareElementType EventBody_AdditionalTriggerAdditionalTriggerParserRuleCall_1_0_ELEMENT_TYPE = associate(EventBodyFactory.createEventBody_AdditionalTriggerAdditionalTriggerParserRuleCall_1_0ElementType());
 
-	public static final IGrammarAwareElementType EventBody_WhenAssignment_2_ELEMENT_TYPE = associate(EventBodyFactory.createEventBody_WhenAssignment_2ElementType());
+	public static final IGrammarAwareElementType EventBody_WhereAssignment_2_ELEMENT_TYPE = associate(EventBodyFactory.createEventBody_WhereAssignment_2ElementType());
 
-	public static final IGrammarAwareElementType EventBody_WhenWhenClauseParserRuleCall_2_0_ELEMENT_TYPE = associate(EventBodyFactory.createEventBody_WhenWhenClauseParserRuleCall_2_0ElementType());
+	public static final IGrammarAwareElementType EventBody_WhereWhereClausesParserRuleCall_2_0_ELEMENT_TYPE = associate(EventBodyFactory.createEventBody_WhereWhereClausesParserRuleCall_2_0ElementType());
 
-	public static final IGrammarAwareElementType EventBody_WhereAssignment_3_ELEMENT_TYPE = associate(EventBodyFactory.createEventBody_WhereAssignment_3ElementType());
+	public static final IGrammarAwareElementType EventBody_WhenAssignment_3_ELEMENT_TYPE = associate(EventBodyFactory.createEventBody_WhenAssignment_3ElementType());
 
-	public static final IGrammarAwareElementType EventBody_WhereWhereClauseParserRuleCall_3_0_ELEMENT_TYPE = associate(EventBodyFactory.createEventBody_WhereWhereClauseParserRuleCall_3_0ElementType());
+	public static final IGrammarAwareElementType EventBody_WhenWhenClauseParserRuleCall_3_0_ELEMENT_TYPE = associate(EventBodyFactory.createEventBody_WhenWhenClauseParserRuleCall_3_0ElementType());
 
 	public static final IGrammarAwareElementType EventBody_CategorisationAssignment_4_ELEMENT_TYPE = associate(EventBodyFactory.createEventBody_CategorisationAssignment_4ElementType());
 
@@ -458,29 +458,59 @@ public class ValourElementTypeProvider implements IElementTypeProvider {
 		public static IGrammarAwareElementType createSimpleTriggerElementType() {
 			return new IGrammarAwareElementType("SimpleTrigger_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getSimpleTriggerRule());
 		}
-		public static IGrammarAwareElementType createSimpleTrigger_AlternativesElementType() {
-			return new IGrammarAwareElementType("SimpleTrigger_Alternatives_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getSimpleTriggerAccess().getAlternatives());
+		public static IGrammarAwareElementType createSimpleTrigger_GroupElementType() {
+			return new IGrammarAwareElementType("SimpleTrigger_Group_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getSimpleTriggerAccess().getGroup());
 		}
-		public static IGrammarAwareElementType createSimpleTrigger_ControlFlowTriggerParserRuleCall_0ElementType() {
-			return new IGrammarAwareElementType("SimpleTrigger_ControlFlowTriggerParserRuleCall_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getSimpleTriggerAccess().getControlFlowTriggerParserRuleCall_0());
+		public static IGrammarAwareElementType createSimpleTrigger_Alternatives_0ElementType() {
+			return new IGrammarAwareElementType("SimpleTrigger_Alternatives_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getSimpleTriggerAccess().getAlternatives_0());
 		}
-		public static IGrammarAwareElementType createSimpleTrigger_EventTriggerParserRuleCall_1ElementType() {
-			return new IGrammarAwareElementType("SimpleTrigger_EventTriggerParserRuleCall_1_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getSimpleTriggerAccess().getEventTriggerParserRuleCall_1());
+		public static IGrammarAwareElementType createSimpleTrigger_ControlFlowTriggerAssignment_0_0ElementType() {
+			return new IGrammarAwareElementType("SimpleTrigger_ControlFlowTriggerAssignment_0_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getSimpleTriggerAccess().getControlFlowTriggerAssignment_0_0());
 		}
-		public static IGrammarAwareElementType createSimpleTrigger_MonitorTriggerParserRuleCall_2ElementType() {
-			return new IGrammarAwareElementType("SimpleTrigger_MonitorTriggerParserRuleCall_2_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getSimpleTriggerAccess().getMonitorTriggerParserRuleCall_2());
+		public static IGrammarAwareElementType createSimpleTrigger_ControlFlowTriggerControlFlowTriggerParserRuleCall_0_0_0ElementType() {
+			return new IGrammarAwareElementType("SimpleTrigger_ControlFlowTriggerControlFlowTriggerParserRuleCall_0_0_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getSimpleTriggerAccess().getControlFlowTriggerControlFlowTriggerParserRuleCall_0_0_0());
+		}
+		public static IGrammarAwareElementType createSimpleTrigger_EventTriggerAssignment_0_1ElementType() {
+			return new IGrammarAwareElementType("SimpleTrigger_EventTriggerAssignment_0_1_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getSimpleTriggerAccess().getEventTriggerAssignment_0_1());
+		}
+		public static IGrammarAwareElementType createSimpleTrigger_EventTriggerEventTriggerParserRuleCall_0_1_0ElementType() {
+			return new IGrammarAwareElementType("SimpleTrigger_EventTriggerEventTriggerParserRuleCall_0_1_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getSimpleTriggerAccess().getEventTriggerEventTriggerParserRuleCall_0_1_0());
+		}
+		public static IGrammarAwareElementType createSimpleTrigger_MonitorTriggerAssignment_0_2ElementType() {
+			return new IGrammarAwareElementType("SimpleTrigger_MonitorTriggerAssignment_0_2_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getSimpleTriggerAccess().getMonitorTriggerAssignment_0_2());
+		}
+		public static IGrammarAwareElementType createSimpleTrigger_MonitorTriggerMonitorTriggerParserRuleCall_0_2_0ElementType() {
+			return new IGrammarAwareElementType("SimpleTrigger_MonitorTriggerMonitorTriggerParserRuleCall_0_2_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getSimpleTriggerAccess().getMonitorTriggerMonitorTriggerParserRuleCall_0_2_0());
+		}
+		public static IGrammarAwareElementType createSimpleTrigger_WhereClausesAssignment_1ElementType() {
+			return new IGrammarAwareElementType("SimpleTrigger_WhereClausesAssignment_1_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getSimpleTriggerAccess().getWhereClausesAssignment_1());
+		}
+		public static IGrammarAwareElementType createSimpleTrigger_WhereClausesWhereClausesParserRuleCall_1_0ElementType() {
+			return new IGrammarAwareElementType("SimpleTrigger_WhereClausesWhereClausesParserRuleCall_1_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getSimpleTriggerAccess().getWhereClausesWhereClausesParserRuleCall_1_0());
 		}
 	}
 
 	public static final IGrammarAwareElementType SimpleTrigger_ELEMENT_TYPE = associate(SimpleTriggerFactory.createSimpleTriggerElementType());
 
-	public static final IGrammarAwareElementType SimpleTrigger_Alternatives_ELEMENT_TYPE = associate(SimpleTriggerFactory.createSimpleTrigger_AlternativesElementType());
+	public static final IGrammarAwareElementType SimpleTrigger_Group_ELEMENT_TYPE = associate(SimpleTriggerFactory.createSimpleTrigger_GroupElementType());
 
-	public static final IGrammarAwareElementType SimpleTrigger_ControlFlowTriggerParserRuleCall_0_ELEMENT_TYPE = associate(SimpleTriggerFactory.createSimpleTrigger_ControlFlowTriggerParserRuleCall_0ElementType());
+	public static final IGrammarAwareElementType SimpleTrigger_Alternatives_0_ELEMENT_TYPE = associate(SimpleTriggerFactory.createSimpleTrigger_Alternatives_0ElementType());
 
-	public static final IGrammarAwareElementType SimpleTrigger_EventTriggerParserRuleCall_1_ELEMENT_TYPE = associate(SimpleTriggerFactory.createSimpleTrigger_EventTriggerParserRuleCall_1ElementType());
+	public static final IGrammarAwareElementType SimpleTrigger_ControlFlowTriggerAssignment_0_0_ELEMENT_TYPE = associate(SimpleTriggerFactory.createSimpleTrigger_ControlFlowTriggerAssignment_0_0ElementType());
 
-	public static final IGrammarAwareElementType SimpleTrigger_MonitorTriggerParserRuleCall_2_ELEMENT_TYPE = associate(SimpleTriggerFactory.createSimpleTrigger_MonitorTriggerParserRuleCall_2ElementType());
+	public static final IGrammarAwareElementType SimpleTrigger_ControlFlowTriggerControlFlowTriggerParserRuleCall_0_0_0_ELEMENT_TYPE = associate(SimpleTriggerFactory.createSimpleTrigger_ControlFlowTriggerControlFlowTriggerParserRuleCall_0_0_0ElementType());
+
+	public static final IGrammarAwareElementType SimpleTrigger_EventTriggerAssignment_0_1_ELEMENT_TYPE = associate(SimpleTriggerFactory.createSimpleTrigger_EventTriggerAssignment_0_1ElementType());
+
+	public static final IGrammarAwareElementType SimpleTrigger_EventTriggerEventTriggerParserRuleCall_0_1_0_ELEMENT_TYPE = associate(SimpleTriggerFactory.createSimpleTrigger_EventTriggerEventTriggerParserRuleCall_0_1_0ElementType());
+
+	public static final IGrammarAwareElementType SimpleTrigger_MonitorTriggerAssignment_0_2_ELEMENT_TYPE = associate(SimpleTriggerFactory.createSimpleTrigger_MonitorTriggerAssignment_0_2ElementType());
+
+	public static final IGrammarAwareElementType SimpleTrigger_MonitorTriggerMonitorTriggerParserRuleCall_0_2_0_ELEMENT_TYPE = associate(SimpleTriggerFactory.createSimpleTrigger_MonitorTriggerMonitorTriggerParserRuleCall_0_2_0ElementType());
+
+	public static final IGrammarAwareElementType SimpleTrigger_WhereClausesAssignment_1_ELEMENT_TYPE = associate(SimpleTriggerFactory.createSimpleTrigger_WhereClausesAssignment_1ElementType());
+
+	public static final IGrammarAwareElementType SimpleTrigger_WhereClausesWhereClausesParserRuleCall_1_0_ELEMENT_TYPE = associate(SimpleTriggerFactory.createSimpleTrigger_WhereClausesWhereClausesParserRuleCall_1_0ElementType());
 
 	private static class ControlFlowTriggerFactory {
 		public static IGrammarAwareElementType createControlFlowTriggerElementType() {
@@ -656,26 +686,20 @@ public class ValourElementTypeProvider implements IElementTypeProvider {
 		public static IGrammarAwareElementType createAdditionalTrigger_GroupElementType() {
 			return new IGrammarAwareElementType("AdditionalTrigger_Group_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getAdditionalTriggerAccess().getGroup());
 		}
-		public static IGrammarAwareElementType createAdditionalTrigger_WhereClauseAssignment_0ElementType() {
-			return new IGrammarAwareElementType("AdditionalTrigger_WhereClauseAssignment_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getAdditionalTriggerAccess().getWhereClauseAssignment_0());
+		public static IGrammarAwareElementType createAdditionalTrigger_VerticalLineVerticalLineKeyword_0ElementType() {
+			return new IGrammarAwareElementType("AdditionalTrigger_VerticalLineVerticalLineKeyword_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getAdditionalTriggerAccess().getVerticalLineVerticalLineKeyword_0());
 		}
-		public static IGrammarAwareElementType createAdditionalTrigger_WhereClauseWhereClauseParserRuleCall_0_0ElementType() {
-			return new IGrammarAwareElementType("AdditionalTrigger_WhereClauseWhereClauseParserRuleCall_0_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getAdditionalTriggerAccess().getWhereClauseWhereClauseParserRuleCall_0_0());
+		public static IGrammarAwareElementType createAdditionalTrigger_TriggerAssignment_1ElementType() {
+			return new IGrammarAwareElementType("AdditionalTrigger_TriggerAssignment_1_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getAdditionalTriggerAccess().getTriggerAssignment_1());
 		}
-		public static IGrammarAwareElementType createAdditionalTrigger_VerticalLineVerticalLineKeyword_1ElementType() {
-			return new IGrammarAwareElementType("AdditionalTrigger_VerticalLineVerticalLineKeyword_1_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getAdditionalTriggerAccess().getVerticalLineVerticalLineKeyword_1());
+		public static IGrammarAwareElementType createAdditionalTrigger_TriggerSimpleTriggerParserRuleCall_1_0ElementType() {
+			return new IGrammarAwareElementType("AdditionalTrigger_TriggerSimpleTriggerParserRuleCall_1_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getAdditionalTriggerAccess().getTriggerSimpleTriggerParserRuleCall_1_0());
 		}
-		public static IGrammarAwareElementType createAdditionalTrigger_TriggerAssignment_2ElementType() {
-			return new IGrammarAwareElementType("AdditionalTrigger_TriggerAssignment_2_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getAdditionalTriggerAccess().getTriggerAssignment_2());
+		public static IGrammarAwareElementType createAdditionalTrigger_AdditionalTriggerAssignment_2ElementType() {
+			return new IGrammarAwareElementType("AdditionalTrigger_AdditionalTriggerAssignment_2_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getAdditionalTriggerAccess().getAdditionalTriggerAssignment_2());
 		}
-		public static IGrammarAwareElementType createAdditionalTrigger_TriggerSimpleTriggerParserRuleCall_2_0ElementType() {
-			return new IGrammarAwareElementType("AdditionalTrigger_TriggerSimpleTriggerParserRuleCall_2_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getAdditionalTriggerAccess().getTriggerSimpleTriggerParserRuleCall_2_0());
-		}
-		public static IGrammarAwareElementType createAdditionalTrigger_AdditionalTriggerAssignment_3ElementType() {
-			return new IGrammarAwareElementType("AdditionalTrigger_AdditionalTriggerAssignment_3_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getAdditionalTriggerAccess().getAdditionalTriggerAssignment_3());
-		}
-		public static IGrammarAwareElementType createAdditionalTrigger_AdditionalTriggerAdditionalTriggerParserRuleCall_3_0ElementType() {
-			return new IGrammarAwareElementType("AdditionalTrigger_AdditionalTriggerAdditionalTriggerParserRuleCall_3_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getAdditionalTriggerAccess().getAdditionalTriggerAdditionalTriggerParserRuleCall_3_0());
+		public static IGrammarAwareElementType createAdditionalTrigger_AdditionalTriggerAdditionalTriggerParserRuleCall_2_0ElementType() {
+			return new IGrammarAwareElementType("AdditionalTrigger_AdditionalTriggerAdditionalTriggerParserRuleCall_2_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getAdditionalTriggerAccess().getAdditionalTriggerAdditionalTriggerParserRuleCall_2_0());
 		}
 	}
 
@@ -683,19 +707,43 @@ public class ValourElementTypeProvider implements IElementTypeProvider {
 
 	public static final IGrammarAwareElementType AdditionalTrigger_Group_ELEMENT_TYPE = associate(AdditionalTriggerFactory.createAdditionalTrigger_GroupElementType());
 
-	public static final IGrammarAwareElementType AdditionalTrigger_WhereClauseAssignment_0_ELEMENT_TYPE = associate(AdditionalTriggerFactory.createAdditionalTrigger_WhereClauseAssignment_0ElementType());
+	public static final IGrammarAwareElementType AdditionalTrigger_VerticalLineVerticalLineKeyword_0_ELEMENT_TYPE = associate(AdditionalTriggerFactory.createAdditionalTrigger_VerticalLineVerticalLineKeyword_0ElementType());
 
-	public static final IGrammarAwareElementType AdditionalTrigger_WhereClauseWhereClauseParserRuleCall_0_0_ELEMENT_TYPE = associate(AdditionalTriggerFactory.createAdditionalTrigger_WhereClauseWhereClauseParserRuleCall_0_0ElementType());
+	public static final IGrammarAwareElementType AdditionalTrigger_TriggerAssignment_1_ELEMENT_TYPE = associate(AdditionalTriggerFactory.createAdditionalTrigger_TriggerAssignment_1ElementType());
 
-	public static final IGrammarAwareElementType AdditionalTrigger_VerticalLineVerticalLineKeyword_1_ELEMENT_TYPE = associate(AdditionalTriggerFactory.createAdditionalTrigger_VerticalLineVerticalLineKeyword_1ElementType());
+	public static final IGrammarAwareElementType AdditionalTrigger_TriggerSimpleTriggerParserRuleCall_1_0_ELEMENT_TYPE = associate(AdditionalTriggerFactory.createAdditionalTrigger_TriggerSimpleTriggerParserRuleCall_1_0ElementType());
 
-	public static final IGrammarAwareElementType AdditionalTrigger_TriggerAssignment_2_ELEMENT_TYPE = associate(AdditionalTriggerFactory.createAdditionalTrigger_TriggerAssignment_2ElementType());
+	public static final IGrammarAwareElementType AdditionalTrigger_AdditionalTriggerAssignment_2_ELEMENT_TYPE = associate(AdditionalTriggerFactory.createAdditionalTrigger_AdditionalTriggerAssignment_2ElementType());
 
-	public static final IGrammarAwareElementType AdditionalTrigger_TriggerSimpleTriggerParserRuleCall_2_0_ELEMENT_TYPE = associate(AdditionalTriggerFactory.createAdditionalTrigger_TriggerSimpleTriggerParserRuleCall_2_0ElementType());
+	public static final IGrammarAwareElementType AdditionalTrigger_AdditionalTriggerAdditionalTriggerParserRuleCall_2_0_ELEMENT_TYPE = associate(AdditionalTriggerFactory.createAdditionalTrigger_AdditionalTriggerAdditionalTriggerParserRuleCall_2_0ElementType());
 
-	public static final IGrammarAwareElementType AdditionalTrigger_AdditionalTriggerAssignment_3_ELEMENT_TYPE = associate(AdditionalTriggerFactory.createAdditionalTrigger_AdditionalTriggerAssignment_3ElementType());
+	private static class WhereClausesFactory {
+		public static IGrammarAwareElementType createWhereClausesElementType() {
+			return new IGrammarAwareElementType("WhereClauses_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getWhereClausesRule());
+		}
+		public static IGrammarAwareElementType createWhereClauses_GroupElementType() {
+			return new IGrammarAwareElementType("WhereClauses_Group_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getWhereClausesAccess().getGroup());
+		}
+		public static IGrammarAwareElementType createWhereClauses_WhereKeyword_0ElementType() {
+			return new IGrammarAwareElementType("WhereClauses_WhereKeyword_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getWhereClausesAccess().getWhereKeyword_0());
+		}
+		public static IGrammarAwareElementType createWhereClauses_ClausesAssignment_1ElementType() {
+			return new IGrammarAwareElementType("WhereClauses_ClausesAssignment_1_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getWhereClausesAccess().getClausesAssignment_1());
+		}
+		public static IGrammarAwareElementType createWhereClauses_ClausesWhereClauseParserRuleCall_1_0ElementType() {
+			return new IGrammarAwareElementType("WhereClauses_ClausesWhereClauseParserRuleCall_1_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getWhereClausesAccess().getClausesWhereClauseParserRuleCall_1_0());
+		}
+	}
 
-	public static final IGrammarAwareElementType AdditionalTrigger_AdditionalTriggerAdditionalTriggerParserRuleCall_3_0_ELEMENT_TYPE = associate(AdditionalTriggerFactory.createAdditionalTrigger_AdditionalTriggerAdditionalTriggerParserRuleCall_3_0ElementType());
+	public static final IGrammarAwareElementType WhereClauses_ELEMENT_TYPE = associate(WhereClausesFactory.createWhereClausesElementType());
+
+	public static final IGrammarAwareElementType WhereClauses_Group_ELEMENT_TYPE = associate(WhereClausesFactory.createWhereClauses_GroupElementType());
+
+	public static final IGrammarAwareElementType WhereClauses_WhereKeyword_0_ELEMENT_TYPE = associate(WhereClausesFactory.createWhereClauses_WhereKeyword_0ElementType());
+
+	public static final IGrammarAwareElementType WhereClauses_ClausesAssignment_1_ELEMENT_TYPE = associate(WhereClausesFactory.createWhereClauses_ClausesAssignment_1ElementType());
+
+	public static final IGrammarAwareElementType WhereClauses_ClausesWhereClauseParserRuleCall_1_0_ELEMENT_TYPE = associate(WhereClausesFactory.createWhereClauses_ClausesWhereClauseParserRuleCall_1_0ElementType());
 
 	private static class WhereClauseFactory {
 		public static IGrammarAwareElementType createWhereClauseElementType() {
@@ -704,26 +752,20 @@ public class ValourElementTypeProvider implements IElementTypeProvider {
 		public static IGrammarAwareElementType createWhereClause_GroupElementType() {
 			return new IGrammarAwareElementType("WhereClause_Group_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getWhereClauseAccess().getGroup());
 		}
-		public static IGrammarAwareElementType createWhereClause_WhereKeyword_0ElementType() {
-			return new IGrammarAwareElementType("WhereClause_WhereKeyword_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getWhereClauseAccess().getWhereKeyword_0());
+		public static IGrammarAwareElementType createWhereClause_WhereIdAssignment_0ElementType() {
+			return new IGrammarAwareElementType("WhereClause_WhereIdAssignment_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getWhereClauseAccess().getWhereIdAssignment_0());
 		}
-		public static IGrammarAwareElementType createWhereClause_Group_1ElementType() {
-			return new IGrammarAwareElementType("WhereClause_Group_1_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getWhereClauseAccess().getGroup_1());
+		public static IGrammarAwareElementType createWhereClause_WhereIdIDTerminalRuleCall_0_0ElementType() {
+			return new IGrammarAwareElementType("WhereClause_WhereIdIDTerminalRuleCall_0_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getWhereClauseAccess().getWhereIdIDTerminalRuleCall_0_0());
 		}
-		public static IGrammarAwareElementType createWhereClause_WhereIdAssignment_1_0ElementType() {
-			return new IGrammarAwareElementType("WhereClause_WhereIdAssignment_1_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getWhereClauseAccess().getWhereIdAssignment_1_0());
+		public static IGrammarAwareElementType createWhereClause_EqualsSignKeyword_1ElementType() {
+			return new IGrammarAwareElementType("WhereClause_EqualsSignKeyword_1_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getWhereClauseAccess().getEqualsSignKeyword_1());
 		}
-		public static IGrammarAwareElementType createWhereClause_WhereIdIDTerminalRuleCall_1_0_0ElementType() {
-			return new IGrammarAwareElementType("WhereClause_WhereIdIDTerminalRuleCall_1_0_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getWhereClauseAccess().getWhereIdIDTerminalRuleCall_1_0_0());
+		public static IGrammarAwareElementType createWhereClause_WhereExpressionAssignment_2ElementType() {
+			return new IGrammarAwareElementType("WhereClause_WhereExpressionAssignment_2_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getWhereClauseAccess().getWhereExpressionAssignment_2());
 		}
-		public static IGrammarAwareElementType createWhereClause_EqualsSignKeyword_1_1ElementType() {
-			return new IGrammarAwareElementType("WhereClause_EqualsSignKeyword_1_1_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getWhereClauseAccess().getEqualsSignKeyword_1_1());
-		}
-		public static IGrammarAwareElementType createWhereClause_WhereExpressionAssignment_1_2ElementType() {
-			return new IGrammarAwareElementType("WhereClause_WhereExpressionAssignment_1_2_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getWhereClauseAccess().getWhereExpressionAssignment_1_2());
-		}
-		public static IGrammarAwareElementType createWhereClause_WhereExpressionValueExpressionParserRuleCall_1_2_0ElementType() {
-			return new IGrammarAwareElementType("WhereClause_WhereExpressionValueExpressionParserRuleCall_1_2_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getWhereClauseAccess().getWhereExpressionValueExpressionParserRuleCall_1_2_0());
+		public static IGrammarAwareElementType createWhereClause_WhereExpressionValueExpressionParserRuleCall_2_0ElementType() {
+			return new IGrammarAwareElementType("WhereClause_WhereExpressionValueExpressionParserRuleCall_2_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getWhereClauseAccess().getWhereExpressionValueExpressionParserRuleCall_2_0());
 		}
 	}
 
@@ -731,19 +773,15 @@ public class ValourElementTypeProvider implements IElementTypeProvider {
 
 	public static final IGrammarAwareElementType WhereClause_Group_ELEMENT_TYPE = associate(WhereClauseFactory.createWhereClause_GroupElementType());
 
-	public static final IGrammarAwareElementType WhereClause_WhereKeyword_0_ELEMENT_TYPE = associate(WhereClauseFactory.createWhereClause_WhereKeyword_0ElementType());
+	public static final IGrammarAwareElementType WhereClause_WhereIdAssignment_0_ELEMENT_TYPE = associate(WhereClauseFactory.createWhereClause_WhereIdAssignment_0ElementType());
 
-	public static final IGrammarAwareElementType WhereClause_Group_1_ELEMENT_TYPE = associate(WhereClauseFactory.createWhereClause_Group_1ElementType());
+	public static final IGrammarAwareElementType WhereClause_WhereIdIDTerminalRuleCall_0_0_ELEMENT_TYPE = associate(WhereClauseFactory.createWhereClause_WhereIdIDTerminalRuleCall_0_0ElementType());
 
-	public static final IGrammarAwareElementType WhereClause_WhereIdAssignment_1_0_ELEMENT_TYPE = associate(WhereClauseFactory.createWhereClause_WhereIdAssignment_1_0ElementType());
+	public static final IGrammarAwareElementType WhereClause_EqualsSignKeyword_1_ELEMENT_TYPE = associate(WhereClauseFactory.createWhereClause_EqualsSignKeyword_1ElementType());
 
-	public static final IGrammarAwareElementType WhereClause_WhereIdIDTerminalRuleCall_1_0_0_ELEMENT_TYPE = associate(WhereClauseFactory.createWhereClause_WhereIdIDTerminalRuleCall_1_0_0ElementType());
+	public static final IGrammarAwareElementType WhereClause_WhereExpressionAssignment_2_ELEMENT_TYPE = associate(WhereClauseFactory.createWhereClause_WhereExpressionAssignment_2ElementType());
 
-	public static final IGrammarAwareElementType WhereClause_EqualsSignKeyword_1_1_ELEMENT_TYPE = associate(WhereClauseFactory.createWhereClause_EqualsSignKeyword_1_1ElementType());
-
-	public static final IGrammarAwareElementType WhereClause_WhereExpressionAssignment_1_2_ELEMENT_TYPE = associate(WhereClauseFactory.createWhereClause_WhereExpressionAssignment_1_2ElementType());
-
-	public static final IGrammarAwareElementType WhereClause_WhereExpressionValueExpressionParserRuleCall_1_2_0_ELEMENT_TYPE = associate(WhereClauseFactory.createWhereClause_WhereExpressionValueExpressionParserRuleCall_1_2_0ElementType());
+	public static final IGrammarAwareElementType WhereClause_WhereExpressionValueExpressionParserRuleCall_2_0_ELEMENT_TYPE = associate(WhereClauseFactory.createWhereClause_WhereExpressionValueExpressionParserRuleCall_2_0ElementType());
 
 	private static class ValueExpressionFactory {
 		public static IGrammarAwareElementType createValueExpressionElementType() {
@@ -912,11 +950,17 @@ public class ValourElementTypeProvider implements IElementTypeProvider {
 		public static IGrammarAwareElementType createConditionExpression_AlternativesElementType() {
 			return new IGrammarAwareElementType("ConditionExpression_Alternatives_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getConditionExpressionAccess().getAlternatives());
 		}
-		public static IGrammarAwareElementType createConditionExpression_ConditionRefInvocationParserRuleCall_0ElementType() {
-			return new IGrammarAwareElementType("ConditionExpression_ConditionRefInvocationParserRuleCall_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getConditionExpressionAccess().getConditionRefInvocationParserRuleCall_0());
+		public static IGrammarAwareElementType createConditionExpression_RefAssignment_0ElementType() {
+			return new IGrammarAwareElementType("ConditionExpression_RefAssignment_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getConditionExpressionAccess().getRefAssignment_0());
 		}
-		public static IGrammarAwareElementType createConditionExpression_ConditionBlockParserRuleCall_1ElementType() {
-			return new IGrammarAwareElementType("ConditionExpression_ConditionBlockParserRuleCall_1_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getConditionExpressionAccess().getConditionBlockParserRuleCall_1());
+		public static IGrammarAwareElementType createConditionExpression_RefConditionRefInvocationParserRuleCall_0_0ElementType() {
+			return new IGrammarAwareElementType("ConditionExpression_RefConditionRefInvocationParserRuleCall_0_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getConditionExpressionAccess().getRefConditionRefInvocationParserRuleCall_0_0());
+		}
+		public static IGrammarAwareElementType createConditionExpression_BlockAssignment_1ElementType() {
+			return new IGrammarAwareElementType("ConditionExpression_BlockAssignment_1_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getConditionExpressionAccess().getBlockAssignment_1());
+		}
+		public static IGrammarAwareElementType createConditionExpression_BlockConditionBlockParserRuleCall_1_0ElementType() {
+			return new IGrammarAwareElementType("ConditionExpression_BlockConditionBlockParserRuleCall_1_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getConditionExpressionAccess().getBlockConditionBlockParserRuleCall_1_0());
 		}
 	}
 
@@ -924,9 +968,13 @@ public class ValourElementTypeProvider implements IElementTypeProvider {
 
 	public static final IGrammarAwareElementType ConditionExpression_Alternatives_ELEMENT_TYPE = associate(ConditionExpressionFactory.createConditionExpression_AlternativesElementType());
 
-	public static final IGrammarAwareElementType ConditionExpression_ConditionRefInvocationParserRuleCall_0_ELEMENT_TYPE = associate(ConditionExpressionFactory.createConditionExpression_ConditionRefInvocationParserRuleCall_0ElementType());
+	public static final IGrammarAwareElementType ConditionExpression_RefAssignment_0_ELEMENT_TYPE = associate(ConditionExpressionFactory.createConditionExpression_RefAssignment_0ElementType());
 
-	public static final IGrammarAwareElementType ConditionExpression_ConditionBlockParserRuleCall_1_ELEMENT_TYPE = associate(ConditionExpressionFactory.createConditionExpression_ConditionBlockParserRuleCall_1ElementType());
+	public static final IGrammarAwareElementType ConditionExpression_RefConditionRefInvocationParserRuleCall_0_0_ELEMENT_TYPE = associate(ConditionExpressionFactory.createConditionExpression_RefConditionRefInvocationParserRuleCall_0_0ElementType());
+
+	public static final IGrammarAwareElementType ConditionExpression_BlockAssignment_1_ELEMENT_TYPE = associate(ConditionExpressionFactory.createConditionExpression_BlockAssignment_1ElementType());
+
+	public static final IGrammarAwareElementType ConditionExpression_BlockConditionBlockParserRuleCall_1_0_ELEMENT_TYPE = associate(ConditionExpressionFactory.createConditionExpression_BlockConditionBlockParserRuleCall_1_0ElementType());
 
 	private static class ConditionRefInvocationFactory {
 		public static IGrammarAwareElementType createConditionRefInvocationElementType() {
@@ -947,8 +995,8 @@ public class ValourElementTypeProvider implements IElementTypeProvider {
 		public static IGrammarAwareElementType createConditionRefInvocation_ParamsAssignment_2ElementType() {
 			return new IGrammarAwareElementType("ConditionRefInvocation_ParamsAssignment_2_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getConditionRefInvocationAccess().getParamsAssignment_2());
 		}
-		public static IGrammarAwareElementType createConditionRefInvocation_ParamsFormalParametersParserRuleCall_2_0ElementType() {
-			return new IGrammarAwareElementType("ConditionRefInvocation_ParamsFormalParametersParserRuleCall_2_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getConditionRefInvocationAccess().getParamsFormalParametersParserRuleCall_2_0());
+		public static IGrammarAwareElementType createConditionRefInvocation_ParamsActualParametersParserRuleCall_2_0ElementType() {
+			return new IGrammarAwareElementType("ConditionRefInvocation_ParamsActualParametersParserRuleCall_2_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getConditionRefInvocationAccess().getParamsActualParametersParserRuleCall_2_0());
 		}
 		public static IGrammarAwareElementType createConditionRefInvocation_RightParenthesisKeyword_3ElementType() {
 			return new IGrammarAwareElementType("ConditionRefInvocation_RightParenthesisKeyword_3_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getConditionRefInvocationAccess().getRightParenthesisKeyword_3());
@@ -967,7 +1015,7 @@ public class ValourElementTypeProvider implements IElementTypeProvider {
 
 	public static final IGrammarAwareElementType ConditionRefInvocation_ParamsAssignment_2_ELEMENT_TYPE = associate(ConditionRefInvocationFactory.createConditionRefInvocation_ParamsAssignment_2ElementType());
 
-	public static final IGrammarAwareElementType ConditionRefInvocation_ParamsFormalParametersParserRuleCall_2_0_ELEMENT_TYPE = associate(ConditionRefInvocationFactory.createConditionRefInvocation_ParamsFormalParametersParserRuleCall_2_0ElementType());
+	public static final IGrammarAwareElementType ConditionRefInvocation_ParamsActualParametersParserRuleCall_2_0_ELEMENT_TYPE = associate(ConditionRefInvocationFactory.createConditionRefInvocation_ParamsActualParametersParserRuleCall_2_0ElementType());
 
 	public static final IGrammarAwareElementType ConditionRefInvocation_RightParenthesisKeyword_3_ELEMENT_TYPE = associate(ConditionRefInvocationFactory.createConditionRefInvocation_RightParenthesisKeyword_3ElementType());
 
@@ -1011,11 +1059,17 @@ public class ValourElementTypeProvider implements IElementTypeProvider {
 		public static IGrammarAwareElementType createConditionBlock_AlternativesElementType() {
 			return new IGrammarAwareElementType("ConditionBlock_Alternatives_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getConditionBlockAccess().getAlternatives());
 		}
-		public static IGrammarAwareElementType createConditionBlock_SimpleConditionParserRuleCall_0ElementType() {
-			return new IGrammarAwareElementType("ConditionBlock_SimpleConditionParserRuleCall_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getConditionBlockAccess().getSimpleConditionParserRuleCall_0());
+		public static IGrammarAwareElementType createConditionBlock_SimpleAssignment_0ElementType() {
+			return new IGrammarAwareElementType("ConditionBlock_SimpleAssignment_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getConditionBlockAccess().getSimpleAssignment_0());
 		}
-		public static IGrammarAwareElementType createConditionBlock_ComplexConditionParserRuleCall_1ElementType() {
-			return new IGrammarAwareElementType("ConditionBlock_ComplexConditionParserRuleCall_1_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getConditionBlockAccess().getComplexConditionParserRuleCall_1());
+		public static IGrammarAwareElementType createConditionBlock_SimpleSimpleConditionParserRuleCall_0_0ElementType() {
+			return new IGrammarAwareElementType("ConditionBlock_SimpleSimpleConditionParserRuleCall_0_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getConditionBlockAccess().getSimpleSimpleConditionParserRuleCall_0_0());
+		}
+		public static IGrammarAwareElementType createConditionBlock_ComplexAssignment_1ElementType() {
+			return new IGrammarAwareElementType("ConditionBlock_ComplexAssignment_1_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getConditionBlockAccess().getComplexAssignment_1());
+		}
+		public static IGrammarAwareElementType createConditionBlock_ComplexComplexConditionParserRuleCall_1_0ElementType() {
+			return new IGrammarAwareElementType("ConditionBlock_ComplexComplexConditionParserRuleCall_1_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getConditionBlockAccess().getComplexComplexConditionParserRuleCall_1_0());
 		}
 	}
 
@@ -1023,9 +1077,13 @@ public class ValourElementTypeProvider implements IElementTypeProvider {
 
 	public static final IGrammarAwareElementType ConditionBlock_Alternatives_ELEMENT_TYPE = associate(ConditionBlockFactory.createConditionBlock_AlternativesElementType());
 
-	public static final IGrammarAwareElementType ConditionBlock_SimpleConditionParserRuleCall_0_ELEMENT_TYPE = associate(ConditionBlockFactory.createConditionBlock_SimpleConditionParserRuleCall_0ElementType());
+	public static final IGrammarAwareElementType ConditionBlock_SimpleAssignment_0_ELEMENT_TYPE = associate(ConditionBlockFactory.createConditionBlock_SimpleAssignment_0ElementType());
 
-	public static final IGrammarAwareElementType ConditionBlock_ComplexConditionParserRuleCall_1_ELEMENT_TYPE = associate(ConditionBlockFactory.createConditionBlock_ComplexConditionParserRuleCall_1ElementType());
+	public static final IGrammarAwareElementType ConditionBlock_SimpleSimpleConditionParserRuleCall_0_0_ELEMENT_TYPE = associate(ConditionBlockFactory.createConditionBlock_SimpleSimpleConditionParserRuleCall_0_0ElementType());
+
+	public static final IGrammarAwareElementType ConditionBlock_ComplexAssignment_1_ELEMENT_TYPE = associate(ConditionBlockFactory.createConditionBlock_ComplexAssignment_1ElementType());
+
+	public static final IGrammarAwareElementType ConditionBlock_ComplexComplexConditionParserRuleCall_1_0_ELEMENT_TYPE = associate(ConditionBlockFactory.createConditionBlock_ComplexComplexConditionParserRuleCall_1_0ElementType());
 
 	private static class SimpleConditionFactory {
 		public static IGrammarAwareElementType createSimpleConditionElementType() {
@@ -1327,11 +1385,11 @@ public class ValourElementTypeProvider implements IElementTypeProvider {
 		public static IGrammarAwareElementType createRuleAction_AlternativesElementType() {
 			return new IGrammarAwareElementType("RuleAction_Alternatives_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getRuleActionAccess().getAlternatives());
 		}
-		public static IGrammarAwareElementType createRuleAction_ActionBlockAssignment_0ElementType() {
-			return new IGrammarAwareElementType("RuleAction_ActionBlockAssignment_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getRuleActionAccess().getActionBlockAssignment_0());
+		public static IGrammarAwareElementType createRuleAction_ActionMonitorTriggerFireAssignment_0ElementType() {
+			return new IGrammarAwareElementType("RuleAction_ActionMonitorTriggerFireAssignment_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getRuleActionAccess().getActionMonitorTriggerFireAssignment_0());
 		}
-		public static IGrammarAwareElementType createRuleAction_ActionBlockActionBlockParserRuleCall_0_0ElementType() {
-			return new IGrammarAwareElementType("RuleAction_ActionBlockActionBlockParserRuleCall_0_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getRuleActionAccess().getActionBlockActionBlockParserRuleCall_0_0());
+		public static IGrammarAwareElementType createRuleAction_ActionMonitorTriggerFireMonitorTriggerFireParserRuleCall_0_0ElementType() {
+			return new IGrammarAwareElementType("RuleAction_ActionMonitorTriggerFireMonitorTriggerFireParserRuleCall_0_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getRuleActionAccess().getActionMonitorTriggerFireMonitorTriggerFireParserRuleCall_0_0());
 		}
 		public static IGrammarAwareElementType createRuleAction_ActionRefInvocationAssignment_1ElementType() {
 			return new IGrammarAwareElementType("RuleAction_ActionRefInvocationAssignment_1_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getRuleActionAccess().getActionRefInvocationAssignment_1());
@@ -1339,11 +1397,11 @@ public class ValourElementTypeProvider implements IElementTypeProvider {
 		public static IGrammarAwareElementType createRuleAction_ActionRefInvocationActionRefInvocationParserRuleCall_1_0ElementType() {
 			return new IGrammarAwareElementType("RuleAction_ActionRefInvocationActionRefInvocationParserRuleCall_1_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getRuleActionAccess().getActionRefInvocationActionRefInvocationParserRuleCall_1_0());
 		}
-		public static IGrammarAwareElementType createRuleAction_ActionMonitorTriggerFireAssignment_2ElementType() {
-			return new IGrammarAwareElementType("RuleAction_ActionMonitorTriggerFireAssignment_2_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getRuleActionAccess().getActionMonitorTriggerFireAssignment_2());
+		public static IGrammarAwareElementType createRuleAction_ActionBlockAssignment_2ElementType() {
+			return new IGrammarAwareElementType("RuleAction_ActionBlockAssignment_2_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getRuleActionAccess().getActionBlockAssignment_2());
 		}
-		public static IGrammarAwareElementType createRuleAction_ActionMonitorTriggerFireMonitorTriggerFireParserRuleCall_2_0ElementType() {
-			return new IGrammarAwareElementType("RuleAction_ActionMonitorTriggerFireMonitorTriggerFireParserRuleCall_2_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getRuleActionAccess().getActionMonitorTriggerFireMonitorTriggerFireParserRuleCall_2_0());
+		public static IGrammarAwareElementType createRuleAction_ActionBlockActionBlockParserRuleCall_2_0ElementType() {
+			return new IGrammarAwareElementType("RuleAction_ActionBlockActionBlockParserRuleCall_2_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getRuleActionAccess().getActionBlockActionBlockParserRuleCall_2_0());
 		}
 	}
 
@@ -1351,17 +1409,17 @@ public class ValourElementTypeProvider implements IElementTypeProvider {
 
 	public static final IGrammarAwareElementType RuleAction_Alternatives_ELEMENT_TYPE = associate(RuleActionFactory.createRuleAction_AlternativesElementType());
 
-	public static final IGrammarAwareElementType RuleAction_ActionBlockAssignment_0_ELEMENT_TYPE = associate(RuleActionFactory.createRuleAction_ActionBlockAssignment_0ElementType());
+	public static final IGrammarAwareElementType RuleAction_ActionMonitorTriggerFireAssignment_0_ELEMENT_TYPE = associate(RuleActionFactory.createRuleAction_ActionMonitorTriggerFireAssignment_0ElementType());
 
-	public static final IGrammarAwareElementType RuleAction_ActionBlockActionBlockParserRuleCall_0_0_ELEMENT_TYPE = associate(RuleActionFactory.createRuleAction_ActionBlockActionBlockParserRuleCall_0_0ElementType());
+	public static final IGrammarAwareElementType RuleAction_ActionMonitorTriggerFireMonitorTriggerFireParserRuleCall_0_0_ELEMENT_TYPE = associate(RuleActionFactory.createRuleAction_ActionMonitorTriggerFireMonitorTriggerFireParserRuleCall_0_0ElementType());
 
 	public static final IGrammarAwareElementType RuleAction_ActionRefInvocationAssignment_1_ELEMENT_TYPE = associate(RuleActionFactory.createRuleAction_ActionRefInvocationAssignment_1ElementType());
 
 	public static final IGrammarAwareElementType RuleAction_ActionRefInvocationActionRefInvocationParserRuleCall_1_0_ELEMENT_TYPE = associate(RuleActionFactory.createRuleAction_ActionRefInvocationActionRefInvocationParserRuleCall_1_0ElementType());
 
-	public static final IGrammarAwareElementType RuleAction_ActionMonitorTriggerFireAssignment_2_ELEMENT_TYPE = associate(RuleActionFactory.createRuleAction_ActionMonitorTriggerFireAssignment_2ElementType());
+	public static final IGrammarAwareElementType RuleAction_ActionBlockAssignment_2_ELEMENT_TYPE = associate(RuleActionFactory.createRuleAction_ActionBlockAssignment_2ElementType());
 
-	public static final IGrammarAwareElementType RuleAction_ActionMonitorTriggerFireMonitorTriggerFireParserRuleCall_2_0_ELEMENT_TYPE = associate(RuleActionFactory.createRuleAction_ActionMonitorTriggerFireMonitorTriggerFireParserRuleCall_2_0ElementType());
+	public static final IGrammarAwareElementType RuleAction_ActionBlockActionBlockParserRuleCall_2_0_ELEMENT_TYPE = associate(RuleActionFactory.createRuleAction_ActionBlockActionBlockParserRuleCall_2_0ElementType());
 
 	private static class ActionBlockFactory {
 		public static IGrammarAwareElementType createActionBlockElementType() {
@@ -1820,20 +1878,11 @@ public class ValourElementTypeProvider implements IElementTypeProvider {
 		public static IGrammarAwareElementType createStateDeclaration_EqualsSignKeyword_2ElementType() {
 			return new IGrammarAwareElementType("StateDeclaration_EqualsSignKeyword_2_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getStateDeclarationAccess().getEqualsSignKeyword_2());
 		}
-		public static IGrammarAwareElementType createStateDeclaration_Alternatives_3ElementType() {
-			return new IGrammarAwareElementType("StateDeclaration_Alternatives_3_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getStateDeclarationAccess().getAlternatives_3());
+		public static IGrammarAwareElementType createStateDeclaration_ValueExpressionAssignment_3ElementType() {
+			return new IGrammarAwareElementType("StateDeclaration_ValueExpressionAssignment_3_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getStateDeclarationAccess().getValueExpressionAssignment_3());
 		}
-		public static IGrammarAwareElementType createStateDeclaration_SimpleAssignment_3_0ElementType() {
-			return new IGrammarAwareElementType("StateDeclaration_SimpleAssignment_3_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getStateDeclarationAccess().getSimpleAssignment_3_0());
-		}
-		public static IGrammarAwareElementType createStateDeclaration_SimpleSimpleValueExpressionParserRuleCall_3_0_0ElementType() {
-			return new IGrammarAwareElementType("StateDeclaration_SimpleSimpleValueExpressionParserRuleCall_3_0_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getStateDeclarationAccess().getSimpleSimpleValueExpressionParserRuleCall_3_0_0());
-		}
-		public static IGrammarAwareElementType createStateDeclaration_ComplexAssignment_3_1ElementType() {
-			return new IGrammarAwareElementType("StateDeclaration_ComplexAssignment_3_1_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getStateDeclarationAccess().getComplexAssignment_3_1());
-		}
-		public static IGrammarAwareElementType createStateDeclaration_ComplexComplexValueExpressionParserRuleCall_3_1_0ElementType() {
-			return new IGrammarAwareElementType("StateDeclaration_ComplexComplexValueExpressionParserRuleCall_3_1_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getStateDeclarationAccess().getComplexComplexValueExpressionParserRuleCall_3_1_0());
+		public static IGrammarAwareElementType createStateDeclaration_ValueExpressionValueExpressionParserRuleCall_3_0ElementType() {
+			return new IGrammarAwareElementType("StateDeclaration_ValueExpressionValueExpressionParserRuleCall_3_0_ELEMENT_TYPE", ValourLanguage.INSTANCE, GRAMMAR_ACCESS.getStateDeclarationAccess().getValueExpressionValueExpressionParserRuleCall_3_0());
 		}
 	}
 
@@ -1851,15 +1900,9 @@ public class ValourElementTypeProvider implements IElementTypeProvider {
 
 	public static final IGrammarAwareElementType StateDeclaration_EqualsSignKeyword_2_ELEMENT_TYPE = associate(StateDeclarationFactory.createStateDeclaration_EqualsSignKeyword_2ElementType());
 
-	public static final IGrammarAwareElementType StateDeclaration_Alternatives_3_ELEMENT_TYPE = associate(StateDeclarationFactory.createStateDeclaration_Alternatives_3ElementType());
+	public static final IGrammarAwareElementType StateDeclaration_ValueExpressionAssignment_3_ELEMENT_TYPE = associate(StateDeclarationFactory.createStateDeclaration_ValueExpressionAssignment_3ElementType());
 
-	public static final IGrammarAwareElementType StateDeclaration_SimpleAssignment_3_0_ELEMENT_TYPE = associate(StateDeclarationFactory.createStateDeclaration_SimpleAssignment_3_0ElementType());
-
-	public static final IGrammarAwareElementType StateDeclaration_SimpleSimpleValueExpressionParserRuleCall_3_0_0_ELEMENT_TYPE = associate(StateDeclarationFactory.createStateDeclaration_SimpleSimpleValueExpressionParserRuleCall_3_0_0ElementType());
-
-	public static final IGrammarAwareElementType StateDeclaration_ComplexAssignment_3_1_ELEMENT_TYPE = associate(StateDeclarationFactory.createStateDeclaration_ComplexAssignment_3_1ElementType());
-
-	public static final IGrammarAwareElementType StateDeclaration_ComplexComplexValueExpressionParserRuleCall_3_1_0_ELEMENT_TYPE = associate(StateDeclarationFactory.createStateDeclaration_ComplexComplexValueExpressionParserRuleCall_3_1_0ElementType());
+	public static final IGrammarAwareElementType StateDeclaration_ValueExpressionValueExpressionParserRuleCall_3_0_ELEMENT_TYPE = associate(StateDeclarationFactory.createStateDeclaration_ValueExpressionValueExpressionParserRuleCall_3_0ElementType());
 
 	private static class ForEachFactory {
 		public static IGrammarAwareElementType createForEachElementType() {
@@ -6977,20 +7020,20 @@ public class ValourElementTypeProvider implements IElementTypeProvider {
 		return EventBody_AdditionalTriggerAdditionalTriggerParserRuleCall_1_0_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getEventBody_WhenAssignment_2ElementType() {
-		return EventBody_WhenAssignment_2_ELEMENT_TYPE;
+	public IGrammarAwareElementType getEventBody_WhereAssignment_2ElementType() {
+		return EventBody_WhereAssignment_2_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getEventBody_WhenWhenClauseParserRuleCall_2_0ElementType() {
-		return EventBody_WhenWhenClauseParserRuleCall_2_0_ELEMENT_TYPE;
+	public IGrammarAwareElementType getEventBody_WhereWhereClausesParserRuleCall_2_0ElementType() {
+		return EventBody_WhereWhereClausesParserRuleCall_2_0_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getEventBody_WhereAssignment_3ElementType() {
-		return EventBody_WhereAssignment_3_ELEMENT_TYPE;
+	public IGrammarAwareElementType getEventBody_WhenAssignment_3ElementType() {
+		return EventBody_WhenAssignment_3_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getEventBody_WhereWhereClauseParserRuleCall_3_0ElementType() {
-		return EventBody_WhereWhereClauseParserRuleCall_3_0_ELEMENT_TYPE;
+	public IGrammarAwareElementType getEventBody_WhenWhenClauseParserRuleCall_3_0ElementType() {
+		return EventBody_WhenWhenClauseParserRuleCall_3_0_ELEMENT_TYPE;
 	}
 	
 	public IGrammarAwareElementType getEventBody_CategorisationAssignment_4ElementType() {
@@ -7005,20 +7048,44 @@ public class ValourElementTypeProvider implements IElementTypeProvider {
 		return SimpleTrigger_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getSimpleTrigger_AlternativesElementType() {
-		return SimpleTrigger_Alternatives_ELEMENT_TYPE;
+	public IGrammarAwareElementType getSimpleTrigger_GroupElementType() {
+		return SimpleTrigger_Group_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getSimpleTrigger_ControlFlowTriggerParserRuleCall_0ElementType() {
-		return SimpleTrigger_ControlFlowTriggerParserRuleCall_0_ELEMENT_TYPE;
+	public IGrammarAwareElementType getSimpleTrigger_Alternatives_0ElementType() {
+		return SimpleTrigger_Alternatives_0_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getSimpleTrigger_EventTriggerParserRuleCall_1ElementType() {
-		return SimpleTrigger_EventTriggerParserRuleCall_1_ELEMENT_TYPE;
+	public IGrammarAwareElementType getSimpleTrigger_ControlFlowTriggerAssignment_0_0ElementType() {
+		return SimpleTrigger_ControlFlowTriggerAssignment_0_0_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getSimpleTrigger_MonitorTriggerParserRuleCall_2ElementType() {
-		return SimpleTrigger_MonitorTriggerParserRuleCall_2_ELEMENT_TYPE;
+	public IGrammarAwareElementType getSimpleTrigger_ControlFlowTriggerControlFlowTriggerParserRuleCall_0_0_0ElementType() {
+		return SimpleTrigger_ControlFlowTriggerControlFlowTriggerParserRuleCall_0_0_0_ELEMENT_TYPE;
+	}
+	
+	public IGrammarAwareElementType getSimpleTrigger_EventTriggerAssignment_0_1ElementType() {
+		return SimpleTrigger_EventTriggerAssignment_0_1_ELEMENT_TYPE;
+	}
+	
+	public IGrammarAwareElementType getSimpleTrigger_EventTriggerEventTriggerParserRuleCall_0_1_0ElementType() {
+		return SimpleTrigger_EventTriggerEventTriggerParserRuleCall_0_1_0_ELEMENT_TYPE;
+	}
+	
+	public IGrammarAwareElementType getSimpleTrigger_MonitorTriggerAssignment_0_2ElementType() {
+		return SimpleTrigger_MonitorTriggerAssignment_0_2_ELEMENT_TYPE;
+	}
+	
+	public IGrammarAwareElementType getSimpleTrigger_MonitorTriggerMonitorTriggerParserRuleCall_0_2_0ElementType() {
+		return SimpleTrigger_MonitorTriggerMonitorTriggerParserRuleCall_0_2_0_ELEMENT_TYPE;
+	}
+	
+	public IGrammarAwareElementType getSimpleTrigger_WhereClausesAssignment_1ElementType() {
+		return SimpleTrigger_WhereClausesAssignment_1_ELEMENT_TYPE;
+	}
+	
+	public IGrammarAwareElementType getSimpleTrigger_WhereClausesWhereClausesParserRuleCall_1_0ElementType() {
+		return SimpleTrigger_WhereClausesWhereClausesParserRuleCall_1_0_ELEMENT_TYPE;
 	}
 	
 	public IGrammarAwareElementType getControlFlowTriggerElementType() {
@@ -7153,32 +7220,44 @@ public class ValourElementTypeProvider implements IElementTypeProvider {
 		return AdditionalTrigger_Group_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getAdditionalTrigger_WhereClauseAssignment_0ElementType() {
-		return AdditionalTrigger_WhereClauseAssignment_0_ELEMENT_TYPE;
+	public IGrammarAwareElementType getAdditionalTrigger_VerticalLineVerticalLineKeyword_0ElementType() {
+		return AdditionalTrigger_VerticalLineVerticalLineKeyword_0_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getAdditionalTrigger_WhereClauseWhereClauseParserRuleCall_0_0ElementType() {
-		return AdditionalTrigger_WhereClauseWhereClauseParserRuleCall_0_0_ELEMENT_TYPE;
+	public IGrammarAwareElementType getAdditionalTrigger_TriggerAssignment_1ElementType() {
+		return AdditionalTrigger_TriggerAssignment_1_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getAdditionalTrigger_VerticalLineVerticalLineKeyword_1ElementType() {
-		return AdditionalTrigger_VerticalLineVerticalLineKeyword_1_ELEMENT_TYPE;
+	public IGrammarAwareElementType getAdditionalTrigger_TriggerSimpleTriggerParserRuleCall_1_0ElementType() {
+		return AdditionalTrigger_TriggerSimpleTriggerParserRuleCall_1_0_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getAdditionalTrigger_TriggerAssignment_2ElementType() {
-		return AdditionalTrigger_TriggerAssignment_2_ELEMENT_TYPE;
+	public IGrammarAwareElementType getAdditionalTrigger_AdditionalTriggerAssignment_2ElementType() {
+		return AdditionalTrigger_AdditionalTriggerAssignment_2_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getAdditionalTrigger_TriggerSimpleTriggerParserRuleCall_2_0ElementType() {
-		return AdditionalTrigger_TriggerSimpleTriggerParserRuleCall_2_0_ELEMENT_TYPE;
+	public IGrammarAwareElementType getAdditionalTrigger_AdditionalTriggerAdditionalTriggerParserRuleCall_2_0ElementType() {
+		return AdditionalTrigger_AdditionalTriggerAdditionalTriggerParserRuleCall_2_0_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getAdditionalTrigger_AdditionalTriggerAssignment_3ElementType() {
-		return AdditionalTrigger_AdditionalTriggerAssignment_3_ELEMENT_TYPE;
+	public IGrammarAwareElementType getWhereClausesElementType() {
+		return WhereClauses_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getAdditionalTrigger_AdditionalTriggerAdditionalTriggerParserRuleCall_3_0ElementType() {
-		return AdditionalTrigger_AdditionalTriggerAdditionalTriggerParserRuleCall_3_0_ELEMENT_TYPE;
+	public IGrammarAwareElementType getWhereClauses_GroupElementType() {
+		return WhereClauses_Group_ELEMENT_TYPE;
+	}
+	
+	public IGrammarAwareElementType getWhereClauses_WhereKeyword_0ElementType() {
+		return WhereClauses_WhereKeyword_0_ELEMENT_TYPE;
+	}
+	
+	public IGrammarAwareElementType getWhereClauses_ClausesAssignment_1ElementType() {
+		return WhereClauses_ClausesAssignment_1_ELEMENT_TYPE;
+	}
+	
+	public IGrammarAwareElementType getWhereClauses_ClausesWhereClauseParserRuleCall_1_0ElementType() {
+		return WhereClauses_ClausesWhereClauseParserRuleCall_1_0_ELEMENT_TYPE;
 	}
 	
 	public IGrammarAwareElementType getWhereClauseElementType() {
@@ -7189,32 +7268,24 @@ public class ValourElementTypeProvider implements IElementTypeProvider {
 		return WhereClause_Group_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getWhereClause_WhereKeyword_0ElementType() {
-		return WhereClause_WhereKeyword_0_ELEMENT_TYPE;
+	public IGrammarAwareElementType getWhereClause_WhereIdAssignment_0ElementType() {
+		return WhereClause_WhereIdAssignment_0_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getWhereClause_Group_1ElementType() {
-		return WhereClause_Group_1_ELEMENT_TYPE;
+	public IGrammarAwareElementType getWhereClause_WhereIdIDTerminalRuleCall_0_0ElementType() {
+		return WhereClause_WhereIdIDTerminalRuleCall_0_0_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getWhereClause_WhereIdAssignment_1_0ElementType() {
-		return WhereClause_WhereIdAssignment_1_0_ELEMENT_TYPE;
+	public IGrammarAwareElementType getWhereClause_EqualsSignKeyword_1ElementType() {
+		return WhereClause_EqualsSignKeyword_1_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getWhereClause_WhereIdIDTerminalRuleCall_1_0_0ElementType() {
-		return WhereClause_WhereIdIDTerminalRuleCall_1_0_0_ELEMENT_TYPE;
+	public IGrammarAwareElementType getWhereClause_WhereExpressionAssignment_2ElementType() {
+		return WhereClause_WhereExpressionAssignment_2_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getWhereClause_EqualsSignKeyword_1_1ElementType() {
-		return WhereClause_EqualsSignKeyword_1_1_ELEMENT_TYPE;
-	}
-	
-	public IGrammarAwareElementType getWhereClause_WhereExpressionAssignment_1_2ElementType() {
-		return WhereClause_WhereExpressionAssignment_1_2_ELEMENT_TYPE;
-	}
-	
-	public IGrammarAwareElementType getWhereClause_WhereExpressionValueExpressionParserRuleCall_1_2_0ElementType() {
-		return WhereClause_WhereExpressionValueExpressionParserRuleCall_1_2_0_ELEMENT_TYPE;
+	public IGrammarAwareElementType getWhereClause_WhereExpressionValueExpressionParserRuleCall_2_0ElementType() {
+		return WhereClause_WhereExpressionValueExpressionParserRuleCall_2_0_ELEMENT_TYPE;
 	}
 	
 	public IGrammarAwareElementType getValueExpressionElementType() {
@@ -7341,12 +7412,20 @@ public class ValourElementTypeProvider implements IElementTypeProvider {
 		return ConditionExpression_Alternatives_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getConditionExpression_ConditionRefInvocationParserRuleCall_0ElementType() {
-		return ConditionExpression_ConditionRefInvocationParserRuleCall_0_ELEMENT_TYPE;
+	public IGrammarAwareElementType getConditionExpression_RefAssignment_0ElementType() {
+		return ConditionExpression_RefAssignment_0_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getConditionExpression_ConditionBlockParserRuleCall_1ElementType() {
-		return ConditionExpression_ConditionBlockParserRuleCall_1_ELEMENT_TYPE;
+	public IGrammarAwareElementType getConditionExpression_RefConditionRefInvocationParserRuleCall_0_0ElementType() {
+		return ConditionExpression_RefConditionRefInvocationParserRuleCall_0_0_ELEMENT_TYPE;
+	}
+	
+	public IGrammarAwareElementType getConditionExpression_BlockAssignment_1ElementType() {
+		return ConditionExpression_BlockAssignment_1_ELEMENT_TYPE;
+	}
+	
+	public IGrammarAwareElementType getConditionExpression_BlockConditionBlockParserRuleCall_1_0ElementType() {
+		return ConditionExpression_BlockConditionBlockParserRuleCall_1_0_ELEMENT_TYPE;
 	}
 	
 	public IGrammarAwareElementType getConditionRefInvocationElementType() {
@@ -7373,8 +7452,8 @@ public class ValourElementTypeProvider implements IElementTypeProvider {
 		return ConditionRefInvocation_ParamsAssignment_2_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getConditionRefInvocation_ParamsFormalParametersParserRuleCall_2_0ElementType() {
-		return ConditionRefInvocation_ParamsFormalParametersParserRuleCall_2_0_ELEMENT_TYPE;
+	public IGrammarAwareElementType getConditionRefInvocation_ParamsActualParametersParserRuleCall_2_0ElementType() {
+		return ConditionRefInvocation_ParamsActualParametersParserRuleCall_2_0_ELEMENT_TYPE;
 	}
 	
 	public IGrammarAwareElementType getConditionRefInvocation_RightParenthesisKeyword_3ElementType() {
@@ -7413,12 +7492,20 @@ public class ValourElementTypeProvider implements IElementTypeProvider {
 		return ConditionBlock_Alternatives_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getConditionBlock_SimpleConditionParserRuleCall_0ElementType() {
-		return ConditionBlock_SimpleConditionParserRuleCall_0_ELEMENT_TYPE;
+	public IGrammarAwareElementType getConditionBlock_SimpleAssignment_0ElementType() {
+		return ConditionBlock_SimpleAssignment_0_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getConditionBlock_ComplexConditionParserRuleCall_1ElementType() {
-		return ConditionBlock_ComplexConditionParserRuleCall_1_ELEMENT_TYPE;
+	public IGrammarAwareElementType getConditionBlock_SimpleSimpleConditionParserRuleCall_0_0ElementType() {
+		return ConditionBlock_SimpleSimpleConditionParserRuleCall_0_0_ELEMENT_TYPE;
+	}
+	
+	public IGrammarAwareElementType getConditionBlock_ComplexAssignment_1ElementType() {
+		return ConditionBlock_ComplexAssignment_1_ELEMENT_TYPE;
+	}
+	
+	public IGrammarAwareElementType getConditionBlock_ComplexComplexConditionParserRuleCall_1_0ElementType() {
+		return ConditionBlock_ComplexComplexConditionParserRuleCall_1_0_ELEMENT_TYPE;
 	}
 	
 	public IGrammarAwareElementType getSimpleConditionElementType() {
@@ -7649,12 +7736,12 @@ public class ValourElementTypeProvider implements IElementTypeProvider {
 		return RuleAction_Alternatives_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getRuleAction_ActionBlockAssignment_0ElementType() {
-		return RuleAction_ActionBlockAssignment_0_ELEMENT_TYPE;
+	public IGrammarAwareElementType getRuleAction_ActionMonitorTriggerFireAssignment_0ElementType() {
+		return RuleAction_ActionMonitorTriggerFireAssignment_0_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getRuleAction_ActionBlockActionBlockParserRuleCall_0_0ElementType() {
-		return RuleAction_ActionBlockActionBlockParserRuleCall_0_0_ELEMENT_TYPE;
+	public IGrammarAwareElementType getRuleAction_ActionMonitorTriggerFireMonitorTriggerFireParserRuleCall_0_0ElementType() {
+		return RuleAction_ActionMonitorTriggerFireMonitorTriggerFireParserRuleCall_0_0_ELEMENT_TYPE;
 	}
 	
 	public IGrammarAwareElementType getRuleAction_ActionRefInvocationAssignment_1ElementType() {
@@ -7665,12 +7752,12 @@ public class ValourElementTypeProvider implements IElementTypeProvider {
 		return RuleAction_ActionRefInvocationActionRefInvocationParserRuleCall_1_0_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getRuleAction_ActionMonitorTriggerFireAssignment_2ElementType() {
-		return RuleAction_ActionMonitorTriggerFireAssignment_2_ELEMENT_TYPE;
+	public IGrammarAwareElementType getRuleAction_ActionBlockAssignment_2ElementType() {
+		return RuleAction_ActionBlockAssignment_2_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getRuleAction_ActionMonitorTriggerFireMonitorTriggerFireParserRuleCall_2_0ElementType() {
-		return RuleAction_ActionMonitorTriggerFireMonitorTriggerFireParserRuleCall_2_0_ELEMENT_TYPE;
+	public IGrammarAwareElementType getRuleAction_ActionBlockActionBlockParserRuleCall_2_0ElementType() {
+		return RuleAction_ActionBlockActionBlockParserRuleCall_2_0_ELEMENT_TYPE;
 	}
 	
 	public IGrammarAwareElementType getActionBlockElementType() {
@@ -8025,24 +8112,12 @@ public class ValourElementTypeProvider implements IElementTypeProvider {
 		return StateDeclaration_EqualsSignKeyword_2_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getStateDeclaration_Alternatives_3ElementType() {
-		return StateDeclaration_Alternatives_3_ELEMENT_TYPE;
+	public IGrammarAwareElementType getStateDeclaration_ValueExpressionAssignment_3ElementType() {
+		return StateDeclaration_ValueExpressionAssignment_3_ELEMENT_TYPE;
 	}
 	
-	public IGrammarAwareElementType getStateDeclaration_SimpleAssignment_3_0ElementType() {
-		return StateDeclaration_SimpleAssignment_3_0_ELEMENT_TYPE;
-	}
-	
-	public IGrammarAwareElementType getStateDeclaration_SimpleSimpleValueExpressionParserRuleCall_3_0_0ElementType() {
-		return StateDeclaration_SimpleSimpleValueExpressionParserRuleCall_3_0_0_ELEMENT_TYPE;
-	}
-	
-	public IGrammarAwareElementType getStateDeclaration_ComplexAssignment_3_1ElementType() {
-		return StateDeclaration_ComplexAssignment_3_1_ELEMENT_TYPE;
-	}
-	
-	public IGrammarAwareElementType getStateDeclaration_ComplexComplexValueExpressionParserRuleCall_3_1_0ElementType() {
-		return StateDeclaration_ComplexComplexValueExpressionParserRuleCall_3_1_0_ELEMENT_TYPE;
+	public IGrammarAwareElementType getStateDeclaration_ValueExpressionValueExpressionParserRuleCall_3_0ElementType() {
+		return StateDeclaration_ValueExpressionValueExpressionParserRuleCall_3_0_ELEMENT_TYPE;
 	}
 	
 	public IGrammarAwareElementType getForEachElementType() {
