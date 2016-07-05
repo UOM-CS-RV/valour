@@ -16,6 +16,7 @@ ValourBody:
 
 Declarations:
 	'declarations' '{'
+	{Declarations}  //refer to - https://www.eclipse.org/forums/index.php/t/170597/
 	(declarations+=Declaration)*
 	'}';
 
@@ -82,12 +83,14 @@ ValueExpression:
 //TODO - review this and make more restrictive?  Should always return a result (of a given type)
 SimpleValueExpression:
 	'{{'
+	{SimpleValueExpression}  //refer to - https://www.eclipse.org/forums/index.php/t/170597/
 	(expressions+=ValueBlockStatement ';'?)*
 	'}}';
 
 //TODO - review this and make more restrictive?  Should always return a result (of a given type)
 ComplexValueExpression:
 	'{'
+	{ComplexValueExpression}  //refer to - https://www.eclipse.org/forums/index.php/t/170597/
 	(expressions+=ValueBlockStatement ';'?)*
 	'}';
 
@@ -110,14 +113,16 @@ ConditionBlock:
 	simple=SimpleCondition | complex=ComplexCondition;
 
 //TODO - review this and make more restrictive?  Should always have a boolean result
-SimpleCondition:
+SimpleCondition returns xbase::XBlockExpression:
 	'{{'
+	{SimpleCondition}  //refer to - https://www.eclipse.org/forums/index.php/t/170597/
 	(expressions+=ConditionBlockStatement ';'?)*
 	'}}';
 
 //TODO - review this and make more restrictive?  Should always have a boolean result
-ComplexCondition:
+ComplexCondition returns xbase::XBlockExpression:
 	'{'
+	{ComplexCondition}  //refer to - https://www.eclipse.org/forums/index.php/t/170597/
 	(expressions+=ConditionBlockStatement ';'?)*
 	'}';
 
@@ -141,8 +146,9 @@ RuleAction:
 	actionBlock=ActionBlock;
 
 //TODO, should allow reference to other actions and monitor trigger
-ActionBlock :
+ActionBlock returns xbase::XBlockExpression:
 	'{'
+		{ActionBlock}  //refer to - https://www.eclipse.org/forums/index.php/t/170597/
 		(expressions+=ActionBlockStatement ';'?)*
 	'}';
 
