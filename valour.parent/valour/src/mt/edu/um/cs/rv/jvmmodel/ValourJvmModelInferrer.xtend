@@ -4,36 +4,46 @@
 package mt.edu.um.cs.rv.jvmmodel
 
 import com.google.inject.Inject
-import mt.edu.um.cs.rv.valour.Model
-import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
-import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
-import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
-import mt.edu.um.cs.rv.valour.Declarations
-import mt.edu.um.cs.rv.valour.FormalParameters
-import mt.edu.um.cs.rv.valour.EventBody
-import mt.edu.um.cs.rv.valour.SimpleTrigger
-import mt.edu.um.cs.rv.valour.AdditionalTrigger
-import mt.edu.um.cs.rv.valour.WhereClauses
-import mt.edu.um.cs.rv.valour.ValueExpression
-import mt.edu.um.cs.rv.valour.WhenClause
-import mt.edu.um.cs.rv.valour.ConditionExpression
-import mt.edu.um.cs.rv.valour.CategorisationClause
+import java.util.HashMap
 import mt.edu.um.cs.rv.valour.ActionBlock
+import mt.edu.um.cs.rv.valour.ActualParameters
+import mt.edu.um.cs.rv.valour.AdditionalTrigger
+import mt.edu.um.cs.rv.valour.BasicRule
+import mt.edu.um.cs.rv.valour.CategorisationClause
+import mt.edu.um.cs.rv.valour.Category
+import mt.edu.um.cs.rv.valour.ConditionBlock
+import mt.edu.um.cs.rv.valour.ConditionExpression
+import mt.edu.um.cs.rv.valour.ConditionRefInvocation
+import mt.edu.um.cs.rv.valour.Declarations
+import mt.edu.um.cs.rv.valour.EventBody
+import mt.edu.um.cs.rv.valour.ForEach
+import mt.edu.um.cs.rv.valour.FormalParameters
+import mt.edu.um.cs.rv.valour.Model
+import mt.edu.um.cs.rv.valour.ParForEach
 import mt.edu.um.cs.rv.valour.Rule
 import mt.edu.um.cs.rv.valour.Rules
-import mt.edu.um.cs.rv.valour.BasicRule
-import mt.edu.um.cs.rv.valour.ActualParameters
-import mt.edu.um.cs.rv.valour.RuleAction
+import mt.edu.um.cs.rv.valour.SimpleTrigger
 import mt.edu.um.cs.rv.valour.StateBlock
 import mt.edu.um.cs.rv.valour.StateDeclaration
 import mt.edu.um.cs.rv.valour.ValourBody
-import mt.edu.um.cs.rv.valour.ForEach
-import mt.edu.um.cs.rv.valour.ParForEach
+import mt.edu.um.cs.rv.valour.ValueExpression
+import mt.edu.um.cs.rv.valour.WhenClause
+import mt.edu.um.cs.rv.valour.WhereClauses
 import org.eclipse.emf.common.util.EList
-import org.eclipse.xtext.xbase.XExpression
-import mt.edu.um.cs.rv.valour.ConditionRefInvocation
-import mt.edu.um.cs.rv.valour.ConditionBlock
+import org.eclipse.xtext.common.types.JvmDeclaredType
+import org.eclipse.xtext.common.types.JvmGenericType
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
+import org.eclipse.xtext.xbase.XExpression
+import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
+import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
+import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor.IPostIndexingInitializing
+import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
+import org.eclipse.xtext.xtype.XImportSection
+import mt.edu.um.cs.rv.valour.Condition
+import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
+import org.eclipse.xtext.common.types.JvmVisibility
+import org.eclipse.xtext.xbase.XBlockExpression
+import mt.edu.um.cs.rv.valour.Action
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -54,18 +64,18 @@ class ValourJvmModelInferrer extends AbstractModelInferrer {
 	 * 
 	 * @param element
 	 *            the model to create one or more
-	 *            {@link org.eclipse.xtext.common.types.JvmDeclaredType declared
+	 *            {@link JvmDeclaredType declared
 	 *            types} from.
 	 * @param acceptor
 	 *            each created
-	 *            {@link org.eclipse.xtext.common.types.JvmDeclaredType type}
+	 *            {@link JvmDeclaredType type}
 	 *            without a container should be passed to the acceptor in order
 	 *            get attached to the current resource. The acceptor's
 	 *            {@link IJvmDeclaredTypeAcceptor#accept(org.eclipse.xtext.common.types.JvmDeclaredType)
 	 *            accept(..)} method takes the constructed empty type for the
 	 *            pre-indexing phase. This one is further initialized in the
 	 *            indexing phase using the closure you pass to the returned
-	 *            {@link org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor.IPostIndexingInitializing#initializeLater(org.eclipse.xtext.xbase.lib.Procedures.Procedure1)
+	 *            {@link IPostIndexingInitializing#initializeLater(org.eclipse.xtext.xbase.lib.Procedures.Procedure1)
 	 *            initializeLater(..)}.
 	 * @param isPreIndexingPhase
 	 *            whether the method is called in a pre-indexing phase, i.e.
@@ -85,21 +95,58 @@ class ValourJvmModelInferrer extends AbstractModelInferrer {
 //   				]
 //   			}
 //   		]
+
 		if (!isPreIndexingPhase) {
+			
+			
+			//TODO the package to which to generate the classes should be defined in the language
+			val packageName = packageNameToUse(element.eResource.URI.lastSegment)
+			
+			//TODO rename?
+			val String scaffoldClassName = packageName+".Scaffold"
+			var JvmGenericType scaffoldClass = element.toClass(scaffoldClassName)
+			scaffoldClass.members += element.toClass("Categories", [static = true])
+			scaffoldClass.members += element.toClass("Conditions", [static = true])
+			scaffoldClass.members += element.toClass("Actions", [static = true])
+					
+			acceptor.accept(
+					scaffoldClass
+			)
+			
+			//add categories nested class
+//			scaffoldClass.
+
 			// handle imports
-			for (i : element.imports.importDeclarations) {
-				println('import ' + i.importedName)
+			if (element.imports != null){
+				handleImports(element.imports)
 			}
-
-			handleValourBody(element.body)
-
+			
+			handleValourBody(element.body, scaffoldClass)
 		}
 	}
+	
+	def String packageNameToUse(String inputFileName){
+		val lastIndex = inputFileName.lastIndexOf('.valour')
+		if (lastIndex > 0)
+		{
+			return "valour." + inputFileName.substring(0, lastIndex)
+		}
+		else{
+			return "valour." + inputFileName.toLowerCase
+		}
+		
+	}
+	
+	def void handleImports(XImportSection imports){
+		for (i : imports.importDeclarations) {
+				println('import ' + i.importedName)
+			}
+	}
 
-	def void handleValourBody(ValourBody vb) {
+	def void handleValourBody(ValourBody vb, JvmGenericType scaffoldClass) {
 		// handle declarations
 		if (vb.declarations != null) {
-			handleDeclarations(vb.declarations)
+			handleDeclarations(vb.declarations, scaffoldClass)
 		}
 
 		// handle rules
@@ -108,12 +155,12 @@ class ValourJvmModelInferrer extends AbstractModelInferrer {
 		}
 	}
 
-	def void handleDeclarations(Declarations declarations) {
+	def void handleDeclarations(Declarations declarations, JvmGenericType scaffoldClass) {
 		if (declarations.declarations != null && declarations.declarations.length > 0) {
 			println("declarations {")
 			for (d : declarations.declarations) {
 				if (d.category != null) {
-					println('category ' + d.category.name + ' indexed by ' + d.category.keyType.qualifiedName)
+					handleCategoryDeclaration(d.category, scaffoldClass)
 				} else if (d.event != null) {
 					print('event ' + d.event.name + ' (')
 					handleFormalParameters(d.event.eventFormalParameters)
@@ -121,22 +168,70 @@ class ValourJvmModelInferrer extends AbstractModelInferrer {
 					handleEventBody(d.event.eventBody)
 					println('}')
 				} else if (d.condition != null) {
-					print('condition ' + d.condition.name + ' (')
-					handleFormalParameters(d.condition.conditionFormalParameters)
-					print(') = ')
-					handleConditionExpression(d.condition.conditionExpression)
-					println()
+					handleConditionDeclaration(d.condition, scaffoldClass)
 				} else if (d.action != null) {
-					print('action ' + d.action.name + ' (')
-					handleFormalParameters(d.action.actionFormalParameters)
-					print(') = ')
-					handleActionBlock(d.action.action)
-					println
+					handleActionDeclaration(d.action, scaffoldClass)
 				}
 			}
 			println("}")
 			println
 		}
+	}
+	
+	def void handleCategoryDeclaration(Category category, JvmGenericType scaffoldClass){
+		println('category ' + category.name + ' indexed by ' + category.keyType.qualifiedName)
+		
+		val categoriesClass = scaffoldClass.findAllNestedTypesByName("Categories").findFirst[true]
+		
+		categoriesClass.members += category.toField(category.name, typeRef(HashMap, category.keyType, typeRef(Object)))
+		categoriesClass.members += category.toGetter(category.name, typeRef(HashMap, category.keyType, typeRef(Object)))
+		 
+	}
+	
+	def void handleConditionDeclaration(Condition condition, JvmGenericType scaffoldClass){
+		print('condition ' + condition.name + ' (')
+		handleFormalParameters(condition.conditionFormalParameters)
+		print(') = ')
+		handleConditionExpression(condition.conditionExpression)
+		println()
+		
+		val conditionsClass = scaffoldClass.findAllNestedTypesByName("Conditions").findFirst[true]	
+		conditionsClass.members += 
+			condition.toMethod(condition.name, 
+								typeRef(Boolean), 
+								[
+									static = true
+									visibility = JvmVisibility.PUBLIC
+									for (p : condition.conditionFormalParameters.parameters) {
+							            parameters += p.toParameter(p.name, p.parameterType)
+							        }
+							        		
+									body = handleConditionExpression(condition.conditionExpression)							
+								]
+							)
+	}
+	
+	def void handleActionDeclaration(Action action, JvmGenericType scaffoldClass){
+		print('action ' + action.name + ' (')
+		handleFormalParameters(action.actionFormalParameters)
+		print(') = ')
+		handleActionBlock(action.action as ActionBlock)  //TODO not sure whether there is a better way of doing this (i.e. not with a type cast)
+		println
+		
+		val actionsClass = scaffoldClass.findAllNestedTypesByName("Actions").findFirst[true]	
+		actionsClass.members += 
+			action.toMethod(action.name, 
+								typeRef(void), 
+								[
+									static = true
+									visibility = JvmVisibility.PUBLIC
+									for (p : action.actionFormalParameters.parameters) {
+							            parameters += p.toParameter(p.name, p.parameterType)
+							        }
+							        		
+									body = handleActionBlock(action.action as ActionBlock)							
+								]
+							)
 	}
 
 	def void handleFormalParameters(FormalParameters fps) {
@@ -251,12 +346,14 @@ class ValourJvmModelInferrer extends AbstractModelInferrer {
 		println(closeBraces)
 	}
 
-	def void handleConditionExpression(ConditionExpression ce) {
+	def XBlockExpression handleConditionExpression(ConditionExpression ce) {
 		if (ce.ref != null){
 			handleConditionRefInvocation(ce.ref)
+			//TODO
+			return null
 		}
 		else{
-			handleConditionBlock(ce.block)
+			return handleConditionBlock(ce.block)
 		}
 	}
 	
@@ -266,12 +363,14 @@ class ValourJvmModelInferrer extends AbstractModelInferrer {
 		print(')')
 	}
 	
-	def void handleConditionBlock(ConditionBlock cb){
+	def XBlockExpression handleConditionBlock(ConditionBlock cb){
 		if (cb.simple != null){
 			handleConditionBlockStatements('{{', '}}', cb.simple.expressions)
+			return cb.simple
 		}
 		else {
 			handleConditionBlockStatements('{', '}', cb.complex.expressions)
+			return cb.complex
 		}
 	}
 	
@@ -284,13 +383,15 @@ class ValourJvmModelInferrer extends AbstractModelInferrer {
 		println(closeBraces)
 	}
 
-	def void handleActionBlock(ActionBlock ab) {
+	def XBlockExpression handleActionBlock(ActionBlock ab) {
 		println('{')
 		for (e : ab.expressions){
 			//TODO check whether ActionRefInvocation is being handled correctly
 			println(NodeModelUtils.getNode(e).text)
 		}
 		println('}')
+		
+		return ab
 	}
 
 	def void handleRules(Rules rules) {
@@ -333,7 +434,7 @@ class ValourJvmModelInferrer extends AbstractModelInferrer {
 		val ra = br.ruleAction
 
 		if (ra.actionBlock != null) {
-			handleActionBlock(ra.actionBlock)
+			handleActionBlock(ra.actionBlock as ActionBlock)
 		} else if (ra.actionRefInvocation != null) {
 			print('#')
 			print(ra.actionRefInvocation.actionRef.actionRefId.name)
@@ -357,7 +458,7 @@ class ValourJvmModelInferrer extends AbstractModelInferrer {
 			handleStateDeclaration(sd)
 		}
 		println('} in {')
-		handleValourBody(sb.valourBody)
+		handleValourBody(sb.valourBody, null)
 		println('}')
 
 	}
@@ -375,7 +476,7 @@ class ValourJvmModelInferrer extends AbstractModelInferrer {
 			handleStateDeclaration(sd)
 		}
 		println('} foreach ' + fe.category.name + ' ' + fe.categoryLabel + '{ ')
-		handleValourBody(fe.valourBody)
+		handleValourBody(fe.valourBody, null)
 		println('}')
 	}
 
@@ -385,7 +486,7 @@ class ValourJvmModelInferrer extends AbstractModelInferrer {
 			handleStateDeclaration(sd)
 		}
 		println('} foreach ' + pfe.category.name + ' ' + pfe.categoryLabel + '{ ')
-		handleValourBody(pfe.valourBody)
+		handleValourBody(pfe.valourBody, null)
 		println('}')
 	}
 
