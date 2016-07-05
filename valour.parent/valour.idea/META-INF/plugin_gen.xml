@@ -71,11 +71,11 @@
 			implementationClass="com.intellij.lang.PsiStructureViewFactory"
 		/>
 		<facetType implementation="mt.edu.um.cs.rv.idea.facet.ValourFacetType"/>
-      	<lang.documentationProvider 
-      		language="mt.edu.um.cs.rv.Valour"
-      		factoryClass="mt.edu.um.cs.rv.idea.ValourExtensionFactory"
-      		implementationClass="org.eclipse.xtext.idea.documentation.IdeaDocumentationProvider"
-      	/>
+		<lang.documentationProvider 
+			language="mt.edu.um.cs.rv.Valour"
+			factoryClass="mt.edu.um.cs.rv.idea.ValourExtensionFactory"
+			implementationClass="org.eclipse.xtext.idea.documentation.IdeaDocumentationProvider"
+		/>
 		<colorSettingsPage implementation="mt.edu.um.cs.rv.idea.highlighting.ValourColorSettingsPage"/>
 		<highlightVisitor implementation="mt.edu.um.cs.rv.idea.highlighting.ValourSemanticHighlightVisitor"/>
 
