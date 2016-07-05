@@ -20,11 +20,24 @@ class ValourParsingTest{
 	ParseHelper<Model> parseHelper;
 
 	@Test 
-	def void loadModel() {
-		val result = parseHelper.parse('''
-			Hello Xtext!
+	def void loadEmptyModel() {
+		val model = parseHelper.parse('''
 		''')
-		Assert.assertNotNull(result)
+		
+		Assert.assertNotNull(model)
+		Assert.assertNull(model.imports)
 	}
+
+	@Test 
+	def void loadModelWithImportsOnly() {
+		val model = parseHelper.parse('''
+			import java.lang.String
+			import java.util.UUID
+		''')
+		
+		Assert.assertNotNull(model)
+		Assert.assertEquals(2, model.imports.importDeclarations.length)		
+	}
+	
 
 }
