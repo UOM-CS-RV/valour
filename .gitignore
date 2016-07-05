@@ -8,3 +8,6 @@ out
 **/.classpath
 **/target
 *.iml
+**/src-gen
+**/xtend-gen
+valour.parent/valour/model/generated
