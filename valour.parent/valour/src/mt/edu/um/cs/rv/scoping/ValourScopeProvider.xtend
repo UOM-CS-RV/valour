@@ -3,6 +3,22 @@
  */
 package mt.edu.um.cs.rv.scoping
 
+import mt.edu.um.cs.rv.valour.Action
+import mt.edu.um.cs.rv.valour.ActionRef
+import mt.edu.um.cs.rv.valour.Declarations
+import mt.edu.um.cs.rv.valour.Event
+import mt.edu.um.cs.rv.valour.EventRef
+import mt.edu.um.cs.rv.valour.ValourBody
+import org.eclipse.emf.ecore.EObject
+import org.eclipse.emf.ecore.EReference
+import org.eclipse.xtext.EcoreUtil2
+import org.eclipse.xtext.scoping.IScope
+import org.eclipse.xtext.scoping.Scopes
+import mt.edu.um.cs.rv.valour.CategorisationClause
+import mt.edu.um.cs.rv.valour.Category
+import mt.edu.um.cs.rv.valour.ConditionRef
+import mt.edu.um.cs.rv.valour.Condition
+import mt.edu.um.cs.rv.valour.CategoryRef
 
 /**
  * This class contains custom scoping description.
@@ -11,5 +27,73 @@ package mt.edu.um.cs.rv.scoping
  * on how and when to use it.
  */
 class ValourScopeProvider extends AbstractValourScopeProvider {
+
+	override getScope(EObject context, EReference reference) {
+		var IScope iScope = super.getScope(context, reference)
+
+		if (context instanceof EventRef) {
+			return buildScopeForReference(context, Event)
+		} 
+		else if (context instanceof ActionRef) {
+			return buildScopeForReference(context, Action)
+		} 
+		else if (context instanceof CategoryRef) {
+			return buildScopeForReference(context, Category)
+		}
+		else if (context instanceof ConditionRef) {
+			return buildScopeForReference(context, Condition)
+		} 
+		else {
+			return iScope
+		}
+
+	}
+
+	def <R extends EObject, X extends EObject> buildScopeForReference(X context, Class<R> referencedType) {
+		val declarationsList = newArrayList()
+
+		var declarations = findClosestDeclaration(context)
+
+		if (declarations != null) {
+			do {
+				declarationsList.add(declarations)
+				declarations = findClosestDeclaration(declarations.eContainer.eContainer)
+			} while (declarations != null)
+
+			// build the scope object
+			var IScope parent = IScope.NULLSCOPE
+			for (var i = declarationsList.size - 1; i >= 0; i--) {
+
+				declarations = declarationsList.get(i)
+
+				val candidates = EcoreUtil2.getAllContentsOfType(declarations, referencedType)
+				parent = Scopes.scopeFor(candidates, parent)
+			}
+
+			return parent
+		}
+	}
+
+	def Declarations findClosestDeclaration(EObject context) {
+		if ((context != null) && (context instanceof ValourBody)) {
+			
+			val declarations = (context as ValourBody).declarations
+			if (declarations != null){
+				//return the declarations
+				return declarations
+			}
+			else {
+				//recurse to try and find higher level declarations
+				findClosestDeclaration(context.eContainer)
+			}
+			
+		}
+
+		if (context.eContainer != null) {
+			findClosestDeclaration(context.eContainer)
+		} else {
+			return null
+		}
+	}
 
 }
