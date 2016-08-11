@@ -4,46 +4,34 @@
 package mt.edu.um.cs.rv.jvmmodel
 
 import com.google.inject.Inject
-import java.util.HashMap
-import mt.edu.um.cs.rv.valour.ActionBlock
-import mt.edu.um.cs.rv.valour.ActualParameters
+import com.google.inject.Provider
+import java.util.List
+import mt.edu.um.cs.rv.jvmmodel.handler.InferrerHandler
+import mt.edu.um.cs.rv.valour.Action
 import mt.edu.um.cs.rv.valour.AdditionalTrigger
-import mt.edu.um.cs.rv.valour.BasicRule
 import mt.edu.um.cs.rv.valour.CategorisationClause
-import mt.edu.um.cs.rv.valour.Category
-import mt.edu.um.cs.rv.valour.ConditionBlock
-import mt.edu.um.cs.rv.valour.ConditionExpression
-import mt.edu.um.cs.rv.valour.ConditionRefInvocation
+import mt.edu.um.cs.rv.valour.Condition
 import mt.edu.um.cs.rv.valour.Declarations
+import mt.edu.um.cs.rv.valour.Event
 import mt.edu.um.cs.rv.valour.EventBody
 import mt.edu.um.cs.rv.valour.ForEach
-import mt.edu.um.cs.rv.valour.FormalParameters
 import mt.edu.um.cs.rv.valour.Model
 import mt.edu.um.cs.rv.valour.ParForEach
 import mt.edu.um.cs.rv.valour.Rule
 import mt.edu.um.cs.rv.valour.Rules
 import mt.edu.um.cs.rv.valour.SimpleTrigger
 import mt.edu.um.cs.rv.valour.StateBlock
-import mt.edu.um.cs.rv.valour.StateDeclaration
 import mt.edu.um.cs.rv.valour.ValourBody
-import mt.edu.um.cs.rv.valour.ValueExpression
 import mt.edu.um.cs.rv.valour.WhenClause
 import mt.edu.um.cs.rv.valour.WhereClauses
-import org.eclipse.emf.common.util.EList
 import org.eclipse.xtext.common.types.JvmDeclaredType
-import org.eclipse.xtext.common.types.JvmGenericType
-import org.eclipse.xtext.nodemodel.util.NodeModelUtils
-import org.eclipse.xtext.xbase.XExpression
+import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
-import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor.IPostIndexingInitializing
+import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
-import org.eclipse.xtext.xtype.XImportSection
-import mt.edu.um.cs.rv.valour.Condition
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
-import org.eclipse.xtext.common.types.JvmVisibility
-import org.eclipse.xtext.xbase.XBlockExpression
-import mt.edu.um.cs.rv.valour.Action
+import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -57,6 +45,12 @@ class ValourJvmModelInferrer extends AbstractModelInferrer {
 	 * convenience API to build and initialize JVM types and their members.
 	 */
 	@Inject extension JvmTypesBuilder
+
+	@Inject extension IJvmModelAssociations
+
+	@Inject extension IQualifiedNameProvider
+
+	@Inject Provider<List<InferrerHandler>> inferrerHandlersProvider
 
 	/**
 	 * The dispatch method {@code infer} is called for each instance of the
@@ -96,398 +90,257 @@ class ValourJvmModelInferrer extends AbstractModelInferrer {
 //   			}
 //   		]
 
+
 		if (!isPreIndexingPhase) {
-			
-			
-			//TODO the package to which to generate the classes should be defined in the language
-			val packageName = packageNameToUse(element.eResource.URI.lastSegment)
-			
-			//TODO rename?
-			val String scaffoldClassName = packageName+".Scaffold"
-			var JvmGenericType scaffoldClass = element.toClass(scaffoldClassName)
-			scaffoldClass.members += element.toClass("Categories", [static = true])
-			scaffoldClass.members += element.toClass("Conditions", [static = true])
-			scaffoldClass.members += element.toClass("Actions", [static = true])
-					
-			acceptor.accept(
-					scaffoldClass
-			)
-			
-			//add categories nested class
-//			scaffoldClass.
-
-			// handle imports
-			if (element.imports != null){
+			val List<InferrerHandler> inferrerHandlers = inferrerHandlersProvider.get
+			inferrerHandlers.forEach[
+				setup(this._annotationTypesBuilder, this._typeReferenceBuilder)
+				//initialise
+				initialise(element, acceptor)
+				//and call handle imports
 				handleImports(element.imports)
-			}
-			
-			handleValourBody(element.body, scaffoldClass)
+			]
+
+			handleValourBody(element.body, inferrerHandlers)
 		}
-	}
-	
-	def String packageNameToUse(String inputFileName){
-		val lastIndex = inputFileName.lastIndexOf('.valour')
-		if (lastIndex > 0)
-		{
-			return "valour." + inputFileName.substring(0, lastIndex)
-		}
-		else{
-			return "valour." + inputFileName.toLowerCase
-		}
-		
-	}
-	
-	def void handleImports(XImportSection imports){
-		for (i : imports.importDeclarations) {
-				println('import ' + i.importedName)
-			}
 	}
 
-	def void handleValourBody(ValourBody vb, JvmGenericType scaffoldClass) {
+	def void handleValourBody(ValourBody vb, List<InferrerHandler> inferrerHandlers) {
 		// handle declarations
 		if (vb.declarations != null) {
-			handleDeclarations(vb.declarations, scaffoldClass)
+			handleDeclarations(vb.declarations, inferrerHandlers)
 		}
 
 		// handle rules
 		if (vb.rules != null) {
-			handleRules(vb.rules)
+			handleRules(vb.rules, inferrerHandlers)
 		}
 	}
 
-	def void handleDeclarations(Declarations declarations, JvmGenericType scaffoldClass) {
+	def void handleDeclarations(Declarations declarations, List<InferrerHandler> inferrerHandlers) {
 		if (declarations.declarations != null && declarations.declarations.length > 0) {
-			println("declarations {")
+			inferrerHandlers.forEach[handleDeclarationsBlockStart]
+			
 			for (d : declarations.declarations) {
 				if (d.category != null) {
-					handleCategoryDeclaration(d.category, scaffoldClass)
+					inferrerHandlers.forEach[handleCategoryDeclaration(d.category)]
 				} else if (d.event != null) {
-					print('event ' + d.event.name + ' (')
-					handleFormalParameters(d.event.eventFormalParameters)
-					println(') = {')
-					handleEventBody(d.event.eventBody)
-					println('}')
+					handleEventDeclaration(d.event, inferrerHandlers)
 				} else if (d.condition != null) {
-					handleConditionDeclaration(d.condition, scaffoldClass)
+					handleConditionDeclaration(d.condition, inferrerHandlers)
 				} else if (d.action != null) {
-					handleActionDeclaration(d.action, scaffoldClass)
+					handleActionDeclaration(d.action, inferrerHandlers)
 				}
 			}
-			println("}")
-			println
-		}
-	}
-	
-	def void handleCategoryDeclaration(Category category, JvmGenericType scaffoldClass){
-		println('category ' + category.name + ' indexed by ' + category.keyType.qualifiedName)
-		
-		val categoriesClass = scaffoldClass.findAllNestedTypesByName("Categories").findFirst[true]
-		
-		categoriesClass.members += category.toField(category.name, typeRef(HashMap, category.keyType, typeRef(Object)))
-		categoriesClass.members += category.toGetter(category.name, typeRef(HashMap, category.keyType, typeRef(Object)))
-		 
-	}
-	
-	def void handleConditionDeclaration(Condition condition, JvmGenericType scaffoldClass){
-		print('condition ' + condition.name + ' (')
-		handleFormalParameters(condition.conditionFormalParameters)
-		print(') = ')
-		handleConditionExpression(condition.conditionExpression)
-		println()
-		
-		val conditionsClass = scaffoldClass.findAllNestedTypesByName("Conditions").findFirst[true]	
-		conditionsClass.members += 
-			condition.toMethod(condition.name, 
-								typeRef(Boolean), 
-								[
-									static = true
-									visibility = JvmVisibility.PUBLIC
-									for (p : condition.conditionFormalParameters.parameters) {
-							            parameters += p.toParameter(p.name, p.parameterType)
-							        }
-							        		
-									body = handleConditionExpression(condition.conditionExpression)							
-								]
-							)
-	}
-	
-	def void handleActionDeclaration(Action action, JvmGenericType scaffoldClass){
-		print('action ' + action.name + ' (')
-		handleFormalParameters(action.actionFormalParameters)
-		print(') = ')
-		handleActionBlock(action.action as ActionBlock)  //TODO not sure whether there is a better way of doing this (i.e. not with a type cast)
-		println
-		
-		val actionsClass = scaffoldClass.findAllNestedTypesByName("Actions").findFirst[true]	
-		actionsClass.members += 
-			action.toMethod(action.name, 
-								typeRef(void), 
-								[
-									static = true
-									visibility = JvmVisibility.PUBLIC
-									for (p : action.actionFormalParameters.parameters) {
-							            parameters += p.toParameter(p.name, p.parameterType)
-							        }
-							        		
-									body = handleActionBlock(action.action as ActionBlock)							
-								]
-							)
-	}
-
-	def void handleFormalParameters(FormalParameters fps) {
-		if (fps != null) {
-			var fpsSize = fps.parameters.length
-			for (fp : fps.parameters) {
-				print(fp.parameterType.qualifiedName + ' ' + fp.name)
-				fpsSize--;
-				if (fpsSize > 0) {
-					print(', ')
-				}
-			}
+			
+			inferrerHandlers.forEach[handleDeclarationsBlockEnd]
 		}
 	}
 
-	def void handleActualParameters(ActualParameters aps) {
-		if (aps != null) {
-			var apsSize = aps.parameters.length
-			for (ap : aps.parameters) {
-				print(ap.toString)
-				apsSize--;
-				if (apsSize > 0) {
-					print(', ')
-				}
-			}
-		}
-	}
+	def void handleEventDeclaration(Event event, List<InferrerHandler> inferrerHandlers) {
 
-	def void handleEventBody(EventBody eventBody) {
-		handleSimpleTrigger(eventBody.trigger)
+		inferrerHandlers.forEach[handleEventDeclarationBegin(event)]
+
+		handleEventBody(event.eventBody, inferrerHandlers)
+		
+		inferrerHandlers.forEach[handleEventDeclarationEnd(event)]
+	}
+	
+	def void handleEventBody(EventBody eventBody, List<InferrerHandler> inferrerHandlers) {
+		
+		handleSimpleTrigger(eventBody.trigger, false, inferrerHandlers)
 		if (eventBody.additionalTrigger != null) {
-			handleAdditionalTrigger(eventBody.additionalTrigger)
+			handleAdditionalTrigger(eventBody.additionalTrigger, inferrerHandlers)
 		}
 
 		if (eventBody.where != null) {
-			handleWhereClauses(eventBody.where)
+			handleWhereClauses(eventBody.where, inferrerHandlers)
 		}
 
 		if (eventBody.when != null) {
-			handleWhen(eventBody.when)
+			handleWhen(eventBody.when, inferrerHandlers)
 		}
 
 		if (eventBody.categorisation != null) {
-			handleCategorisation(eventBody.categorisation)
+			handleCategorisation(eventBody.categorisation, inferrerHandlers)
 		}
+		
 	}
 
-	def void handleSimpleTrigger(SimpleTrigger simpleTrigger) {
+	def void handleSimpleTrigger(SimpleTrigger simpleTrigger, Boolean additionalTrigger, List<InferrerHandler> inferrerHandlers) {
 		if (simpleTrigger.controlFlowTrigger != null) {
-			println('system controlflow trigger \"' + simpleTrigger.controlFlowTrigger.aop.expression + '\"')
+			inferrerHandlers.forEach[handleControlFlowTrigger(simpleTrigger.controlFlowTrigger, additionalTrigger)]
 		} else if (simpleTrigger.eventTrigger != null) {
-			print('event trigger ' + simpleTrigger.eventTrigger.onEvent + ' (')
-			handleFormalParameters(simpleTrigger.eventTrigger.params)
-			println(')')
+			inferrerHandlers.forEach[handleEventTrigger(simpleTrigger.eventTrigger, additionalTrigger)]
 		} else if (simpleTrigger.monitorTrigger != null) {
-			print('monitor trigger ' + simpleTrigger.monitorTrigger.name + ' (')
-			handleFormalParameters(simpleTrigger.monitorTrigger.params)
-			println(')')
+			inferrerHandlers.forEach[handleMonitorTrigger(simpleTrigger.monitorTrigger, additionalTrigger)]
 		}
 
 		if (simpleTrigger.whereClauses != null) {
-			handleWhereClauses(simpleTrigger.whereClauses)
+			handleWhereClauses(simpleTrigger.whereClauses, inferrerHandlers)
 		}
 	}
-
-	def void handleAdditionalTrigger(AdditionalTrigger additionalTrigger) {
-		println()
-		print('\t|| ')
-		handleSimpleTrigger(additionalTrigger.trigger)
+	
+	def void handleAdditionalTrigger(AdditionalTrigger additionalTrigger, List<InferrerHandler> inferrerHandlers) {
+		handleSimpleTrigger(additionalTrigger.trigger, true, inferrerHandlers)
 
 		if (additionalTrigger.additionalTrigger != null) {
-			handleAdditionalTrigger(additionalTrigger.additionalTrigger)
-		}
-	}
-
-	def void handleWhereClauses(WhereClauses whereClauses) {
-		print('where ')
-		for (clause : whereClauses.clauses) {
-			print(clause.whereId + " = ")
-			handleValueExpression(clause.whereExpression)
-		}
-		println
-	}
-
-	def void handleWhen(WhenClause whenClause) {
-		print('when ')
-		handleConditionExpression(whenClause.condition)
-		println
-	}
-
-	def void handleCategorisation(CategorisationClause cc) {
-		print('belonging to ' + cc.category.name + ' with index ')
-		handleValueExpression(cc.categoryExpression)
-		println
-	}
-
-	def void handleValueExpression(ValueExpression ve) {
-	
-		if (ve.simple != null){
-			handleValueBlockStatements('{{', '}}', ve.simple.expressions)
-		}
-		else {
-			handleValueBlockStatements('{', '}', ve.complex.expressions)
+			handleAdditionalTrigger(additionalTrigger.additionalTrigger, inferrerHandlers)
 		}
 	}
 	
-	def handleValueBlockStatements(String openBraces, String closeBraces, EList<XExpression> expressions) {
-		println(openBraces)
-		for (e : expressions){
-			println(NodeModelUtils.getNode(e).text)
-		}
-		println(closeBraces)
-	}
-
-	def XBlockExpression handleConditionExpression(ConditionExpression ce) {
-		if (ce.ref != null){
-			handleConditionRefInvocation(ce.ref)
-			//TODO
-			return null
-		}
-		else{
-			return handleConditionBlock(ce.block)
-		}
-	}
 	
-	def void handleConditionRefInvocation(ConditionRefInvocation cri){
-		print('#' + cri.ref.ref.name + '(')
-		handleActualParameters(cri.params)
-		print(')')
-	}
 	
-	def XBlockExpression handleConditionBlock(ConditionBlock cb){
-		if (cb.simple != null){
-			handleConditionBlockStatements('{{', '}}', cb.simple.expressions)
-			return cb.simple
-		}
-		else {
-			handleConditionBlockStatements('{', '}', cb.complex.expressions)
-			return cb.complex
-		}
-	}
-	
-	def handleConditionBlockStatements(String openBraces, String closeBraces, EList<XExpression> expressions) {
-		println(openBraces)
-		for (e : expressions){
-			//TODO check whether ConditionRefInvocation is being handled correctly
-			println(NodeModelUtils.getNode(e).text)
-		}
-		println(closeBraces)
-	}
-
-	def XBlockExpression handleActionBlock(ActionBlock ab) {
-		println('{')
-		for (e : ab.expressions){
-			//TODO check whether ActionRefInvocation is being handled correctly
-			println(NodeModelUtils.getNode(e).text)
-		}
-		println('}')
+	def void handleConditionDeclaration(Condition condition, List<InferrerHandler> inferrerHandlers) {
 		
-		return ab
+		inferrerHandlers.forEach[handleConditionDeclarationStart(condition)]
+		
+		inferrerHandlers.forEach[handleConditionDeclarationExpression(condition)]
+			
+		inferrerHandlers.forEach[handleConditionDeclarationEnd(condition)]
+
+//		val conditionsClass = scaffoldClass.findAllNestedTypesByName("Conditions").findFirst[true]
+//		conditionsClass.members += condition.toMethod(
+//			condition.name,
+//			typeRef(Boolean),
+//			[
+//				static = true
+//				visibility = JvmVisibility.PUBLIC
+//				for (p : condition.conditionFormalParameters.parameters) {
+//					parameters += p.toParameter(p.name, p.parameterType)
+//				}
+//
+//				body = handleConditionExpression(condition.conditionExpression)
+//			]
+//		)
 	}
 
-	def void handleRules(Rules rules) {
+	def void handleActionDeclaration(Action action, List<InferrerHandler> inferrerHandlers) {
+		
+		inferrerHandlers.forEach[handleActionDeclarationStart(action)]
+		
+		inferrerHandlers.forEach[handleActionDeclarationActionBlock(action)]
+			
+		inferrerHandlers.forEach[handleActionDeclarationEnd(action)]
+
+//		val actionsClass = scaffoldClass.findAllNestedTypesByName("Actions").findFirst[true]
+//		actionsClass.members += action.toMethod(
+//			action.name,
+//			typeRef(void),
+//			[
+//				static = true
+//				visibility = JvmVisibility.PUBLIC
+//				for (p : action.actionFormalParameters.parameters) {
+//					parameters += p.toParameter(p.name, p.parameterType)
+//				}
+//
+//				body = handleActionBlock(action.action as ActionBlock)
+//			]
+//		)
+	}
+
+
+	def void handleWhereClauses(WhereClauses whereClauses, List<InferrerHandler> inferrerHandlers) {
+		
+		inferrerHandlers.forEach[handleWhereClausesStart(whereClauses)]
+		
+		for (whereClause : whereClauses.clauses) {
+			inferrerHandlers.forEach[handleWhereClause(whereClause)]
+		}
+		
+		inferrerHandlers.forEach[handleWhereClausesEnd(whereClauses)]
+	}
+	
+	def void handleWhen(WhenClause whenClause, List<InferrerHandler> inferrerHandlers) {
+		inferrerHandlers.forEach[handleWhenClauseStart(whenClause)]
+
+		inferrerHandlers.forEach[handleWhenClauseExpression(whenClause)]
+		
+		inferrerHandlers.forEach[handleWhenClauseEnd(whenClause)]
+	}
+	
+
+	def void handleCategorisation(CategorisationClause categorisationClause, List<InferrerHandler> inferrerHandlers) {
+		inferrerHandlers.forEach[handleCategorisationClauseStart(categorisationClause)]
+
+		inferrerHandlers.forEach[handleCategorisationClauseExpression(categorisationClause)]
+		
+		inferrerHandlers.forEach[handleCategorisationClauseEnd(categorisationClause)]
+	}
+
+
+	def void handleRules(Rules rules, List<InferrerHandler> inferrerHandlers) {
 		for (rule : rules.rules) {
-			handleRule(rule)
+			handleRule(rule, inferrerHandlers)
 		}
 	}
 
-	def void handleRule(Rule rule) {
+	def void handleRule(Rule rule, List<InferrerHandler> inferrerHandlers) {
+		
+		inferrerHandlers.forEach[handleRuleStart(rule)]
+		
 		if (rule.basicRule != null) {
-			handleBasicRule(rule.basicRule)
+			inferrerHandlers.forEach[handleBasicRule(rule.basicRule)]
 		}
 
 		if (rule.stateBlock != null) {
-			handleStateBlock(rule.stateBlock)
+			handleStateBlock(rule.stateBlock, inferrerHandlers)
 		}
 
 		if (rule.forEach != null) {
-			handleForEach(rule.forEach)
+			handleForEach(rule.forEach, inferrerHandlers)
 		}
 
 		if (rule.parForEach != null) {
-			handleParForEach(rule.parForEach)
+			handleParForEach(rule.parForEach, inferrerHandlers)
 		}
-		println()
+		
+		inferrerHandlers.forEach[handleRuleEnd(rule)]
+	}
+	
+	
+	def handleStateBlock(StateBlock stateBlock, List<InferrerHandler> inferrerHandlers) {
+		
+		inferrerHandlers.forEach[handleStateBlockStart(stateBlock)]
+		
+		for (stateDeclaration : stateBlock.stateDec) {
+			inferrerHandlers.forEach[handleStateDeclaration(stateDeclaration)]
+		}
+		
+		inferrerHandlers.forEach[handleStateBlockStateDeclarationsEnd(stateBlock)]
+		
+		handleValourBody(stateBlock.valourBody, inferrerHandlers)
+		
+		inferrerHandlers.forEach[handleStateBlockEnd(stateBlock)]
+	}
+	
+
+	def handleForEach(ForEach forEach, List<InferrerHandler> inferrerHandlers) {
+		inferrerHandlers.forEach[handleForEachBlockStart(forEach)]
+			
+		for (stateDeclaration : forEach.stateDec) {
+			inferrerHandlers.forEach[handleStateDeclaration(stateDeclaration)]
+		}
+		
+		inferrerHandlers.forEach[handleForEachCategoryDefinitionStart(forEach)]
+	
+		handleValourBody(forEach.valourBody, inferrerHandlers)
+		
+		inferrerHandlers.forEach[handleForEachBlockEnd(forEach)]
+	
 	}
 
-	def void handleBasicRule(BasicRule br) {
-		print(br.event.eventRefId.name + "(")
-		handleActualParameters(br.event.eventActualParameters)
-		print(") ")
-
-		if (br.condition != null) {
-			print(' | ')
-			handleConditionExpression(br.condition)
+	def handleParForEach(ParForEach parForEach, List<InferrerHandler> inferrerHandlers) {
+		inferrerHandlers.forEach[handleParForEachBlockStart(parForEach)]
+		
+		for (stateDeclaration : parForEach.stateDec) {
+			inferrerHandlers.forEach[handleStateDeclaration(stateDeclaration)]
 		}
-
-		print(' -> ')
-
-		val ra = br.ruleAction
-
-		if (ra.actionBlock != null) {
-			handleActionBlock(ra.actionBlock as ActionBlock)
-		} else if (ra.actionRefInvocation != null) {
-			print('#')
-			print(ra.actionRefInvocation.actionRef.actionRefId.name)
-			print('(')
-			handleActualParameters(ra.actionRefInvocation.actionActualParameters)
-			println(')')
-		} else {
-			// action monitor trigger fire
-			print('#generate trigger')
-			print(ra.actionMonitorTriggerFire.monitorTrigger)
-			print('(')
-			handleActualParameters(ra.actionMonitorTriggerFire.monitorTriggerActualParameters)
-			println(')')
-		}
-
-	}
-
-	def handleStateBlock(StateBlock sb) {
-		println('state {')
-		for (sd : sb.stateDec) {
-			handleStateDeclaration(sd)
-		}
-		println('} in {')
-		handleValourBody(sb.valourBody, null)
-		println('}')
-
-	}
-
-	def handleStateDeclaration(StateDeclaration sd) {
-		print(sd.type.qualifiedName + ' ')
-		print(sd.name + ' = ')
-		handleValueExpression(sd.valueExpression)
-		println
-	}
-
-	def handleForEach(ForEach fe) {
-		println('replicate {')
-		for (sd : fe.stateDec) {
-			handleStateDeclaration(sd)
-		}
-		println('} foreach ' + fe.category.name + ' ' + fe.categoryLabel + '{ ')
-		handleValourBody(fe.valourBody, null)
-		println('}')
-	}
-
-	def handleParForEach(ParForEach pfe) {
-		println('replicate in parallel {')
-		for (sd : pfe.stateDec) {
-			handleStateDeclaration(sd)
-		}
-		println('} foreach ' + pfe.category.name + ' ' + pfe.categoryLabel + '{ ')
-		handleValourBody(pfe.valourBody, null)
-		println('}')
+		inferrerHandlers.forEach[handleParForEachCategoryDefinitionStart(parForEach)]
+		
+		handleValourBody(parForEach.valourBody, inferrerHandlers)
+		inferrerHandlers.forEach[handleParForEachBlockEnd(parForEach)]
+		
 	}
 
 }

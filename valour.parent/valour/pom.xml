@@ -7,6 +7,12 @@
 			<artifactId>org.eclipse.xtend.lib</artifactId>
 			<version>2.9.2</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>mt.edu.um.cs.rv</groupId>
+			<artifactId>events</artifactId>
+        	<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	<parent>
 		<groupId>valour</groupId>

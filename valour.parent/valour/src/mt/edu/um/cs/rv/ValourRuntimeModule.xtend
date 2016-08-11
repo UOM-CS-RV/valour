@@ -3,10 +3,23 @@
  */
 package mt.edu.um.cs.rv
 
+import com.google.inject.Provides
+import mt.edu.um.cs.rv.jvmmodel.handler.InferrerHandler
+import java.util.List
+import mt.edu.um.cs.rv.jvmmodel.handler.JavaInferrerHandler
+import mt.edu.um.cs.rv.jvmmodel.handler.StdoutInferrerHandler
+import javax.inject.Inject
+import org.eclipse.emf.ecore.resource.Resource
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */
 class ValourRuntimeModule extends AbstractValourRuntimeModule {
-	
+
+	@Provides
+	@Inject
+	def List<InferrerHandler> inferrerHandlers(JavaInferrerHandler javaInferrerHandler,
+		StdoutInferrerHandler stdoutInferrerHandler) {
+		return #[javaInferrerHandler, stdoutInferrerHandler]
+	}
 }
