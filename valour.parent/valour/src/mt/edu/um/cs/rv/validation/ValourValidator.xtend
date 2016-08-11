@@ -3,14 +3,18 @@
  */
 package mt.edu.um.cs.rv.validation
 
+import org.eclipse.xtext.validation.Check
+import mt.edu.um.cs.rv.valour.Event
+import mt.edu.um.cs.rv.valour.EventRef
+import mt.edu.um.cs.rv.valour.ValourPackage
 
 /**
  * This class contains custom validation rules. 
- *
+ * 
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
  */
 class ValourValidator extends AbstractValourValidator {
-	
+
 //  public static val INVALID_NAME = 'invalidName'
 //
 //	@Check
@@ -21,5 +25,18 @@ class ValourValidator extends AbstractValourValidator {
 //					INVALID_NAME)
 //		}
 //	}
-	
+
+
+	@Check
+	def checkParameterCount(EventRef eventRef) {
+
+		val e = eventRef.eCrossReferences.get(0) as Event
+		
+		if (eventRef.eventActualParameters.parameters.size != e.eventFormalParameters.parameters.size())
+		{
+			error("Bad Parameter Count", ValourPackage.Literals.EVENT__NAME);
+		}
+
+	}
+
 }
