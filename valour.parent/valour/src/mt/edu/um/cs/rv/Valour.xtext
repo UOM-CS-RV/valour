@@ -132,7 +132,10 @@ ConditionBlockStatement returns xbase::XExpression:
 //TODO check if its possible to bind the type of the ValueExpression with the type of the category.
 //Probably in a similar way as described here - http://stackoverflow.com/questions/15511669/validate-number-of-function-parameters-in-xtext
 CategorisationClause:
-	'belonging' 'to' category=[Category] 'with' 'index' categoryExpression=ValueExpression;
+	'belonging' 'to' category=CategoryRef 'with' 'index' categoryExpression=ValueExpression;
+	
+CategoryRef:
+	category=[Category];
 
 Condition:
 	'condition' name=ID '('conditionFormalParameters=FormalParameters')' '=' conditionExpression=ConditionExpression;
@@ -204,7 +207,7 @@ ForEach:
 	'{'
 	(stateDec+=StateDeclaration)*
 	'}'
-	'foreach' category=[Category] categoryLabel=ID
+	'foreach' category=CategoryRef categoryLabel=ID
 	'{'
 	valourBody=ValourBody
 	'}';
@@ -214,7 +217,7 @@ ParForEach:
 	'{'
 	(stateDec+=StateDeclaration)*
 	'}'
-	'foreach' category=[Category] categoryLabel=ID
+	'foreach' category=CategoryRef categoryLabel=ID
 	'{'
 	valourBody=ValourBody
 	'}';
