@@ -125,10 +125,44 @@ public class JavaInferrerHandler extends InferrerHandler {
 
 		val eventDecName = event.name + ' (' + formalParametersAsString(event.eventFormalParameters) + ')'
 
-		var JvmGenericType eventClass = event.toClass(className, [
+		val JvmGenericType eventClass = event.toClass(className, [
 			static = false
 			superTypes += typeRef("mt.edu.um.cs.rv.events.Event")
 		])
+
+		if (event.eventFormalParameters != null && !event.eventFormalParameters.parameters.isNullOrEmpty) {
+			
+
+			// generate a private field for each event parameter
+			event.eventFormalParameters.parameters.forEach [ param |
+				eventClass.members += event.toField(
+					param.name,
+					param.parameterType
+				)
+			]
+			
+			// add constructor with all properties for event
+			val constuctor = event.toConstructor [
+				body = '''
+					«FOR param : event.eventFormalParameters.parameters»
+						this.«param.name» = «param.name»;
+						«ENDFOR» 
+				''' 
+			]
+			eventClass.members += constuctor
+			
+			event.eventFormalParameters.parameters.forEach [ param |
+					constuctor.parameters += param.toParameter(param.name, param.parameterType)	
+			]
+
+			// generate a getter method for each event parameter
+			event.eventFormalParameters.parameters.forEach [ param |
+				eventClass.members += event.toGetter(
+					param.name,
+					param.parameterType
+				)
+			]
+		}
 
 		eventClass.members += event.toMethod(
 			"isSynchronous",
