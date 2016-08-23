@@ -32,9 +32,20 @@ class ValourValidator extends AbstractValourValidator {
 
 		val e = eventRef.eCrossReferences.get(0) as Event
 		
-		if (eventRef.eventActualParameters.parameters.size != e.eventFormalParameters.parameters.size())
+		var actualParameterCount = 0
+		if (eventRef.eventActualParameters != null && !eventRef.eventActualParameters.parameters.isNullOrEmpty){
+			actualParameterCount = eventRef.eventActualParameters.parameters.size
+		}
+		
+		var formalParameterCount = 0
+		if (e.eventFormalParameters != null && !e.eventFormalParameters.parameters.isNullOrEmpty){
+			formalParameterCount = e.eventFormalParameters.parameters.size
+		}
+	 
+		if (actualParameterCount != formalParameterCount)
 		{
-			error("Bad Parameter Count", ValourPackage.Literals.EVENT__NAME);
+			var msg = '''Bad parameter count for event «e.name»: Expected «formalParameterCount» but found «actualParameterCount»'''
+			error(msg, ValourPackage.Literals.EVENT_REF__EVENT_REF_ID);
 		}
 
 	}
