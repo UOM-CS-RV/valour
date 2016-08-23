@@ -1,75 +1,58 @@
 package mt.edu.um.cs.rv.jvmmodel.handler;
 
-import mt.edu.um.cs.rv.valour.Model
-import org.eclipse.xtext.common.types.JvmGenericType
-import javax.inject.Inject
-import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
-import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
-import org.eclipse.xtext.xtype.XImportSection
-import mt.edu.um.cs.rv.valour.Category
-import mt.edu.um.cs.rv.valour.Event
-import org.eclipse.xtext.common.types.JvmVisibility
-import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
-import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
-import mt.edu.um.cs.rv.valour.ControlFlowTrigger
-import mt.edu.um.cs.rv.valour.EventTrigger
-import mt.edu.um.cs.rv.valour.MonitorTrigger
-import mt.edu.um.cs.rv.valour.WhereClauses
-import mt.edu.um.cs.rv.valour.WhereClause
-import mt.edu.um.cs.rv.valour.WhenClause
-import mt.edu.um.cs.rv.valour.CategorisationClause
-import mt.edu.um.cs.rv.valour.Condition
-import mt.edu.um.cs.rv.valour.Action
-import mt.edu.um.cs.rv.valour.Rule
-import mt.edu.um.cs.rv.valour.BasicRule
 import java.util.Set
-import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
-import org.eclipse.xtext.naming.IQualifiedNameProvider
+import javax.inject.Inject
+import mt.edu.um.cs.rv.valour.Action
+import mt.edu.um.cs.rv.valour.BasicRule
+import mt.edu.um.cs.rv.valour.CategorisationClause
+import mt.edu.um.cs.rv.valour.Category
+import mt.edu.um.cs.rv.valour.Condition
+import mt.edu.um.cs.rv.valour.ControlFlowTrigger
+import mt.edu.um.cs.rv.valour.Event
+import mt.edu.um.cs.rv.valour.EventTrigger
+import mt.edu.um.cs.rv.valour.ForEach
+import mt.edu.um.cs.rv.valour.Model
+import mt.edu.um.cs.rv.valour.MonitorTrigger
+import mt.edu.um.cs.rv.valour.ParForEach
+import mt.edu.um.cs.rv.valour.Rule
 import mt.edu.um.cs.rv.valour.StateBlock
 import mt.edu.um.cs.rv.valour.StateDeclaration
-import mt.edu.um.cs.rv.valour.ForEach
-import mt.edu.um.cs.rv.valour.ParForEach
-import org.eclipse.emf.ecore.resource.Resource
+import mt.edu.um.cs.rv.valour.WhenClause
+import mt.edu.um.cs.rv.valour.WhereClause
+import mt.edu.um.cs.rv.valour.WhereClauses
+import org.eclipse.xtext.common.types.JvmGenericType
+import org.eclipse.xtext.common.types.JvmVisibility
+import org.eclipse.xtext.naming.IQualifiedNameProvider
+import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
+import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
+import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
+import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
+import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
+import org.eclipse.xtext.xtype.XImportSection
 
 public class JavaInferrerHandler extends InferrerHandler {
-//
-//	@Inject JvmAnnotationReferenceBuilder.Factory annotationRefBuilderFactory;
-//	@Inject JvmTypeReferenceBuilder.Factory typeRefBuilderFactory;
-	
-//	@Extension JvmAnnotationReferenceBuilder _annotationTypesBuilder;
-//	@Extension JvmTypeReferenceBuilder _typeReferenceBuilder;
 
 	/**
 	 * convenience API to build and initialize JVM types and their members.
 	 */
 	@Inject extension JvmTypesBuilder
 
-//	@Inject extension JvmTypeReferenceBuilder
-//	@Inject extension JvmAnnotationReferenceBuilder
 	@Inject extension IJvmModelAssociations
 	@Inject extension IQualifiedNameProvider
-	
+
 	var Model model
 	var IJvmDeclaredTypeAcceptor acceptor
 
 	var monitorCounter = 1;
 	var eventCounter = 1;
-	
-	
-//	@Inject JvmAnnotationReferenceBuilder.Factory annotationRefBuilderFactory;
-//	@Inject JvmTypeReferenceBuilder.Factory typeRefBuilderFactory;
-//	
+
 	@Extension JvmAnnotationReferenceBuilder _annotationTypesBuilder;
 	@Extension JvmTypeReferenceBuilder _typeReferenceBuilder;
-	
-	
-	override void setup(JvmAnnotationReferenceBuilder _annotationTypesBuilder, JvmTypeReferenceBuilder _typeReferenceBuilder){
-//	def void setContext(Resource resource) {
-//		_annotationTypesBuilder = annotationRefBuilderFactory.create(resource.getResourceSet());
-//		_typeReferenceBuilder = typeRefBuilderFactory.create(resource.getResourceSet());
+
+	override void setup(JvmAnnotationReferenceBuilder _annotationTypesBuilder,
+		JvmTypeReferenceBuilder _typeReferenceBuilder) {
 		this._annotationTypesBuilder = _annotationTypesBuilder
 		this._typeReferenceBuilder = _typeReferenceBuilder
-	
 	}
 
 	override initialise(Model model, IJvmDeclaredTypeAcceptor acceptor) {
@@ -194,83 +177,64 @@ public class JavaInferrerHandler extends InferrerHandler {
 	override handleEventDeclarationEnd(Event event) {
 		// nothing to do here
 	}
-	
+
 	override handleControlFlowTrigger(ControlFlowTrigger controlFlowTrigger, Boolean additionalTrigger) {
-		
 	}
-	
+
 	override handleEventTrigger(EventTrigger eventTrigger, Boolean additionalTrigger) {
-		
 	}
-	
+
 	override handleMonitorTrigger(MonitorTrigger monitorTrigger, Boolean additionalTrigger) {
-		
 	}
-	
+
 	override handleWhereClausesStart(WhereClauses whereClauses) {
-		
 	}
-	
+
 	override handleWhereClausesEnd(WhereClauses whereClauses) {
-		
 	}
-	
+
 	override handleWhereClause(WhereClause whereClause) {
-		
 	}
-	
+
 	override handleWhenClauseStart(WhenClause whenClause) {
-		
 	}
-	
+
 	override handleWhenClauseEnd(WhenClause whenClause) {
-		
 	}
-	
+
 	override handleWhenClauseExpression(WhenClause clause) {
-		
 	}
-	
+
 	override handleCategorisationClauseStart(CategorisationClause categorisationClause) {
-		
 	}
-	
+
 	override handleCategorisationClauseExpression(CategorisationClause categorisationClause) {
-		
 	}
-	
+
 	override handleCategorisationClauseEnd(CategorisationClause categorisationClause) {
-		
 	}
-	
+
 	override handleConditionDeclarationStart(Condition condition) {
-		
 	}
-	
+
 	override handleConditionDeclarationExpression(Condition condition) {
-		
 	}
-	
+
 	override handleConditionDeclarationEnd(Condition condition) {
-		
 	}
-	
+
 	override handleActionDeclarationStart(Action action) {
-		
 	}
-	
+
 	override handleActionDeclarationActionBlock(Action action) {
-		
 	}
-	
+
 	override handleActionDeclarationEnd(Action action) {
-		
 	}
-	
+
 	override handleRuleStart(Rule rule) {
-		
 	}
-	
+
 	override handleBasicRule(BasicRule basicRule) {
 		var ruleWithoutBodyAndCondition = basicRule.event.eventRefId.name + "(" +
 			actualParametersAsString(basicRule.event.eventActualParameters) + ") "
@@ -354,51 +318,38 @@ public class JavaInferrerHandler extends InferrerHandler {
 		}
 
 	}
-	
+
 	override handleRuleEnd(Rule rule) {
-		
 	}
-	
+
 	override handleStateBlockStart(StateBlock block) {
-		
 	}
-	
+
 	override handleStateDeclaration(StateDeclaration sd) {
-		
 	}
-	
+
 	override handleStateBlockStateDeclarationsEnd(StateBlock block) {
-		
 	}
-	
+
 	override handleStateBlockEnd(StateBlock block) {
-		
 	}
-	
+
 	override handleForEachBlockStart(ForEach forEach) {
-		
 	}
-	
+
 	override handleForEachCategoryDefinitionStart(ForEach forEach) {
-		
 	}
-	
+
 	override handleForEachBlockEnd(ForEach forEach) {
-		
 	}
-	
+
 	override handleParForEachBlockStart(ParForEach parForEach) {
-		
 	}
-	
+
 	override handleParForEachCategoryDefinitionStart(ParForEach parForEach) {
-		
 	}
-	
+
 	override handleParForEachBlockEnd(ParForEach parForEach) {
-		
 	}
-	
-	
 
 }
