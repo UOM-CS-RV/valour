@@ -7,6 +7,12 @@ import org.eclipse.xtext.validation.Check
 import mt.edu.um.cs.rv.valour.Event
 import mt.edu.um.cs.rv.valour.EventRef
 import mt.edu.um.cs.rv.valour.ValourPackage
+import javax.inject.Inject
+import org.eclipse.xtext.resource.impl.ResourceDescriptionsProvider
+import org.eclipse.xtext.resource.IContainer
+import mt.edu.um.cs.rv.valour.Declarations
+import org.eclipse.emf.ecore.EObject
+import mt.edu.um.cs.rv.valour.ValourBody
 
 /**
  * This class contains custom validation rules. 
@@ -15,39 +21,97 @@ import mt.edu.um.cs.rv.valour.ValourPackage
  */
 class ValourValidator extends AbstractValourValidator {
 
-//  public static val INVALID_NAME = 'invalidName'
-//
-//	@Check
-//	def checkGreetingStartsWithCapital(Greeting greeting) {
-//		if (!Character.isUpperCase(greeting.name.charAt(0))) {
-//			warning('Name should start with a capital', 
-//					ValourPackage.Literals.GREETING__NAME,
-//					INVALID_NAME)
-//		}
-//	}
+	@Inject
+	ResourceDescriptionsProvider resourceDescriptionsProvider;
 
+	@Inject
+	IContainer.Manager containerManager;
 
 	@Check
-	def checkParameterCount(EventRef eventRef) {
+	def checkEventRefParameterCount(EventRef eventRef) {
 
 		val e = eventRef.eCrossReferences.get(0) as Event
-		
+
 		var actualParameterCount = 0
-		if (eventRef.eventActualParameters != null && !eventRef.eventActualParameters.parameters.isNullOrEmpty){
+		if (eventRef.eventActualParameters != null && !eventRef.eventActualParameters.parameters.isNullOrEmpty) {
 			actualParameterCount = eventRef.eventActualParameters.parameters.size
 		}
-		
+
 		var formalParameterCount = 0
-		if (e.eventFormalParameters != null && !e.eventFormalParameters.parameters.isNullOrEmpty){
+		if (e.eventFormalParameters != null && !e.eventFormalParameters.parameters.isNullOrEmpty) {
 			formalParameterCount = e.eventFormalParameters.parameters.size
 		}
-	 
-		if (actualParameterCount != formalParameterCount)
-		{
+
+		if (actualParameterCount !=
+			formalParameterCount) {
 			var msg = '''Bad parameter count for event «e.name»: Expected «formalParameterCount» but found «actualParameterCount»'''
 			error(msg, ValourPackage.Literals.EVENT_REF__EVENT_REF_ID);
 		}
 
+	}
+
+//	@Check
+//	def checkEventDeclarationUniqueness(Event event) {
+//		val names = new HashSet<QualifiedName>()
+//		
+//		val resourceDescriptions = resourceDescriptionsProvider.getResourceDescriptions(event.eResource());
+//		val resourceDescription = resourceDescriptions.getResourceDescription(event.eResource().getURI());
+//		
+//		for (IContainer c : containerManager.getVisibleContainers(resourceDescription, resourceDescriptions)) {
+//			for (IEObjectDescription od : c.getExportedObjectsByType(ValourPackage.Literals.EVENT)) {
+//				if (!names.add(od.qualifiedName)) {
+//					val msg = '''Duplicate event with name «event.name»'''
+//					error(msg, ValourPackage.Literals.EVENT__NAME);
+//				}
+//			}
+//		}
+//	}
+	@Check
+	def checkEventDeclarationUniqueness(Event event) {
+		var declarations = findClosestDeclaration(event);
+		
+		if (declarations != null) {
+			do {
+				var events = declarations.declarations.filter[d | d.event != null].map[d | d.event]
+
+				//remove this event
+				events = events.filter[e | !e.equals(event)]
+				
+				var errors = events.filter[e | e.name.equals(event.name)]
+				
+				if (!errors.isNullOrEmpty){
+					val msg = '''Duplicate event with name «event.name»'''
+					error(msg, ValourPackage.Literals.EVENT__NAME)
+					errors.forEach[e | error(msg, e, ValourPackage.Literals.EVENT__NAME)]
+				}
+				
+				declarations = findClosestDeclaration(declarations.eContainer.eContainer)
+			} while (declarations != null)
+		}
+	}
+	
+	
+	//TODO this is a duplicate method of ValourScopeProvider#findClosestDeclaration(EObject)
+	def Declarations findClosestDeclaration(EObject context) {
+		if ((context != null) && (context instanceof ValourBody)) {
+			
+			val declarations = (context as ValourBody).declarations
+			if (declarations != null){
+				//return the declarations
+				return declarations
+			}
+			else {
+				//recurse to try and find higher level declarations
+				findClosestDeclaration(context.eContainer)
+			}
+			
+		}
+
+		if (context.eContainer != null) {
+			findClosestDeclaration(context.eContainer)
+		} else {
+			return null
+		}
 	}
 
 }
