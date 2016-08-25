@@ -9,7 +9,7 @@ import java.util.List
 import mt.edu.um.cs.rv.jvmmodel.handler.JavaInferrerHandler
 import mt.edu.um.cs.rv.jvmmodel.handler.StdoutInferrerHandler
 import javax.inject.Inject
-import org.eclipse.emf.ecore.resource.Resource
+import mt.edu.um.cs.rv.utils.ValourScriptTraverser
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
@@ -21,5 +21,10 @@ class ValourRuntimeModule extends AbstractValourRuntimeModule {
 	def List<InferrerHandler> inferrerHandlers(JavaInferrerHandler javaInferrerHandler,
 		StdoutInferrerHandler stdoutInferrerHandler) {
 		return #[javaInferrerHandler, stdoutInferrerHandler]
+	}
+	
+	@Provides
+	def ValourScriptTraverser valourScriptTraverser(){
+		return new ValourScriptTraverser()
 	}
 }

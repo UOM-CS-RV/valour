@@ -8,11 +8,7 @@ import mt.edu.um.cs.rv.valour.Event
 import mt.edu.um.cs.rv.valour.EventRef
 import mt.edu.um.cs.rv.valour.ValourPackage
 import javax.inject.Inject
-import org.eclipse.xtext.resource.impl.ResourceDescriptionsProvider
-import org.eclipse.xtext.resource.IContainer
-import mt.edu.um.cs.rv.valour.Declarations
-import org.eclipse.emf.ecore.EObject
-import mt.edu.um.cs.rv.valour.ValourBody
+import mt.edu.um.cs.rv.utils.ValourScriptTraverser
 
 /**
  * This class contains custom validation rules. 
@@ -21,11 +17,7 @@ import mt.edu.um.cs.rv.valour.ValourBody
  */
 class ValourValidator extends AbstractValourValidator {
 
-	@Inject
-	ResourceDescriptionsProvider resourceDescriptionsProvider;
-
-	@Inject
-	IContainer.Manager containerManager;
+	@Inject extension ValourScriptTraverser
 
 	@Check
 	def checkEventRefParameterCount(EventRef eventRef) {
@@ -50,22 +42,6 @@ class ValourValidator extends AbstractValourValidator {
 
 	}
 
-//	@Check
-//	def checkEventDeclarationUniqueness(Event event) {
-//		val names = new HashSet<QualifiedName>()
-//		
-//		val resourceDescriptions = resourceDescriptionsProvider.getResourceDescriptions(event.eResource());
-//		val resourceDescription = resourceDescriptions.getResourceDescription(event.eResource().getURI());
-//		
-//		for (IContainer c : containerManager.getVisibleContainers(resourceDescription, resourceDescriptions)) {
-//			for (IEObjectDescription od : c.getExportedObjectsByType(ValourPackage.Literals.EVENT)) {
-//				if (!names.add(od.qualifiedName)) {
-//					val msg = '''Duplicate event with name «event.name»'''
-//					error(msg, ValourPackage.Literals.EVENT__NAME);
-//				}
-//			}
-//		}
-//	}
 	@Check
 	def checkEventDeclarationUniqueness(Event event) {
 		var declarations = findClosestDeclaration(event);
@@ -89,29 +65,4 @@ class ValourValidator extends AbstractValourValidator {
 			} while (declarations != null)
 		}
 	}
-	
-	
-	//TODO this is a duplicate method of ValourScopeProvider#findClosestDeclaration(EObject)
-	def Declarations findClosestDeclaration(EObject context) {
-		if ((context != null) && (context instanceof ValourBody)) {
-			
-			val declarations = (context as ValourBody).declarations
-			if (declarations != null){
-				//return the declarations
-				return declarations
-			}
-			else {
-				//recurse to try and find higher level declarations
-				findClosestDeclaration(context.eContainer)
-			}
-			
-		}
-
-		if (context.eContainer != null) {
-			findClosestDeclaration(context.eContainer)
-		} else {
-			return null
-		}
-	}
-
 }

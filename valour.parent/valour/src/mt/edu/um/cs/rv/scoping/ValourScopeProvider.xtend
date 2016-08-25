@@ -5,20 +5,19 @@ package mt.edu.um.cs.rv.scoping
 
 import mt.edu.um.cs.rv.valour.Action
 import mt.edu.um.cs.rv.valour.ActionRef
-import mt.edu.um.cs.rv.valour.Declarations
 import mt.edu.um.cs.rv.valour.Event
 import mt.edu.um.cs.rv.valour.EventRef
-import mt.edu.um.cs.rv.valour.ValourBody
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.scoping.IScope
 import org.eclipse.xtext.scoping.Scopes
-import mt.edu.um.cs.rv.valour.CategorisationClause
 import mt.edu.um.cs.rv.valour.Category
 import mt.edu.um.cs.rv.valour.ConditionRef
 import mt.edu.um.cs.rv.valour.Condition
 import mt.edu.um.cs.rv.valour.CategoryRef
+import mt.edu.um.cs.rv.utils.ValourScriptTraverser
+import javax.inject.Inject
 
 /**
  * This class contains custom scoping description.
@@ -27,6 +26,8 @@ import mt.edu.um.cs.rv.valour.CategoryRef
  * on how and when to use it.
  */
 class ValourScopeProvider extends AbstractValourScopeProvider {
+	
+	@Inject extension ValourScriptTraverser
 
 	override getScope(EObject context, EReference reference) {
 		var IScope iScope = super.getScope(context, reference)
@@ -73,27 +74,4 @@ class ValourScopeProvider extends AbstractValourScopeProvider {
 			return parent
 		}
 	}
-
-	def Declarations findClosestDeclaration(EObject context) {
-		if ((context != null) && (context instanceof ValourBody)) {
-			
-			val declarations = (context as ValourBody).declarations
-			if (declarations != null){
-				//return the declarations
-				return declarations
-			}
-			else {
-				//recurse to try and find higher level declarations
-				findClosestDeclaration(context.eContainer)
-			}
-			
-		}
-
-		if (context.eContainer != null) {
-			findClosestDeclaration(context.eContainer)
-		} else {
-			return null
-		}
-	}
-
 }
