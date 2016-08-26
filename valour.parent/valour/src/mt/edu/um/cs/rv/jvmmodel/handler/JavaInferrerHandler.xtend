@@ -29,6 +29,11 @@ import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 import org.eclipse.xtext.xtype.XImportSection
+import org.eclipse.emf.ecore.EObject
+import mt.edu.um.cs.rv.compilation.ActionConsumable
+import mt.edu.um.cs.rv.compilation.Context
+import mt.edu.um.cs.rv.compilation.Parameters
+import org.eclipse.xtext.xbase.XBlockExpression
 
 public class JavaInferrerHandler extends InferrerHandler {
 
@@ -45,6 +50,8 @@ public class JavaInferrerHandler extends InferrerHandler {
 
 	var monitorCounter = 1;
 	var eventCounter = 1;
+	var actionCounter = 1;
+	var conditionCounter = 1;
 
 	@Extension JvmAnnotationReferenceBuilder _annotationTypesBuilder;
 	@Extension JvmTypeReferenceBuilder _typeReferenceBuilder;
@@ -61,7 +68,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 		this.acceptor = acceptor
 
 		// TODO the package to which to generate the classes should be defined in the language ???
-		val packageName = packageNameToUse(model.eResource.URI.lastSegment)
+		val packageName = packageNameToUse(model)
 
 		// TODO rename?
 		val String scaffoldClassName = packageName + ".Scaffold"
@@ -76,7 +83,8 @@ public class JavaInferrerHandler extends InferrerHandler {
 	}
 
 	// TODO the package to which to generate the classes should be defined in the language ???
-	def String packageNameToUse(String inputFileName) {
+	def String packageNameToUse(EObject eObject) {
+		val inputFileName = eObject.eResource.URI.lastSegment	
 		val lastIndex = inputFileName.lastIndexOf('.valour')
 		if (lastIndex > 0) {
 			return "valour." + inputFileName.substring(0, lastIndex)
@@ -103,7 +111,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 	}
 
 	override handleEventDeclarationBegin(Event event) {
-		val packageName = packageNameToUse(event.eResource.URI.lastSegment) + ".events"
+		val packageName = packageNameToUse(event) + ".events"
 		val String className = packageName + ".Event" + (eventCounter++)
 
 		val eventDecName = event.name + ' (' + formalParametersAsString(event.eventFormalParameters) + ')'
@@ -218,6 +226,61 @@ public class JavaInferrerHandler extends InferrerHandler {
 	}
 
 	override handleConditionDeclarationExpression(Condition condition) {
+		val packageName = packageNameToUse(condition) + ".conditions"
+		val conditionId = conditionCounter++
+		val String className = packageName + ".Condition" + (conditionId)
+		val String functionalInterfaceName = packageName + ".ICondition" + (conditionId)
+		
+		val functionalInterface = condition.toClass(functionalInterfaceName,
+			[	
+				annotations += annotationRef(FunctionalInterface)
+				interface = true
+				members += condition.toMethod("apply", typeRef(boolean),
+				[
+					static = false
+					^default = false
+					abstract = true
+					visibility = JvmVisibility.PUBLIC
+					condition.conditionFormalParameters.parameters.forEach[ p |
+						parameters += condition.toParameter(p.name, p.parameterType)	
+					]		
+				])
+			]
+		)
+		
+		acceptor.accept(
+			functionalInterface
+		)
+		
+		val actionClass = condition.toClass(className,
+			[
+				superTypes += typeRef(functionalInterfaceName) 	
+				
+				members += condition.toMethod("apply", typeRef(boolean),
+				[
+					static = false
+					visibility = JvmVisibility.PUBLIC
+					annotations += annotationRef(Override)
+					condition.conditionFormalParameters.parameters.forEach[ p |
+						parameters += condition.toParameter(p.name, p.parameterType)	
+					]
+					
+					if (condition.conditionExpression.ref != null){
+						//TODO body = condition.conditionExpression.ref.
+					}
+					else if (condition.conditionExpression.block.simple != null){
+						body = condition.conditionExpression.block.simple	
+					}
+					else {
+						body = condition.conditionExpression.block.complex	
+					}
+				])
+			]
+		)
+				
+		acceptor.accept(
+			actionClass
+		)
 	}
 
 	override handleConditionDeclarationEnd(Condition condition) {
@@ -227,6 +290,53 @@ public class JavaInferrerHandler extends InferrerHandler {
 	}
 
 	override handleActionDeclarationActionBlock(Action action) {
+		val packageName = packageNameToUse(action) + ".actions"
+		val actionId = actionCounter++
+		val String className = packageName + ".Action" + (actionId)
+		val String functionalInterfaceName = packageName + ".IAction" + (actionId)
+		
+		val consumableFunctionalInterface = action.toClass(functionalInterfaceName,
+			[	
+				annotations += annotationRef(FunctionalInterface)
+				interface = true
+				members += action.toMethod("accept", typeRef(void),
+				[
+					static = false
+					^default = false
+					abstract = true
+					visibility = JvmVisibility.PUBLIC
+					action.actionFormalParameters.parameters.forEach[ p |
+						parameters += action.toParameter(p.name, p.parameterType)	
+					]		
+				])
+			]
+		)
+		
+		acceptor.accept(
+			consumableFunctionalInterface
+		)
+		
+		val actionClass = action.toClass(className,
+			[
+				superTypes += typeRef(functionalInterfaceName) 	
+				
+				members += action.toMethod("accept", typeRef(void),
+				[
+					static = false
+					visibility = JvmVisibility.PUBLIC
+					annotations += annotationRef(Override)
+					action.actionFormalParameters.parameters.forEach[ p |
+						parameters += action.toParameter(p.name, p.parameterType)	
+					]
+//					body = '''return;'''
+					body = action.action
+				])
+			]
+		)
+				
+		acceptor.accept(
+			actionClass
+		)
 	}
 
 	override handleActionDeclarationEnd(Action action) {
@@ -245,7 +355,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 
 		ruleWithoutBodyAndCondition = ruleWithoutBodyAndCondition + ' -> { .. }'
 
-		val packageName = packageNameToUse(basicRule.eResource.URI.lastSegment) + ".monitors"
+		val packageName = packageNameToUse(basicRule) + ".monitors"
 		val String className = packageName + ".Monitor" + (monitorCounter++)
 
 		val eventClass = basicRule.event.eventRefId.getJvmElements().filter(JvmGenericType).head
