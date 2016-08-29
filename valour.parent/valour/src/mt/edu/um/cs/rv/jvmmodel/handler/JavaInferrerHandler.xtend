@@ -20,6 +20,7 @@ import mt.edu.um.cs.rv.valour.StateDeclaration
 import mt.edu.um.cs.rv.valour.WhenClause
 import mt.edu.um.cs.rv.valour.WhereClause
 import mt.edu.um.cs.rv.valour.WhereClauses
+import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.common.types.JvmGenericType
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.naming.IQualifiedNameProvider
@@ -29,11 +30,6 @@ import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 import org.eclipse.xtext.xtype.XImportSection
-import org.eclipse.emf.ecore.EObject
-import mt.edu.um.cs.rv.compilation.ActionConsumable
-import mt.edu.um.cs.rv.compilation.Context
-import mt.edu.um.cs.rv.compilation.Parameters
-import org.eclipse.xtext.xbase.XBlockExpression
 
 public class JavaInferrerHandler extends InferrerHandler {
 
@@ -84,7 +80,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 
 	// TODO the package to which to generate the classes should be defined in the language ???
 	def String packageNameToUse(EObject eObject) {
-		val inputFileName = eObject.eResource.URI.lastSegment	
+		val inputFileName = eObject.eResource.URI.lastSegment
 		val lastIndex = inputFileName.lastIndexOf('.valour')
 		if (lastIndex > 0) {
 			return "valour." + inputFileName.substring(0, lastIndex)
@@ -122,7 +118,6 @@ public class JavaInferrerHandler extends InferrerHandler {
 		])
 
 		if (event.eventFormalParameters != null && !event.eventFormalParameters.parameters.isNullOrEmpty) {
-			
 
 			// generate a private field for each event parameter
 			event.eventFormalParameters.parameters.forEach [ param |
@@ -131,19 +126,19 @@ public class JavaInferrerHandler extends InferrerHandler {
 					param.parameterType
 				)
 			]
-			
+
 			// add constructor with all properties for event
 			val constuctor = event.toConstructor [
 				body = '''
 					«FOR param : event.eventFormalParameters.parameters»
 						this.«param.name» = «param.name»;
 						«ENDFOR» 
-				''' 
+				'''
 			]
 			eventClass.members += constuctor
-			
+
 			event.eventFormalParameters.parameters.forEach [ param |
-					constuctor.parameters += param.toParameter(param.name, param.parameterType)	
+				constuctor.parameters += param.toParameter(param.name, param.parameterType)
 			]
 
 			// generate a getter method for each event parameter
@@ -230,54 +225,52 @@ public class JavaInferrerHandler extends InferrerHandler {
 		val conditionId = conditionCounter++
 		val String className = packageName + ".Condition" + (conditionId)
 		val String functionalInterfaceName = packageName + ".ICondition" + (conditionId)
-		
-		val functionalInterface = condition.toClass(functionalInterfaceName,
-			[	
+
+		val functionalInterface = condition.toClass(
+			functionalInterfaceName,
+			[
 				annotations += annotationRef(FunctionalInterface)
 				interface = true
-				members += condition.toMethod("apply", typeRef(boolean),
-				[
+				members += condition.toMethod("apply", typeRef(boolean), [
 					static = false
 					^default = false
 					abstract = true
 					visibility = JvmVisibility.PUBLIC
-					condition.conditionFormalParameters.parameters.forEach[ p |
-						parameters += condition.toParameter(p.name, p.parameterType)	
-					]		
+					condition.conditionFormalParameters.parameters.forEach [ p |
+						parameters += condition.toParameter(p.name, p.parameterType)
+					]
 				])
 			]
 		)
-		
+
 		acceptor.accept(
 			functionalInterface
 		)
-		
-		val actionClass = condition.toClass(className,
+
+		val actionClass = condition.toClass(
+			className,
 			[
-				superTypes += typeRef(functionalInterfaceName) 	
-				
-				members += condition.toMethod("apply", typeRef(boolean),
-				[
+				superTypes += typeRef(functionalInterfaceName)
+
+				members += condition.toMethod("apply", typeRef(boolean), [
 					static = false
 					visibility = JvmVisibility.PUBLIC
 					annotations += annotationRef(Override)
-					condition.conditionFormalParameters.parameters.forEach[ p |
-						parameters += condition.toParameter(p.name, p.parameterType)	
+					condition.conditionFormalParameters.parameters.forEach [ p |
+						parameters += condition.toParameter(p.name, p.parameterType)
 					]
-					
-					if (condition.conditionExpression.ref != null){
-						//TODO body = condition.conditionExpression.ref.
-					}
-					else if (condition.conditionExpression.block.simple != null){
-						body = condition.conditionExpression.block.simple	
-					}
-					else {
-						body = condition.conditionExpression.block.complex	
+
+					if (condition.conditionExpression.ref != null) {
+						// TODO body = condition.conditionExpression.ref.
+					} else if (condition.conditionExpression.block.simple != null) {
+						body = condition.conditionExpression.block.simple
+					} else {
+						body = condition.conditionExpression.block.complex
 					}
 				])
 			]
 		)
-				
+
 		acceptor.accept(
 			actionClass
 		)
@@ -294,46 +287,46 @@ public class JavaInferrerHandler extends InferrerHandler {
 		val actionId = actionCounter++
 		val String className = packageName + ".Action" + (actionId)
 		val String functionalInterfaceName = packageName + ".IAction" + (actionId)
-		
-		val consumableFunctionalInterface = action.toClass(functionalInterfaceName,
-			[	
+
+		val consumableFunctionalInterface = action.toClass(
+			functionalInterfaceName,
+			[
 				annotations += annotationRef(FunctionalInterface)
 				interface = true
-				members += action.toMethod("accept", typeRef(void),
-				[
+				members += action.toMethod("accept", typeRef(void), [
 					static = false
 					^default = false
 					abstract = true
 					visibility = JvmVisibility.PUBLIC
-					action.actionFormalParameters.parameters.forEach[ p |
-						parameters += action.toParameter(p.name, p.parameterType)	
-					]		
+					action.actionFormalParameters.parameters.forEach [ p |
+						parameters += action.toParameter(p.name, p.parameterType)
+					]
 				])
 			]
 		)
-		
+
 		acceptor.accept(
 			consumableFunctionalInterface
 		)
-		
-		val actionClass = action.toClass(className,
+
+		val actionClass = action.toClass(
+			className,
 			[
-				superTypes += typeRef(functionalInterfaceName) 	
-				
-				members += action.toMethod("accept", typeRef(void),
-				[
+				superTypes += typeRef(functionalInterfaceName)
+
+				members += action.toMethod("accept", typeRef(void), [
 					static = false
 					visibility = JvmVisibility.PUBLIC
 					annotations += annotationRef(Override)
-					action.actionFormalParameters.parameters.forEach[ p |
-						parameters += action.toParameter(p.name, p.parameterType)	
+					action.actionFormalParameters.parameters.forEach [ p |
+						parameters += action.toParameter(p.name, p.parameterType)
 					]
 //					body = '''return;'''
 					body = action.action
 				])
 			]
 		)
-				
+
 		acceptor.accept(
 			actionClass
 		)
@@ -370,7 +363,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 
 		var JvmGenericType scaffoldClass = basicRule.toClass(className, [
 			static = false
-			superTypes += typeRef("mt.edu.um.cs.rv.monitors.Monitor")
+			superTypes += typeRef("mt.edu.um.cs.rv.monitors.Monitor", typeRef(eventClass))
 
 			members += basicRule.toMethod(
 				"requiredEvents",
@@ -383,6 +376,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 					body = '''return java.util.Collections.singleton(«eventClass.fullyQualifiedName».class);'''
 				]
 			)
+
 			members += basicRule.toMethod(
 				"getName",
 				typeRef(String),
@@ -393,6 +387,46 @@ public class JavaInferrerHandler extends InferrerHandler {
 					body = '''return this.toString();'''
 				]
 			)
+
+			members += basicRule.toMethod(
+				"evaluateCondition",
+				typeRef(boolean),
+				[
+					static = false
+					visibility = JvmVisibility.PRIVATE
+					parameters += basicRule.toParameter("e", typeRef(eventClass))
+
+					if (basicRule.condition != null) {
+						if (basicRule.condition.ref != null) {
+							val conditionClass = basicRule.condition.ref.ref.ref.jvmElements.filter(JvmGenericType).filter[t | !t.isInterface].head
+							body = '''
+								«conditionClass.fullyQualifiedName» condition = new «conditionClass.fullyQualifiedName»();
+								return condition.apply(2L, 3L);
+							'''
+						} else {
+							body = '''return true;'''
+						}
+					} else {
+							body = '''return true;'''
+					}
+				]
+			)
+
+			members += basicRule.toMethod(
+				"performEventActions",
+				typeRef(void),
+				[
+					static = false
+					visibility = JvmVisibility.PRIVATE
+					parameters += basicRule.toParameter("e", typeRef(eventClass))
+
+//					if (basicRule.ruleAction.actionBlock != null)
+//						body = basicRule.ruleAction.actionBlock
+//					else 
+					body = '''System.out.println(e.toString());'''
+				]
+			)
+
 			members += basicRule.toMethod(
 				"handleEvent",
 				typeRef(void),
@@ -400,10 +434,16 @@ public class JavaInferrerHandler extends InferrerHandler {
 					static = false
 					visibility = JvmVisibility.PUBLIC
 					annotations += annotationRef(Override)
-					parameters += basicRule.toParameter("e", typeRef("mt.edu.um.cs.rv.events.Event"))
-					body = '''System.out.println(e.toString());'''
+					parameters += basicRule.toParameter("e", typeRef(eventClass))
+					body = '''
+						if (evaluateCondition(e)) {
+							this.performEventActions(e);
+						}
+					'''
+//					body = '''System.out.println(e.toString());'''
 				]
 			)
+
 			members += basicRule.toMethod(
 				"toString",
 				typeRef(String),
