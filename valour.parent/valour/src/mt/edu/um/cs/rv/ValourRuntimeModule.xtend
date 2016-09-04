@@ -10,6 +10,9 @@ import mt.edu.um.cs.rv.jvmmodel.handler.JavaInferrerHandler
 import mt.edu.um.cs.rv.jvmmodel.handler.StdoutInferrerHandler
 import javax.inject.Inject
 import mt.edu.um.cs.rv.utils.ValourScriptTraverser
+import org.eclipse.xtext.xbase.compiler.XbaseCompiler
+import org.eclipse.xtext.xbase.typesystem.computation.XbaseTypeComputer
+import org.eclipse.xtext.xbase.util.XExpressionHelper
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
@@ -20,11 +23,39 @@ class ValourRuntimeModule extends AbstractValourRuntimeModule {
 	@Inject
 	def List<InferrerHandler> inferrerHandlers(JavaInferrerHandler javaInferrerHandler,
 		StdoutInferrerHandler stdoutInferrerHandler) {
-		return #[javaInferrerHandler, stdoutInferrerHandler]
+		//return #[javaInferrerHandler, stdoutInferrerHandler]
+		return #[javaInferrerHandler]
 	}
-	
+
 	@Provides
-	def ValourScriptTraverser valourScriptTraverser(){
+	def ValourScriptTraverser valourScriptTraverser() {
 		return new ValourScriptTraverser()
 	}
+//	@Provides
+//	def XbaseCompiler compiler(ValourCompiler valourCompiler){
+//		valourCompiler
+//	}
+	
+
+	//refer to : https://eclipse.org/Xtext/documentation/305_xbase.html#xbase-java-references
+//	override bindIGenerator() {
+//		ValourGenerator
+//	}
+
+
+	@Provides
+	def XbaseTypeComputer xbaseTypeComputer(ValourTypeComputer valourTypeComputer){
+		valourTypeComputer
+	}
+    
+    @Provides
+	def XbaseCompiler compiler(ValourCompiler valourCompiler){
+		valourCompiler
+	}
+    
+    @Provides
+	def XExpressionHelper xExpressionHelper(ValourXExpressionHelper valourXExpressionHelper){
+		valourXExpressionHelper
+	}
+
 }

@@ -30,6 +30,7 @@ import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 import org.eclipse.xtext.xtype.XImportSection
+import mt.edu.um.cs.rv.valour.ConditionRefInvocation
 
 public class JavaInferrerHandler extends InferrerHandler {
 
@@ -247,7 +248,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 			functionalInterface
 		)
 
-		val actionClass = condition.toClass(
+		val conditionClass = condition.toClass(
 			className,
 			[
 				superTypes += typeRef(functionalInterfaceName)
@@ -272,7 +273,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 		)
 
 		acceptor.accept(
-			actionClass
+			conditionClass
 		)
 	}
 
@@ -398,7 +399,8 @@ public class JavaInferrerHandler extends InferrerHandler {
 
 					if (basicRule.condition != null) {
 						if (basicRule.condition.ref != null) {
-							val conditionClass = basicRule.condition.ref.ref.ref.jvmElements.filter(JvmGenericType).filter[t | !t.isInterface].head
+							val conditionRefInvocation = basicRule.condition.ref as ConditionRefInvocation
+							val conditionClass = conditionRefInvocation.ref.ref.jvmElements.filter(JvmGenericType).filter[t | !t.isInterface].head
 							body = '''
 								«conditionClass.fullyQualifiedName» condition = new «conditionClass.fullyQualifiedName»();
 								return condition.apply(2L, 3L);
@@ -420,10 +422,13 @@ public class JavaInferrerHandler extends InferrerHandler {
 					visibility = JvmVisibility.PRIVATE
 					parameters += basicRule.toParameter("e", typeRef(eventClass))
 
-//					if (basicRule.ruleAction.actionBlock != null)
-//						body = basicRule.ruleAction.actionBlock
-//					else 
-					body = '''System.out.println(e.toString());'''
+					if (basicRule.ruleAction.actionBlock != null)
+						body = basicRule.ruleAction.actionBlock
+					else
+					{ 
+						//TODO
+						body = '''System.out.println(e.toString());'''	
+					}
 				]
 			)
 

@@ -136,7 +136,7 @@ public class StdoutInferrerHandler extends InferrerHandler {
 	def void handleConditionExpression(ConditionExpression conditionExpression){
 		if (conditionExpression.ref != null) {
 			// handle reference to condition
-			handleConditionRefInvocation(conditionExpression.ref)
+			handleConditionRefInvocation(conditionExpression.ref as ConditionRefInvocation)
 		} else {
 			val conditionBlock = conditionExpression.block
 			if (conditionBlock.simple != null) {

@@ -2,7 +2,6 @@ grammar mt.edu.um.cs.rv.Valour with org.eclipse.xtext.xbase.Xbase
 
 import "http://www.eclipse.org/xtext/xbase/Xbase" as xbase
 import "http://www.eclipse.org/xtext/xbase/Xtype"
-
 generate valour "http://www.edu.mt/um/cs/rv/valour"
 
 Model:
@@ -11,12 +10,11 @@ Model:
 
 ValourBody:
 	(declarations=Declarations)? //optional declarations block
-	rules=Rules
-;
+	rules=Rules;
 
 Declarations:
 	'declarations' '{'
-	{Declarations}  //refer to - https://www.eclipse.org/forums/index.php/t/170597/
+	{Declarations} //refer to - https://www.eclipse.org/forums/index.php/t/170597/
 	(declarations+=Declaration)*
 	'}';
 
@@ -30,16 +28,16 @@ Category:
 	'category' name=ID 'indexed' 'by' keyType=JvmTypeReference;
 
 Event:
-	'event' name=ID '('eventFormalParameters=FormalParameters')' '=' '{' eventBody=EventBody '}';
+	'event' name=ID '(' eventFormalParameters=FormalParameters ')' '=' '{' eventBody=EventBody '}';
 
 FormalParameters:
-	(parameters+=FullJvmFormalParameter (',' parameters+=FullJvmFormalParameter)*)?;
+	{FormalParameters}(parameters+=FullJvmFormalParameter (',' parameters+=FullJvmFormalParameter)*)?;
 
 ActualParameters:
-	(parameters+=XExpression (',' parameters+=XExpression)*)?;
+	{ActualParameters}(parameters+=XExpression (',' parameters+=XExpression)*)?;
 
 EventBody:
-	trigger=SimpleTrigger (=>additionalTrigger=AdditionalTrigger)?
+	trigger=SimpleTrigger (=> additionalTrigger=AdditionalTrigger)?
 	(where=WhereClauses)?
 	(when=WhenClause)?
 	(categorisation=CategorisationClause)?;
@@ -48,13 +46,12 @@ SimpleTrigger:
 	(controlFlowTrigger=ControlFlowTrigger |
 	eventTrigger=EventTrigger |
 	monitorTrigger=MonitorTrigger)
-	(=>whereClauses=WhereClauses)?
-;
+	(=> whereClauses=WhereClauses)?;
 
 ControlFlowTrigger:
 	'system' 'controlflow' 'trigger' aop=AopExpression;
 
-//TODO change aop
+	//TODO change aop
 AopExpression:
 	expression=STRING;
 
@@ -64,33 +61,30 @@ EventTrigger:
 MonitorTrigger:
 	'monitor' 'trigger' name=ID '(' params=FormalParameters ')';
 
-
 AdditionalTrigger:
-	 (=>'||') trigger=SimpleTrigger (=>additionalTrigger=AdditionalTrigger)?;
+	(=> '||') trigger=SimpleTrigger (=> additionalTrigger=AdditionalTrigger)?;
 
 WhereClauses:
-	'where' (clauses+=WhereClause)+
-;
+	'where' (clauses+=WhereClause)+;
 
-//TODO cross reference event parameters - http://stackoverflow.com/questions/15511669/validate-number-of-function-parameters-in-xtext
+	//TODO cross reference event parameters - http://stackoverflow.com/questions/15511669/validate-number-of-function-parameters-in-xtext
 WhereClause:
-	whereId=ID '=' whereExpression=ValueExpression
-;
+	whereId=ID '=' whereExpression=ValueExpression;
 
 ValueExpression:
 	simple=SimpleValueExpression | complex=ComplexValueExpression;
 
-//TODO - review this and make more restrictive?  Should always return a result (of a given type)
+	//TODO - review this and make more restrictive?  Should always return a result (of a given type)
 SimpleValueExpression:
 	'{{'
-	{SimpleValueExpression}  //refer to - https://www.eclipse.org/forums/index.php/t/170597/
+	{SimpleValueExpression} //refer to - https://www.eclipse.org/forums/index.php/t/170597/
 	(expressions+=ValueBlockStatement ';'?)*
 	'}}';
 
-//TODO - review this and make more restrictive?  Should always return a result (of a given type)
+	//TODO - review this and make more restrictive?  Should always return a result (of a given type)
 ComplexValueExpression:
 	'{'
-	{ComplexValueExpression}  //refer to - https://www.eclipse.org/forums/index.php/t/170597/
+	{ComplexValueExpression} //refer to - https://www.eclipse.org/forums/index.php/t/170597/
 	(expressions+=ValueBlockStatement ';'?)*
 	'}';
 
@@ -101,77 +95,75 @@ WhenClause:
 	'when' condition=ConditionExpression;
 
 ConditionExpression:
-	ref=ConditionRefInvocation|block=ConditionBlock;
+	ref=ConditionRefInvocation | block=ConditionBlock;
 
-ConditionRefInvocation:
-	ref=ConditionRef'('params=ActualParameters')';
+ConditionRefInvocation returns xbase::XExpression:
+	{ConditionRefInvocation} ref=ConditionRef '(' params=ActualParameters ')';
 
 ConditionRef hidden():
-	'#'ref=[Condition];
+	'#' ref=[Condition];
 
 ConditionBlock:
 	simple=SimpleCondition | complex=ComplexCondition;
 
-//TODO - review this and make more restrictive?  Should always have a boolean result
+	//TODO - review this and make more restrictive?  Should always have a boolean result
 SimpleCondition returns xbase::XBlockExpression:
 	'{{'
-	{SimpleCondition}  //refer to - https://www.eclipse.org/forums/index.php/t/170597/
+	{SimpleCondition} //refer to - https://www.eclipse.org/forums/index.php/t/170597/
 	(expressions+=ConditionBlockStatement ';'?)*
 	'}}';
 
-//TODO - review this and make more restrictive?  Should always have a boolean result
+	//TODO - review this and make more restrictive?  Should always have a boolean result
 ComplexCondition returns xbase::XBlockExpression:
 	'{'
-	{ComplexCondition}  //refer to - https://www.eclipse.org/forums/index.php/t/170597/
+	{ComplexCondition} //refer to - https://www.eclipse.org/forums/index.php/t/170597/
 	(expressions+=ConditionBlockStatement ';'?)*
 	'}';
 
 ConditionBlockStatement returns xbase::XExpression:
 	ConditionRefInvocation | XExpressionOrVarDeclaration;
 
-//TODO check if its possible to bind the type of the ValueExpression with the type of the category.
+	//TODO check if its possible to bind the type of the ValueExpression with the type of the category.
 //Probably in a similar way as described here - http://stackoverflow.com/questions/15511669/validate-number-of-function-parameters-in-xtext
 CategorisationClause:
 	'belonging' 'to' category=CategoryRef 'with' 'index' categoryExpression=ValueExpression;
-	
+
 CategoryRef:
 	category=[Category];
 
 Condition:
-	'condition' name=ID '('conditionFormalParameters=FormalParameters')' '=' conditionExpression=ConditionExpression;
+	'condition' name=ID '(' conditionFormalParameters=FormalParameters ')' '=' conditionExpression=ConditionExpression;
 
 Action:
-	'action' name=ID '('actionFormalParameters=FormalParameters')' '=' action=ActionBlock;
+	'action' name=ID '(' actionFormalParameters=FormalParameters ')' '=' action=ActionBlock;
 
 RuleAction:
 	actionMonitorTriggerFire=MonitorTriggerFire |
 	actionRefInvocation=ActionRefInvocation |
 	actionBlock=ActionBlock;
 
-//TODO, should allow reference to other actions and monitor trigger
+	//TODO, should allow reference to other actions and monitor trigger
 ActionBlock returns xbase::XBlockExpression:
 	'{'
-		{ActionBlock}  //refer to - https://www.eclipse.org/forums/index.php/t/170597/
-		(expressions+=ActionBlockStatement ';'?)*
+	{ActionBlock} //refer to - https://www.eclipse.org/forums/index.php/t/170597/
+	(expressions+=ActionBlockStatement ';'?)*
 	'}';
 
 ActionBlockStatement returns xbase::XExpression:
 	ActionRefInvocation | XExpressionOrVarDeclaration;
-//TODO look at this to restrict the syntax here to just Java statements - https://typefox.io/tutorial-how-to-embed-java-in-an-xtext-dsl
-
+	//TODO look at this to restrict the syntax here to just Java statements - https://typefox.io/tutorial-how-to-embed-java-in-an-xtext-dsl
 ActionRefInvocation:
-	actionRef=ActionRef '('actionActualParameters=ActualParameters')';
-//ActionRef is split from ActionRefInvocation in order to enfore no spacing between the # and the action name
+	actionRef=ActionRef '(' actionActualParameters=ActualParameters ')';
+	//ActionRef is split from ActionRefInvocation in order to enfore no spacing between the # and the action name
 ActionRef hidden():
-	'#'actionRefId=[Action];
+	'#' actionRefId=[Action];
 
-//TODO make monitor trigger reference instance of MonitorTrigger i.e. monitorTrigger=[MonitorTrigger]
+	//TODO make monitor trigger reference instance of MonitorTrigger i.e. monitorTrigger=[MonitorTrigger]
 // currently the problem is that monitor triggers are scoped within an event, but #generate trigger does not allow
 // fully qualified references e.g. event a() = monitor trigger b(), b() needs to be referenced as a.b() but monitorTrigger=[MonitorTrigger]
 // does not currently allow it.
 MonitorTriggerFire:
-	'#generate' 'trigger' monitorTrigger=ID '('monitorTriggerActualParameters=ActualParameters')';
-
+	'#generate' 'trigger' monitorTrigger=ID '(' monitorTriggerActualParameters=ActualParameters ')';
 
 Rules:
 	(rules+=Rule)*;
@@ -180,44 +172,27 @@ Rule:
 	basicRule=BasicRule
 	| stateBlock=StateBlock
 	| forEach=ForEach
-	| parForEach=ParForEach
-;
+	| parForEach=ParForEach;
 
 BasicRule:
-	event=EventRef ('|' condition=ConditionExpression )? '->' ruleAction=RuleAction
-;
+	event=EventRef ('|' condition=ConditionExpression)? '->' ruleAction=RuleAction;
 
-//TODO bind parameters with declaration - http://stackoverflow.com/questions/15511669/validate-number-of-function-parameters-in-xtext
+	//TODO bind parameters with declaration - http://stackoverflow.com/questions/15511669/validate-number-of-function-parameters-in-xtext
 EventRef:
-	eventRefId=[Event] '('eventActualParameters=ActualParameters')'
-;
+	eventRefId=[Event] '(' eventActualParameters=ActualParameters ')';
 
 StateBlock:
 	'state' '{' (stateDec+=StateDeclaration)* '}' 'in' '{' valourBody=ValourBody '}';
 
-//TODO - can we use the var/var declation in xtext ? - https://eclipse.org/xtend/documentation/203_xtend_expressions.html
-StateDeclaration :
+	//TODO - can we use the var/var declation in xtext ? - https://eclipse.org/xtend/documentation/203_xtend_expressions.html
+StateDeclaration:
 //	dec=XVariableDeclaration
-	type=JvmTypeReference name=ValidID '=' valueExpression=ValueExpression
-;
-
+	type=JvmTypeReference name=ValidID '=' valueExpression=ValueExpression;
 
 ForEach:
-	'replicate'
-	'{'
-	(stateDec+=StateDeclaration)*
-	'}'
-	'foreach' category=CategoryRef categoryLabel=ID
-	'{'
-	valourBody=ValourBody
-	'}';
+	'replicate' '{' (stateDec+=StateDeclaration)* '}' 'foreach' category=CategoryRef categoryLabel=ID '{'
+	valourBody=ValourBody '}';
 
 ParForEach:
-	'replicate' 'in' 'parallel'
-	'{'
-	(stateDec+=StateDeclaration)*
-	'}'
-	'foreach' category=CategoryRef categoryLabel=ID
-	'{'
-	valourBody=ValourBody
-	'}';
+	'replicate' 'in' 'parallel' '{' (stateDec+=StateDeclaration)* '}' 'foreach' category=CategoryRef categoryLabel=ID '{'
+	valourBody=ValourBody '}';
