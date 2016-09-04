@@ -150,7 +150,7 @@ ActionBlock returns xbase::XBlockExpression:
 	'}';
 
 ActionBlockStatement returns xbase::XExpression:
-	ActionRefInvocation | XExpressionOrVarDeclaration;
+	ActionRefInvocation | MonitorTriggerFire | XExpressionOrVarDeclaration;
 	//TODO look at this to restrict the syntax here to just Java statements - https://typefox.io/tutorial-how-to-embed-java-in-an-xtext-dsl
 ActionRefInvocation:
 	actionRef=ActionRef '(' actionActualParameters=ActualParameters ')';
@@ -163,7 +163,7 @@ ActionRef hidden():
 // fully qualified references e.g. event a() = monitor trigger b(), b() needs to be referenced as a.b() but monitorTrigger=[MonitorTrigger]
 // does not currently allow it.
 MonitorTriggerFire:
-	'#generate' 'trigger' monitorTrigger=ID '(' monitorTriggerActualParameters=ActualParameters ')';
+	'#generate' 'trigger' monitorTrigger=[MonitorTrigger] '(' monitorTriggerActualParameters=ActualParameters ')';
 
 Rules:
 	(rules+=Rule)*;

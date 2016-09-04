@@ -18,6 +18,9 @@ import mt.edu.um.cs.rv.valour.Condition
 import mt.edu.um.cs.rv.valour.CategoryRef
 import mt.edu.um.cs.rv.utils.ValourScriptTraverser
 import javax.inject.Inject
+import mt.edu.um.cs.rv.valour.MonitorTriggerFire
+import mt.edu.um.cs.rv.valour.MonitorTrigger
+import mt.edu.um.cs.rv.valour.SimpleTrigger
 
 /**
  * This class contains custom scoping description.
@@ -26,7 +29,7 @@ import javax.inject.Inject
  * on how and when to use it.
  */
 class ValourScopeProvider extends AbstractValourScopeProvider {
-	
+
 	@Inject extension ValourScriptTraverser
 
 	override getScope(EObject context, EReference reference) {
@@ -34,17 +37,15 @@ class ValourScopeProvider extends AbstractValourScopeProvider {
 
 		if (context instanceof EventRef) {
 			return buildScopeForReference(context, Event)
-		} 
-		else if (context instanceof ActionRef) {
+		} else if (context instanceof ActionRef) {
 			return buildScopeForReference(context, Action)
-		} 
-		else if (context instanceof CategoryRef) {
+		} else if (context instanceof CategoryRef) {
 			return buildScopeForReference(context, Category)
-		}
-		else if (context instanceof ConditionRef) {
+		} else if (context instanceof ConditionRef) {
 			return buildScopeForReference(context, Condition)
-		} 
-		else {
+		} else if (context instanceof MonitorTriggerFire) {
+			return buildScopeForMonitorTriggerFire(context)
+		} else {
 			return iScope
 		}
 
@@ -73,5 +74,59 @@ class ValourScopeProvider extends AbstractValourScopeProvider {
 
 			return parent
 		}
+	}
+
+	def <R extends EObject, X extends EObject> buildScopeForMonitorTriggerFire(X context) {
+		val declarationsList = newArrayList()
+
+		var declarations = findClosestDeclaration(context)
+
+		if (declarations != null) {
+			do {
+				declarationsList.add(declarations)
+				declarations = findClosestDeclaration(declarations.eContainer.eContainer)
+			} while (declarations != null)
+
+			// build the scope object
+			var IScope parent = IScope.NULLSCOPE
+			for (var i = declarationsList.size - 1; i >= 0; i--) {
+
+				declarations = declarationsList.get(i)
+
+				// get all events with monitor triggers
+				val candidates = EcoreUtil2.getAllContentsOfType(declarations, Event)
+					.map[e | filterMonitorTriggers(e)]
+					.flatten 
+
+				parent = Scopes.scopeFor(candidates, parent)
+			}
+
+			return parent
+		}
+	}
+
+	def filterMonitorTriggers(Event e) {
+		val eventBody = e.eventBody
+		
+		val monitorTriggerList = newArrayList()
+		
+		if (isMonitorTrigger(eventBody.trigger)) {
+			monitorTriggerList.add(eventBody.trigger.monitorTrigger)
+		}
+		 
+		var additionalTrigger = eventBody.additionalTrigger
+		
+		while (additionalTrigger != null){
+			if (isMonitorTrigger(additionalTrigger.trigger)){
+				monitorTriggerList.add(additionalTrigger.trigger.monitorTrigger)
+			}	
+			additionalTrigger = additionalTrigger.additionalTrigger
+		}
+		
+		return monitorTriggerList
+	}
+	
+	def boolean isMonitorTrigger(SimpleTrigger st){
+		st.monitorTrigger != null
 	}
 }
