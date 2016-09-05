@@ -28,4 +28,16 @@ class ValourScriptTraverser {
 		}
 	}
 	
+	def <T extends EObject> T findFirstParentOfType(EObject child, Class<T> parentType){
+		if ((child != null) && (parentType.isInstance(child))) {
+			return child as T
+		}
+		else if (child == null){
+			return null
+		}
+		else {
+			return findFirstParentOfType(child.eContainer, parentType)
+		}
+	}
+	
 }

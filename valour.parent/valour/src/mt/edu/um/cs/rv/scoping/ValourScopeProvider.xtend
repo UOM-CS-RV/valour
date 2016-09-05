@@ -21,6 +21,7 @@ import javax.inject.Inject
 import mt.edu.um.cs.rv.valour.MonitorTriggerFire
 import mt.edu.um.cs.rv.valour.MonitorTrigger
 import mt.edu.um.cs.rv.valour.SimpleTrigger
+import mt.edu.um.cs.rv.valour.WhereClause
 
 /**
  * This class contains custom scoping description.
@@ -45,6 +46,8 @@ class ValourScopeProvider extends AbstractValourScopeProvider {
 			return buildScopeForReference(context, Condition)
 		} else if (context instanceof MonitorTriggerFire) {
 			return buildScopeForMonitorTriggerFire(context)
+		} else if (context instanceof WhereClause) {
+			return buildScopeForWhereClause(context)
 		} else {
 			return iScope
 		}
@@ -128,5 +131,19 @@ class ValourScopeProvider extends AbstractValourScopeProvider {
 	
 	def boolean isMonitorTrigger(SimpleTrigger st){
 		st.monitorTrigger != null
+	}
+	
+	
+	def <R extends EObject, X extends EObject> buildScopeForWhereClause(WhereClause whereClause) {
+		val event = findFirstParentOfType(whereClause, Event)
+		
+		var IScope scope = IScope.NULLSCOPE
+		
+		if (event != null){
+			val parameters = event.eventFormalParameters.parameters
+			scope = Scopes.scopeFor(parameters, scope)
+		}
+		
+		return scope
 	}
 }
