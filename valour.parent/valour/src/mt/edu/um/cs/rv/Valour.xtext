@@ -97,7 +97,7 @@ WhenClause:
 ConditionExpression:
 	ref=ConditionRefInvocation | block=ConditionBlock;
 
-ConditionRefInvocation:
+ConditionRefInvocation returns xbase::XExpression:
 	{ConditionRefInvocation} ref=ConditionRef '(' params=ActualParameters ')';
 
 ConditionRef hidden():
