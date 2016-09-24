@@ -262,7 +262,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 					]
 
 					if (condition.conditionExpression.ref != null) {
-						// TODO body = condition.conditionExpression.ref.
+						body = condition.conditionExpression.ref
 					} else if (condition.conditionExpression.block.simple != null) {
 						body = condition.conditionExpression.block.simple
 					} else {

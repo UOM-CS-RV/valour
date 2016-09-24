@@ -28,7 +28,7 @@ class ValourCompiler extends XbaseCompiler {
 			val action = obj.actionRef.actionRefId
 			val actionParameters = obj.actionActualParameters
 			val actionClass = action.jvmElements.filter(JvmGenericType).filter[t|!t.isInterface].head
-			val objectName = "action" + uuidName
+			val objectName = "action" + uuidName()
 			
 			appendable.append('''«actionClass.fullyQualifiedName» «objectName» = new «actionClass.fullyQualifiedName»();''')
 			appendable.newLine
@@ -38,27 +38,43 @@ class ValourCompiler extends XbaseCompiler {
 			
 			appendArguments(actionParameters.parameters, appendable)
 			
+			appendable.newLine
 			appendable.append(");")
 			appendable.newLine
 			
 			appendable.newLine
 			return
 		}
+		else if (obj instanceof ConditionRefInvocation) {
+			return
+		}
 
 		super.doInternalToJavaStatement(obj, appendable, isReferenced)
 	}
-
-	def functionCall(Action action, ActualParameters actualParameters, ITreeAppendable appendable, boolean isReferenced) {
-		val actionClass = action.jvmElements.filter(JvmGenericType).filter[t|!t.isInterface].head
-		val objectName = "action" + uuidName
-		'''
-			«actionClass.fullyQualifiedName» «objectName» = new «actionClass.fullyQualifiedName»();
-			«objectName».accept(
-			«FOR exp: actualParameters.parameters»
-				«doInternalToJavaStatement(exp, appendable, true)»
-			«ENDFOR»
-			);
-		'''
+	
+	override void _toJavaExpression(XExpression obj, ITreeAppendable appendable) {
+		switch (obj) {
+			ConditionRefInvocation: _toJavaExpression(obj as ConditionRefInvocation, appendable)
+			default: super._toJavaExpression(obj, appendable)
+		}
+	}
+	
+	def _toJavaExpression(ConditionRefInvocation obj, ITreeAppendable appendable) {
+			appendable.trace(obj)
+			appendable.newLine
+			
+			val condition = obj.ref.ref
+			val conditionParameters = obj.params
+			val conditionClass = condition.jvmElements.filter(JvmGenericType).filter[t|!t.isInterface].head
+			
+			appendable.append('''new «conditionClass.fullyQualifiedName»().apply(''')
+			appendable.newLine
+			appendArguments(conditionParameters.parameters, appendable)
+			appendable.newLine
+			appendable.append(")")
+			appendable.newLine
+			
+			appendable.newLine
 	}
 	
 	def uuidName(){
