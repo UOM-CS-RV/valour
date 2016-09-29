@@ -9,6 +9,8 @@ import mt.edu.um.cs.rv.valour.EventRef
 import mt.edu.um.cs.rv.valour.ValourPackage
 import javax.inject.Inject
 import mt.edu.um.cs.rv.utils.ValourScriptTraverser
+import mt.edu.um.cs.rv.valour.ForEach
+import mt.edu.um.cs.rv.valour.Rule
 
 /**
  * This class contains custom validation rules. 
@@ -63,6 +65,31 @@ class ValourValidator extends AbstractValourValidator {
 				
 				declarations = findClosestDeclaration(declarations.eContainer.eContainer)
 			} while (declarations != null)
+		}
+	}
+	
+	@Check
+	def checkForEachBlocksOnlyUseEventsWithTheRightCategorisation(ForEach forEach){
+		val forEachCategory = forEach.category.category
+		
+		val rules = forEach.valourBody.rules.rules
+		
+		for (Rule r: rules){
+			val basicRule = r.basicRule
+			if (basicRule != null){
+				val event = basicRule.event
+				
+				val eventCategorisation = event.eventRefId.eventBody.categorisation
+				
+				if ((eventCategorisation == null) || (eventCategorisation.category == null)){
+					val msg = '''Event «event.eventRefId» cannot be used within a for-each constructor without declaring which category it belongs to'''
+					error(msg, ValourPackage.Literals.EVENT__NAME)		
+				}
+				else if (eventCategorisation.category.category != forEachCategory){
+					val msg = '''Event «event.eventRefId.name» declares a different type of category [«eventCategorisation.category.category.name»], while the current for-each constructor expects category of [«forEachCategory.name»]'''
+					error(msg, r, ValourPackage.Literals.RULE__BASIC_RULE)
+				}
+			}
 		}
 	}
 }
