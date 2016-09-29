@@ -75,14 +75,14 @@ ValueExpression:
 	simple=SimpleValueExpression | complex=ComplexValueExpression;
 
 	//TODO - review this and make more restrictive?  Should always return a result (of a given type)
-SimpleValueExpression:
+SimpleValueExpression returns xbase::XBlockExpression:
 	'{{'
 	{SimpleValueExpression} //refer to - https://www.eclipse.org/forums/index.php/t/170597/
 	(expressions+=ValueBlockStatement ';'?)*
 	'}}';
 
 	//TODO - review this and make more restrictive?  Should always return a result (of a given type)
-ComplexValueExpression:
+ComplexValueExpression  returns xbase::XBlockExpression:
 	'{'
 	{ComplexValueExpression} //refer to - https://www.eclipse.org/forums/index.php/t/170597/
 	(expressions+=ValueBlockStatement ';'?)*

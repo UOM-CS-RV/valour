@@ -22,6 +22,12 @@ import mt.edu.um.cs.rv.valour.MonitorTriggerFire
 import mt.edu.um.cs.rv.valour.MonitorTrigger
 import mt.edu.um.cs.rv.valour.SimpleTrigger
 import mt.edu.um.cs.rv.valour.WhereClause
+import mt.edu.um.cs.rv.valour.ComplexValueExpression
+import mt.edu.um.cs.rv.valour.SimpleValueExpression
+import mt.edu.um.cs.rv.valour.CategorisationClause
+import mt.edu.um.cs.rv.valour.StateDeclaration
+import mt.edu.um.cs.rv.valour.FormalParameters
+import mt.edu.um.cs.rv.valour.ValueExpression
 
 /**
  * This class contains custom scoping description.
@@ -106,7 +112,7 @@ class ValourScopeProvider extends AbstractValourScopeProvider {
 
 			return parent
 		}
-	}
+	}	
 
 	def filterMonitorTriggers(Event e) {
 		val eventBody = e.eventBody
@@ -135,7 +141,7 @@ class ValourScopeProvider extends AbstractValourScopeProvider {
 	
 	
 	def <R extends EObject, X extends EObject> buildScopeForWhereClause(WhereClause whereClause) {
-		val event = findFirstParentOfType(whereClause, Event)
+		val event = findFirstAncestorOfType(whereClause, Event)
 		
 		var IScope scope = IScope.NULLSCOPE
 		

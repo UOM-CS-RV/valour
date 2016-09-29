@@ -31,6 +31,21 @@ import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 import org.eclipse.xtext.xtype.XImportSection
 import mt.edu.um.cs.rv.valour.ConditionRefInvocation
 import java.util.Set
+import java.util.concurrent.ForkJoinPool
+import org.eclipse.xtext.xbase.XExpression
+import mt.edu.um.cs.rv.utils.ValourScriptTraverser
+import mt.edu.um.cs.rv.valour.ValourBody
+import java.util.List
+import java.util.Map
+import org.eclipse.xtext.common.types.JvmOperation
+import java.util.Stack
+import org.eclipse.xtend2.lib.StringConcatenation
+import com.google.common.collect.Multimap
+import com.google.common.collect.ArrayListMultimap
+import org.eclipse.xtext.xbase.lib.Procedures.Procedure1
+import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
+import java.util.HashSet
+import com.google.common.collect.ListMultimap
 
 public class JavaInferrerHandler extends InferrerHandler {
 
@@ -42,6 +57,8 @@ public class JavaInferrerHandler extends InferrerHandler {
 	@Inject extension IJvmModelAssociations
 	@Inject extension IQualifiedNameProvider
 
+	@Inject extension ValourScriptTraverser
+
 	var Model model
 	var IJvmDeclaredTypeAcceptor acceptor
 
@@ -52,6 +69,9 @@ public class JavaInferrerHandler extends InferrerHandler {
 
 	@Extension JvmAnnotationReferenceBuilder _annotationTypesBuilder;
 	@Extension JvmTypeReferenceBuilder _typeReferenceBuilder;
+
+	Stack<Set<String>> requiredEventsStack = new Stack()
+	Stack<Multimap<String, String>> eventMonitorsStack = new Stack()
 
 	override void setup(JvmAnnotationReferenceBuilder _annotationTypesBuilder,
 		JvmTypeReferenceBuilder _typeReferenceBuilder) {
@@ -79,7 +99,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 		)
 	}
 
-	// TODO the package to which to generate the classes should be defined in the language ???
+// TODO the package to which to generate the classes should be defined in the language ???
 	def String packageNameToUse(EObject eObject) {
 		val inputFileName = eObject.eResource.URI.lastSegment
 		val lastIndex = inputFileName.lastIndexOf('.valour')
@@ -172,6 +192,32 @@ public class JavaInferrerHandler extends InferrerHandler {
 				body = '''return "«eventDecName»";'''
 			]
 		)
+
+		if (event.eventBody.categorisation != null) {
+
+			val keyType = event.eventBody.categorisation.category.category.keyType
+			eventClass.superTypes += typeRef("mt.edu.um.cs.rv.events.CategorisedEvent", keyType)
+
+			eventClass.members += event.toMethod(
+				"categoriseEvent",
+				keyType,
+				[
+					static = false
+					visibility = JvmVisibility.PUBLIC
+					annotations += annotationRef(Override)
+
+//					event.eventFormalParameters.parameters.forEach [ param |
+//						parameters += param.toParameter(param.name, param.parameterType)
+//					]
+					if (event.eventBody.categorisation.categoryExpression.simple != null) {
+						body = event.eventBody.categorisation.categoryExpression.simple
+					} else {
+						body = event.eventBody.categorisation.categoryExpression.complex
+					}
+
+				]
+			)
+		}
 
 		acceptor.accept(
 			eventClass
@@ -350,7 +396,8 @@ public class JavaInferrerHandler extends InferrerHandler {
 		ruleWithoutBodyAndCondition = ruleWithoutBodyAndCondition + ' -> { .. }'
 
 		val packageName = packageNameToUse(basicRule) + ".monitors"
-		val String className = packageName + ".Monitor" + (monitorCounter++)
+		val monitorIndex = monitorCounter++;
+		val String className = packageName + ".Monitor" + monitorIndex
 
 		val eventClass = basicRule.event.eventRefId.getJvmElements().filter(JvmGenericType).head
 
@@ -389,149 +436,334 @@ public class JavaInferrerHandler extends InferrerHandler {
 				]
 			)
 
-			members +=
-				basicRule.toMethod(
-					"evaluateCondition",
-					typeRef(boolean),
+			members += basicRule.toMethod(
+				"evaluateCondition",
+				typeRef(boolean),
+				[
+					static = false
+					visibility = JvmVisibility.PRIVATE
+					parameters += basicRule.toParameter("e", typeRef(eventClass))
+
+					if (basicRule.condition != null) {
+						if (basicRule.condition.ref != null) {
+							body = basicRule.condition.ref
+						} else if (basicRule.condition.block != null) {
+							if (basicRule.condition.block.simple != null) {
+								body = basicRule.condition.block.simple
+							} else if (basicRule.condition.block.complex != null) {
+								body = basicRule.condition.block.complex
+							}
+						}
+					} else {
+						// if no condition has been specified, then return true
+						body = '''return true;'''
+					}
+				]
+			)
+
+			members += basicRule.toMethod(
+				"performEventActions",
+				typeRef(void),
+				[
+					static = false
+					visibility = JvmVisibility.PRIVATE
+					parameters += basicRule.toParameter("e", typeRef(eventClass))
+
+					if (basicRule.ruleAction.actionBlock != null)
+						body = basicRule.ruleAction.actionBlock
+					else if (basicRule.ruleAction.actionRefInvocation != null) {
+						body = basicRule.ruleAction.actionRefInvocation
+					} else if (basicRule.ruleAction.actionMonitorTriggerFire != null) {
+						// TODO - see issue #20
+						body = '''System.out.println(e.toString());'''
+					}
+				]
+			)
+
+			members += basicRule.toMethod(
+				"handleEvent",
+				typeRef(void),
+				[
+					static = false
+					visibility = JvmVisibility.PUBLIC
+					annotations += annotationRef(Override)
+					parameters += basicRule.toParameter("e", typeRef("mt.edu.um.cs.rv.events.Event"))
+					body = '''
+						if (e instanceof «eventClass.qualifiedName») {
+							«eventClass.qualifiedName» event = («eventClass.qualifiedName») e;
+							if (evaluateCondition(event)) {
+								this.performEventActions(event);
+							}
+						}
+						else {
+							//TODO this should never happen
+							//TODO handle this cleanly ??
+							throw new RuntimeException("Unable to handle event of type " + e.getClass().getName());
+						}
+					'''
+				]
+			)
+
+			members += basicRule.toMethod(
+				"toString",
+				typeRef(String),
+				[
+					static = false
+					visibility = JvmVisibility.PUBLIC
+					annotations += annotationRef(Override)
+					// TODO clean this 
+					body = '''return "«toStringBody»";'''
+				]
+			)
+
+		])
+
+		if (monitorClass != null) {
+			acceptor.accept(
+				monitorClass
+			)
+		} else {
+			// TODO log error
+			println("Unable to create monitor class!")
+		}
+
+		handleRulePartOfForEach(basicRule, monitorIndex, monitorClass, eventClass)
+
+	}
+
+	def handleRulePartOfForEach(BasicRule basicRule, int monitorCounter, JvmGenericType monitorClass,
+		JvmGenericType eventClass) {
+		// if BasicRule is part of a ForEach block, then we need to build a delegate class
+		val valourBody = findFirstAncestorOfType(basicRule, ValourBody)
+		val valourBodyContainer = valourBody.eContainer
+		if (valourBodyContainer instanceof ForEach) {
+			// add the event to this block and all the upper blocks to ensure event registration
+			requiredEventsStack.forEach[e|e.add(eventClass.fullyQualifiedName.toString)]
+
+			// add the event to monitor association
+			eventMonitorsStack.peek.put(eventClass.fullyQualifiedName.toString,
+				monitorClass.fullyQualifiedName.toString)
+		}
+
+	}
+
+	override handleRuleEnd(Rule rule) {
+	}
+
+	override handleStateBlockStart(StateBlock block) {
+	}
+
+	override handleStateDeclaration(StateDeclaration sd) {
+	}
+
+	override handleStateBlockStateDeclarationsEnd(StateBlock block) {
+	}
+
+	override handleStateBlockEnd(StateBlock block) {
+	}
+
+	override handleForEachBlockStart(ForEach forEach) {
+		val packageName = packageNameToUse(forEach) + ".monitors.foreach"
+		val String className = packageName + ".ForEachDelegatingMonitor" + monitorCounter
+
+		val keyType = forEach.category.category.keyType
+
+		requiredEventsStack.push(new HashSet())
+
+		eventMonitorsStack.push(ArrayListMultimap.create())
+
+		var JvmGenericType forEachDelegatingMonitorClass = forEach.toClass(
+			className,
+			[
+				static = false
+				superTypes += typeRef("mt.edu.um.cs.rv.monitors.Monitor")
+
+				members += forEach.toMethod(
+					"requiredEvents",
+					// Set<Class<? extends Event>> requiredEvents();
+					typeRef(Set, typeRef(Class, wildcardExtends(typeRef("mt.edu.um.cs.rv.events.Event")))),
 					[
 						static = false
-						visibility = JvmVisibility.PRIVATE
-						parameters += basicRule.toParameter("e", typeRef(eventClass))
-
-						if (basicRule.condition != null) {
-							if (basicRule.condition.ref != null){
-								body = basicRule.condition.ref
-							}
-							else if (basicRule.condition.block != null){
-								if (basicRule.condition.block.simple != null){
-									body = basicRule.condition.block.simple
-								}
-								else if (basicRule.condition.block.complex != null){
-									body = basicRule.condition.block.complex
-								}
-							}
-						} else {
-							//if no condition has been specified, then return true
-							body = '''return true;'''
-						}
+						visibility = JvmVisibility.PUBLIC
+						annotations += annotationRef(Override)
+						// setting the body to empty, this is then set in handleForEachBlockEnd() using the content of monitorEventRequirementsStack
+						body = ''''''
 					]
 				)
 
-				members += basicRule.toMethod(
-					"performEventActions",
-					typeRef(void),
-					[
-						static = false
-						visibility = JvmVisibility.PRIVATE
-						parameters += basicRule.toParameter("e", typeRef(eventClass))
-
-						if (basicRule.ruleAction.actionBlock != null)
-							body = basicRule.ruleAction.actionBlock
-						else if (basicRule.ruleAction.actionRefInvocation != null) {
-							body = basicRule.ruleAction.actionRefInvocation
-						} else if (basicRule.ruleAction.actionMonitorTriggerFire != null) {
-							// TODO - see issue #20
-							body = '''System.out.println(e.toString());'''
-						}
-					]
-				)
-
-				members += basicRule.toMethod(
+				members += forEach.toMethod(
 					"handleEvent",
 					typeRef(void),
 					[
 						static = false
 						visibility = JvmVisibility.PUBLIC
 						annotations += annotationRef(Override)
-						parameters += basicRule.toParameter("e", typeRef("mt.edu.um.cs.rv.events.Event"))
+						parameters += forEach.toParameter("e", typeRef("mt.edu.um.cs.rv.events.Event"))
 						body = '''
-							if (e instanceof «eventClass.qualifiedName») {
-								«eventClass.qualifiedName» event = («eventClass.qualifiedName») e;
-								if (evaluateCondition(event)) {
-									this.performEventActions(event);
-								}
+							
+							if (!(e instanceof mt.edu.um.cs.rv.events.CategorisedEvent)){
+								//TODO handle this situation somehow
+								throw new RuntimeException("Cannot handle an un-categorised event in a for-each construct");
 							}
-							else {
+							
+							mt.edu.um.cs.rv.events.CategorisedEvent ce = (mt.edu.um.cs.rv.events.CategorisedEvent) e;
+							«keyType» key = («keyType») ce.categoriseEvent();
+							
+							if (e == null){
 								//TODO this should never happen
 								//TODO handle this cleanly ??
-								throw new RuntimeException("Unable to handle event of type " + e.getClass().getName());
+								throw new RuntimeException("Unable to handle event of type " + e.getClass().getName() + " as categorisation returned null");
+							}
+							else{
+								
+								List<Class<? extends mt.edu.um.cs.rv.monitors.Monitor>> interestedMonitorTypes = getInterestedMonitorTypes(e);
+								
+								for (Class<? extends mt.edu.um.cs.rv.monitors.Monitor> c : interestedMonitorTypes){
+									java.util.Map<«keyType», mt.edu.um.cs.rv.monitors.Monitor> map = getLookupTable(c);
+									
+									mt.edu.um.cs.rv.monitors.Monitor monitor = map.get(key);
+																			
+									if (monitor == null){
+										try {
+											monitor = c.newInstance();
+										} catch (InstantiationException | IllegalAccessException e1) {
+											// TODO Auto-generated catch block
+											e1.printStackTrace();
+										}
+										map.put(key, monitor);
+									}
+									
+									monitor.handleEvent(e);
+								}
+							
 							}
 						'''
 					]
 				)
 
-				members += basicRule.toMethod(
+				members += forEach.toMethod(
+					"getInterestedMonitorTypes",
+					typeRef(List, typeRef(Class, wildcardExtends(typeRef("mt.edu.um.cs.rv.monitors.Monitor")))),
+					[
+						static = false
+						visibility = JvmVisibility.PRIVATE
+						parameters += forEach.toParameter("e", typeRef("mt.edu.um.cs.rv.events.Event"))
+						body = '''
+							//TODO 
+							return new java.util.ArrayList();
+						'''
+					]
+				)
+
+				members += forEach.toField(
+					"lookupTables",
+					typeRef(Map, typeRef(Class), typeRef(Map, keyType, typeRef("mt.edu.um.cs.rv.monitors.Monitor"))),
+					[
+						visibility = JvmVisibility.PRIVATE
+						val Procedure1<ITreeAppendable> b = [
+							append('''new java.util.HashMap()''')
+						]
+						initializer = b
+					]
+				)
+
+				members +=
+					forEach.toMethod(
+						"getLookupTable",
+						typeRef(Map),
+//						typeRef(Map, typeRef(keyType), typeRef("mt.edu.um.cs.rv.monitors.Monitor")),
+						[
+							static = false
+							visibility = JvmVisibility.PRIVATE
+							parameters +=
+								forEach.toParameter("c",
+									typeRef(Class, wildcardExtends(typeRef("mt.edu.um.cs.rv.monitors.Monitor"))))
+							body = '''
+								return lookupTables.get(c);
+							'''
+						]
+					)
+
+				members += forEach.toMethod(
+					"getName",
+					typeRef(String),
+					[
+						static = false
+						visibility = JvmVisibility.PUBLIC
+						annotations += annotationRef(Override)
+						body = '''return this.toString();'''
+					]
+				)
+
+				members += forEach.toMethod(
 					"toString",
 					typeRef(String),
 					[
 						static = false
 						visibility = JvmVisibility.PUBLIC
 						annotations += annotationRef(Override)
-						// TODO clean this 
-						body = '''return "«toStringBody»";'''
+						body = '''return "«className»";'''
 					]
 				)
 
-			])
+			]
+		)
 
-			if (monitorClass != null) {
-				acceptor.accept(
-					monitorClass
-				)
-			} else {
-				// TODO log error
-				println("Unable to create monitor class!")
-			}
-
-		}
-
-		override handleRuleEnd(Rule rule) {
-		}
-
-		override handleStateBlockStart(StateBlock block) {
-		}
-
-		override handleStateDeclaration(StateDeclaration sd) {
-		}
-
-		override handleStateBlockStateDeclarationsEnd(StateBlock block) {
-		}
-
-		override handleStateBlockEnd(StateBlock block) {
-		}
-
-		override handleForEachBlockStart(ForEach forEach) {
-		}
-
-		override handleForEachCategoryDefinitionStart(ForEach forEach) {
-		}
-
-		override handleForEachBlockEnd(ForEach forEach) {
-			val packageName = packageNameToUse(forEach) + ".monitors"
-			val String className = packageName + ".ForEachMonitor" + (monitorCounter++)
-
-			var JvmGenericType monitorClass = forEach.toClass(
-				className,
-				[
-					static = false
-					superTypes += typeRef("mt.edu.um.cs.rv.monitors.ForEachDelegationMonitor")
-				]
-			)
-
-			acceptor.accept(
-				monitorClass
-			)
-
-		}
-
-		override handleParForEachBlockStart(ParForEach parForEach) {
-		}
-
-		override handleParForEachCategoryDefinitionStart(ParForEach parForEach) {
-		}
-
-		override handleParForEachBlockEnd(ParForEach parForEach) {
-		}
+		acceptor.accept(
+			forEachDelegatingMonitorClass
+		)
 
 	}
-	
+
+	override handleForEachCategoryDefinitionStart(ForEach forEach) {
+	}
+
+	override handleForEachBlockEnd(ForEach forEach) {
+		val allEvents = requiredEventsStack.pop
+
+		val requiredEventsMethod = forEach.jvmElements.filter(JvmOperation).filter [op |
+			op.simpleName.equals("requiredEvents")
+		].head
+		requiredEventsMethod.body = '''
+			Set<Class<? extends mt.edu.um.cs.rv.events.Event>> s = new java.util.HashSet<>();
+			
+			«FOR e : allEvents»
+				s.add(«e».class);
+			«ENDFOR»
+			
+			return s;
+		'''
+
+		val eventMonitors = eventMonitorsStack.pop
+
+		val getInterestedMonitorTypesMethod = forEach.jvmElements.filter(JvmOperation).filter [op |
+			op.simpleName.equals("getInterestedMonitorTypes")
+		].head
+		getInterestedMonitorTypesMethod.body = '''
+			Map<Class, java.util.List<Class<? extends Monitor>>> map = new java.util.HashMap<>();
+			java.util.List<Class<? extends Monitor>> list;
+			
+			«FOR e : eventMonitors.keySet»
+				list = new java.util.ArrayList();
+				«FOR m : eventMonitors.get(e)»
+					list.add(«m».class);
+				«ENDFOR»
+				map.put(«e».class, list); 
+				 
+				
+			«ENDFOR»
+			
+			return map.get(e);
+		'''
+	}
+
+	override handleParForEachBlockStart(ParForEach parForEach) {
+	}
+
+	override handleParForEachCategoryDefinitionStart(ParForEach parForEach) {
+	}
+
+	override handleParForEachBlockEnd(ParForEach parForEach) {
+	}
+
+}
