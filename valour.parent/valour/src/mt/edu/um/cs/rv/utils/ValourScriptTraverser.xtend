@@ -28,16 +28,21 @@ class ValourScriptTraverser {
 		}
 	}
 	
-	def <T extends EObject> T findFirstParentOfType(EObject child, Class<T> parentType){
-		if ((child != null) && (parentType.isInstance(child))) {
+	def <T extends EObject> T findFirstAncestorOfType(EObject child, Class<T> ancestorType){
+		if ((child != null) && (ancestorType.isInstance(child))) {
 			return child as T
 		}
 		else if (child == null){
 			return null
 		}
 		else {
-			return findFirstParentOfType(child.eContainer, parentType)
+			return findFirstAncestorOfType(child.eContainer, ancestorType)
 		}
+	}
+	
+	def hasAncestorOfType(EObject child, Class ancestorType){
+		val ancestor = findFirstAncestorOfType(child, ancestorType)
+		ancestor != null
 	}
 	
 }
