@@ -10,6 +10,10 @@
 			<groupId>mt.edu.um.cs.rv</groupId>
 			<artifactId>events</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>mt.edu.um.cs.rv</groupId>
+			<artifactId>monitors</artifactId>
+		</dependency>
 	</dependencies>
 	<parent>
 		<groupId>valour</groupId>

@@ -12,6 +12,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
+		<rv.version>0.0.1-SNAPSHOT</rv.version>
 	</properties>
 	<modules>
 		<module>valour</module>
@@ -232,7 +233,12 @@
 			<dependency>
 				<groupId>mt.edu.um.cs.rv</groupId>
 				<artifactId>events</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
+				<version>${rv.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>mt.edu.um.cs.rv</groupId>
+				<artifactId>monitors</artifactId>
+				<version>${rv.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
