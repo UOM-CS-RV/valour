@@ -46,6 +46,7 @@ import org.eclipse.xtext.xbase.lib.Procedures.Procedure1
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import java.util.HashSet
 import com.google.common.collect.ListMultimap
+import org.eclipse.xtext.common.types.JvmTypeReference
 
 public class JavaInferrerHandler extends InferrerHandler {
 
@@ -66,6 +67,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 	var eventCounter = 1;
 	var actionCounter = 1;
 	var conditionCounter = 1;
+	var stateCounter = 1;
 
 	@Extension JvmAnnotationReferenceBuilder _annotationTypesBuilder;
 	@Extension JvmTypeReferenceBuilder _typeReferenceBuilder;
@@ -409,9 +411,30 @@ public class JavaInferrerHandler extends InferrerHandler {
 
 		val toStringBody = ruleWithoutBodyAndCondition
 
+		// find the state class associated to this rule
+		val valourBody = findFirstAncestorOfType(basicRule, ValourBody)
+		val valourBodyContainer = valourBody.eContainer
+		// TODO add handler for ForEach and ParForEach
+		val JvmGenericType stateClass = valourBodyContainer.jvmElements.filter(JvmGenericType).head
+
 		var JvmGenericType monitorClass = basicRule.toClass(className, [
 			static = false
 			superTypes += typeRef("mt.edu.um.cs.rv.monitors.Monitor")
+
+			members += basicRule.toField(
+				"state",
+				typeRef(stateClass),
+				[
+					visibility = JvmVisibility.PUBLIC
+					final = true
+				]
+			)
+
+			members += basicRule.toConstructor [
+				visibility = JvmVisibility.PUBLIC
+				parameters += basicRule.toParameter("state", typeRef(stateClass))
+				body = '''this.state = state;'''
+			]
 
 			members += basicRule.toMethod(
 				"requiredEvents",
@@ -550,7 +573,78 @@ public class JavaInferrerHandler extends InferrerHandler {
 	override handleRuleEnd(Rule rule) {
 	}
 
-	override handleStateBlockStart(StateBlock block) {
+	override handleStateBlockStart(StateBlock stateBlock) {
+		val packageName = packageNameToUse(stateBlock) + ".state"
+		val stateIndex = stateCounter++;
+
+		val String className = packageName + ".State" + stateIndex
+
+		val JvmGenericType stateClass = stateBlock.toClass(
+			className,
+			[
+				static = false
+
+				stateBlock.stateDec.forEach [ s |
+
+					members += stateBlock.toField(
+						s.name,
+						s.type,
+						[
+							visibility = JvmVisibility.PUBLIC
+							if (s.valueExpression.simple != null) {
+								initializer = s.valueExpression.simple
+							} else {
+								initializer = s.valueExpression.complex
+							}
+						]
+					)
+
+				]
+
+			]
+		)
+
+		// check if class should have a parent field added to it
+		addParentToStateClassIfRequired(stateBlock, stateClass)
+
+		acceptor.accept(
+			stateClass
+		)
+	}
+	
+	def JvmGenericType addParentToStateClassIfRequired(EObject context, JvmGenericType clazz){
+		val containingRule = findFirstAncestorOfType(context, Rule)
+		val parentRule = findParentRule(containingRule)
+		if (parentRule != null) {
+			var JvmGenericType parentStateClass = null
+
+			if (parentRule instanceof StateBlock) {
+				val StateBlock sb = parentRule as StateBlock
+				parentStateClass = sb.jvmElements.filter(JvmGenericType).head
+			}
+			else if (parentRule instanceof ForEach) {
+				val ForEach fe = parentRule as ForEach
+				parentStateClass = fe.jvmElements.filter(JvmGenericType).filter[t | t.simpleName.startsWith("State")].head
+			}
+			else if (parentRule instanceof ParForEach) {
+				// TODO	
+			}
+
+			if (parentStateClass != null) {
+				clazz.members += context.toField(
+					"parent",
+					typeRef(parentStateClass),
+					[
+						visibility = JvmVisibility.PUBLIC
+					]
+				)
+				
+				return parentStateClass
+			}
+		}
+		
+		return null
+				
 	}
 
 	override handleStateDeclaration(StateDeclaration sd) {
@@ -563,14 +657,48 @@ public class JavaInferrerHandler extends InferrerHandler {
 	}
 
 	override handleForEachBlockStart(ForEach forEach) {
-		val packageName = packageNameToUse(forEach) + ".monitors.foreach"
-		val String className = packageName + ".ForEachDelegatingMonitor" + monitorCounter
+		val basePackageName = packageNameToUse(forEach) 
+		val packageName = basePackageName + ".monitors.foreach"
+		
+		val String className = packageName + ".ForEachDelegatingMonitor" + (monitorCounter++)
+		val String stateClassName = basePackageName + ".state.State" + (stateCounter++) 
 
 		val keyType = forEach.category.category.keyType
 
 		requiredEventsStack.push(new HashSet())
 
 		eventMonitorsStack.push(ArrayListMultimap.create())
+		
+		//create the state class
+		val JvmGenericType forEachStateClass = forEach.toClass(
+			stateClassName,
+			[
+				static = false
+
+				forEach.stateDec.forEach [ s |
+
+					members += forEach.toField(
+						s.name,
+						s.type,
+						[
+							visibility = JvmVisibility.PUBLIC
+							if (s.valueExpression.simple != null) {
+								initializer = s.valueExpression.simple
+							} else {
+								initializer = s.valueExpression.complex
+							}
+						]
+					)
+
+				]
+
+			]			
+		)
+		val parentStateClass = addParentToStateClassIfRequired(forEach, forEachStateClass)
+		
+		acceptor.accept(
+			forEachStateClass
+		)
 
 		var JvmGenericType forEachDelegatingMonitorClass = forEach.toClass(
 			className,
@@ -624,9 +752,20 @@ public class JavaInferrerHandler extends InferrerHandler {
 									mt.edu.um.cs.rv.monitors.Monitor monitor = map.get(key);
 																			
 									if (monitor == null){
+										
 										try {
+											//create state object to be passed to the new monitor
+											«IF (parentStateClass != null)»
+												«forEachStateClass» newState = «forEachStateClass».class.newInstance();
+												newState.parent = this.state;
+											«ELSE»
+												«forEachStateClass» newState = «forEachStateClass».class.newInstance();
+											«ENDIF»
+											
+											//create new monitor with the given state object
 											monitor = c.newInstance();
-										} catch (InstantiationException | IllegalAccessException e1) {
+											c.getField("state").set(monitor, newState);
+										} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException e1) {
 											// TODO Auto-generated catch block
 											e1.printStackTrace();
 										}
@@ -705,7 +844,16 @@ public class JavaInferrerHandler extends InferrerHandler {
 						body = '''return "«className»";'''
 					]
 				)
-
+				
+				if (parentStateClass != null){
+					members += forEach.toField(
+						"state",
+						typeRef(parentStateClass),
+						[
+							visibility = JvmVisibility.PUBLIC
+						]
+					)
+				}
 			]
 		)
 
@@ -721,7 +869,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 	override handleForEachBlockEnd(ForEach forEach) {
 		val allEvents = requiredEventsStack.pop
 
-		val requiredEventsMethod = forEach.jvmElements.filter(JvmOperation).filter [op |
+		val requiredEventsMethod = forEach.jvmElements.filter(JvmOperation).filter [ op |
 			op.simpleName.equals("requiredEvents")
 		].head
 		requiredEventsMethod.body = '''
@@ -736,7 +884,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 
 		val eventMonitors = eventMonitorsStack.pop
 
-		val getInterestedMonitorTypesMethod = forEach.jvmElements.filter(JvmOperation).filter [op |
+		val getInterestedMonitorTypesMethod = forEach.jvmElements.filter(JvmOperation).filter [ op |
 			op.simpleName.equals("getInterestedMonitorTypes")
 		].head
 		getInterestedMonitorTypesMethod.body = '''
