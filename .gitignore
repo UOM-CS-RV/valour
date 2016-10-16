@@ -12,3 +12,4 @@ out
 **/xtend-gen
 valour.parent/valour/model/generated
 *.jar
+**/bin
