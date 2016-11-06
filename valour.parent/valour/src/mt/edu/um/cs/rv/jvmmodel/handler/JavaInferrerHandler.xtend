@@ -237,6 +237,64 @@ public class JavaInferrerHandler extends InferrerHandler {
 	}
 
 	override handleMonitorTrigger(MonitorTrigger monitorTrigger, Boolean additionalTrigger) {
+		val packageName = packageNameToUse(monitorTrigger) + ".monitor_triggers"
+		val monitorTriggerId = monitorTriggers++
+		val String className = packageName + ".MonitorTrigger" + (monitorTriggerId)
+		val String functionalInterfaceName = packageName + ".IMonitorTrigger" + (monitorTriggerId)
+
+		val consumableFunctionalInterface = monitorTrigger.toClass(
+			functionalInterfaceName,
+			[
+				annotations += annotationRef(FunctionalInterface)
+				interface = true
+				members += monitorTrigger.toMethod("accept", typeRef(void), [
+					static = false
+					^default = false
+					abstract = true
+					visibility = JvmVisibility.PUBLIC
+					monitorTrigger.params.parameters.forEach [ p |
+						parameters += monitorTrigger.toParameter(p.name, p.parameterType)
+					]
+				])
+			]
+		)
+
+		acceptor.accept(
+			consumableFunctionalInterface
+		)
+
+		val containingEvent = findFirstAncestorOfType(monitorTrigger, Event)
+		val JvmGenericType eventClass = containingEvent.jvmElements.filter(JvmGenericType).head
+		
+		val monitorTriggerClass = monitorTrigger.toClass(
+			className,
+			[
+				superTypes += typeRef(functionalInterfaceName)
+
+				members += monitorTrigger.toMethod("accept", typeRef(void), [
+					static = false
+					visibility = JvmVisibility.PUBLIC
+					annotations += annotationRef(Override)
+					monitorTrigger.params.parameters.forEach [ p |
+						parameters += monitorTrigger.toParameter(p.name, p.parameterType)
+					]
+					body = 
+					'''
+					mt.edu.um.cs.rv.eventmanager.observers.DirectInvocationEventObserver observer = mt.edu.um.cs.rv.eventmanager.observers.DirectInvocationEventObserver.getInstance();
+					
+					//TODO handle event parameters
+					«eventClass.qualifiedName» event = new «eventClass.qualifiedName»();
+					
+					observer.observeEvent(event);
+					return;
+					'''
+				])
+			]
+		)
+
+		acceptor.accept(
+			monitorTriggerClass
+		)
 	}
 
 	override handleWhereClausesStart(WhereClauses whereClauses) {
