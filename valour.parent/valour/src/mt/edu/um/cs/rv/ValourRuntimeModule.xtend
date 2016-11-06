@@ -4,11 +4,12 @@
 package mt.edu.um.cs.rv
 
 import com.google.inject.Provides
-import mt.edu.um.cs.rv.jvmmodel.handler.InferrerHandler
 import java.util.List
+import javax.inject.Inject
+import mt.edu.um.cs.rv.compilation.ValourCompiler
+import mt.edu.um.cs.rv.jvmmodel.handler.InferrerHandler
 import mt.edu.um.cs.rv.jvmmodel.handler.JavaInferrerHandler
 import mt.edu.um.cs.rv.jvmmodel.handler.StdoutInferrerHandler
-import javax.inject.Inject
 import mt.edu.um.cs.rv.utils.ValourScriptTraverser
 import org.eclipse.xtext.xbase.compiler.XbaseCompiler
 import org.eclipse.xtext.xbase.typesystem.computation.XbaseTypeComputer
@@ -31,17 +32,6 @@ class ValourRuntimeModule extends AbstractValourRuntimeModule {
 	def ValourScriptTraverser valourScriptTraverser() {
 		return new ValourScriptTraverser()
 	}
-//	@Provides
-//	def XbaseCompiler compiler(ValourCompiler valourCompiler){
-//		valourCompiler
-//	}
-	
-
-	//refer to : https://eclipse.org/Xtext/documentation/305_xbase.html#xbase-java-references
-//	override bindIGenerator() {
-//		ValourGenerator
-//	}
-
 
 	@Provides
 	def XbaseTypeComputer xbaseTypeComputer(ValourTypeComputer valourTypeComputer){
