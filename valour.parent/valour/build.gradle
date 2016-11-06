@@ -1,3 +1,5 @@
+apply plugin: 'maven'
+
 dependencies {
 	compile "org.eclipse.xtext:org.eclipse.xtext:${xtextVersion}"
 	compile "org.eclipse.xtext:org.eclipse.xtext.xbase:${xtextVersion}"
@@ -11,6 +13,16 @@ configurations {
 dependencies {
 	mwe2 "org.eclipse.emf:org.eclipse.emf.mwe2.launch:2.8.3"
 	mwe2 "org.eclipse.xtext:org.eclipse.xtext.xtext.generator:${xtextVersion}"
+}
+
+dependencies {
+	compile group: 'org.springframework.boot', name :'spring-boot-starter-web', version:'1.3.1.RELEASE'
+	
+	repositories {
+    	mavenLocal()
+    	mavenCentral()
+	}
+    	
 }
 
 task generateXtextLanguage(type: JavaExec) {

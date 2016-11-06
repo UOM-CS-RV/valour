@@ -240,6 +240,11 @@
 				<artifactId>monitors</artifactId>
 				<version>${rv.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>mt.edu.um.cs.rv</groupId>
+				<artifactId>event-manager</artifactId>
+				<version>${rv.version}</version>
+		</dependency>
 		</dependencies>
 	</dependencyManagement>
 </project>

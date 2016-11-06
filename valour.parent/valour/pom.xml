@@ -14,6 +14,10 @@
 			<groupId>mt.edu.um.cs.rv</groupId>
 			<artifactId>monitors</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>mt.edu.um.cs.rv</groupId>
+			<artifactId>event-manager</artifactId>
+		</dependency>
 	</dependencies>
 	<parent>
 		<groupId>valour</groupId>
