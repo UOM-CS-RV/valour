@@ -87,6 +87,8 @@ public abstract class InferrerHandler {
 	def void handleParForEachCategoryDefinitionStart(ParForEach parForEach)
 	def void handleParForEachBlockEnd(ParForEach parForEach)
 	
+	def void handleScriptEnd(Model model)
+	
 	def String formalParametersAsString(FormalParameters fps) {
 		var s = ""
 		if (fps != null) {

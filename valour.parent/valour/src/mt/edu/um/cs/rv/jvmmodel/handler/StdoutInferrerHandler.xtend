@@ -309,4 +309,8 @@ public class StdoutInferrerHandler extends InferrerHandler {
 		println('}')
 	}
 
+	override handleScriptEnd(Model model) {
+		//nothing to do
+	}
+	
 }

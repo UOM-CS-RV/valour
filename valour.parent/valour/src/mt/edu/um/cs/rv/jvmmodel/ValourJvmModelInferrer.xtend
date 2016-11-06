@@ -102,6 +102,10 @@ class ValourJvmModelInferrer extends AbstractModelInferrer {
 			]
 
 			handleValourBody(element.body, inferrerHandlers)
+			
+			inferrerHandlers.forEach[
+				handleScriptEnd(element)	
+			]
 		}
 	}
 
