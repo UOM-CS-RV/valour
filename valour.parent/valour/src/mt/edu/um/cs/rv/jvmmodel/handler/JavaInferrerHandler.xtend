@@ -366,6 +366,8 @@ public class JavaInferrerHandler extends InferrerHandler {
 				monitorTrigger.toMethod("build"+ep.name.toFirstUpper, 
 					ep.parameterType,
 					[
+						static = false
+						visibility = JvmVisibility.PRIVATE
 						//add all available parameters to the method
 						monitorTrigger.params.parameters.forEach [ p |
 							parameters += monitorTrigger.toParameter(p.name, p.parameterType)
