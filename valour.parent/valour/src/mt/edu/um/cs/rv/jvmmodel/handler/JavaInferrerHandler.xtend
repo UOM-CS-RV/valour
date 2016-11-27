@@ -43,6 +43,7 @@ import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1
 import org.eclipse.xtext.xtype.XImportSection
+import java.util.stream.Collectors
 
 public class JavaInferrerHandler extends InferrerHandler {
 
@@ -158,6 +159,12 @@ public class JavaInferrerHandler extends InferrerHandler {
 			static = false
 			superTypes += typeRef("mt.edu.um.cs.rv.events.Event")
 		])
+		
+		//create builder class (to be created in parallel with the event class)
+		val JvmGenericType eventBuilderClass = event.toClass(className + "Builder", [
+			static = false
+		])
+		
 
 		if (event.eventFormalParameters != null && !event.eventFormalParameters.parameters.isNullOrEmpty) {
 
@@ -167,6 +174,11 @@ public class JavaInferrerHandler extends InferrerHandler {
 					param.name,
 					param.parameterType
 				)
+				
+				eventBuilderClass.members += event.toField(
+					param.name,
+					param.parameterType
+				) 
 			]
 
 			// add constructor with all properties for event
@@ -189,8 +201,29 @@ public class JavaInferrerHandler extends InferrerHandler {
 					param.name,
 					param.parameterType
 				)
+				
+				eventBuilderClass.members += event.toSetter(
+					param.name,
+					param.parameterType
+				)
 			]
 		}
+		
+		//add build method to eventClassBuilder
+		eventBuilderClass.members += event.toMethod("build", 
+			typeRef(eventClass),
+			[
+				body = '''
+				«eventClass.qualifiedName» event = new «eventClass.qualifiedName»(
+					«IF (!event.eventFormalParameters.parameters.isNullOrEmpty)»
+						«event.eventFormalParameters.parameters.stream.map[p | "this."+p.name].collect(Collectors.joining(", "))» 
+					«ENDIF»
+				);
+				return event;
+				'''
+			]
+		)
+		
 
 		eventClass.members += event.toMethod(
 			"isSynchronous",
@@ -243,6 +276,10 @@ public class JavaInferrerHandler extends InferrerHandler {
 		acceptor.accept(
 			eventClass
 		)
+		
+		acceptor.accept(
+			eventBuilderClass
+		)
 	}
 
 	override handleEventDeclarationEnd(Event event) {
@@ -283,7 +320,11 @@ public class JavaInferrerHandler extends InferrerHandler {
 		)
 
 		val containingEvent = findFirstAncestorOfType(monitorTrigger, Event)
-		val JvmGenericType eventClass = containingEvent.jvmElements.filter(JvmGenericType).head
+		val JvmGenericType eventBuilderClass = containingEvent
+										.jvmElements
+										.filter(JvmGenericType)
+										.filter[t | t.superTypes.map[st | st.qualifiedName].forall[s | !s.equals("mt.edu.um.cs.rv.events.Event")]]
+										.head
 		
 		val monitorTriggerClass = monitorTrigger.toClass(
 			className,
@@ -302,7 +343,16 @@ public class JavaInferrerHandler extends InferrerHandler {
 					mt.edu.um.cs.rv.eventmanager.observers.DirectInvocationEventObserver observer = mt.edu.um.cs.rv.eventmanager.observers.DirectInvocationEventObserver.getInstance();
 					
 					//TODO handle event parameters
-					«eventClass.qualifiedName» event = new «eventClass.qualifiedName»();
+					«eventBuilderClass.qualifiedName» eventBuilder = new «eventBuilderClass.qualifiedName»();
+					
+					//for all event parameters
+					«FOR param : containingEvent.eventFormalParameters.parameters»
+						eventBuilder.set«param.name.toFirstUpper»(
+							build«param.name.toFirstUpper»(«monitorTrigger.params.parameters.stream.map[p | p.name].collect(Collectors.joining(", "))»)
+						);
+					«ENDFOR»
+					
+					mt.edu.um.cs.rv.events.Event event = eventBuilder.build();
 					
 					observer.observeEvent(event);
 					return;
@@ -310,6 +360,22 @@ public class JavaInferrerHandler extends InferrerHandler {
 				])
 			]
 		)
+		
+		containingEvent.eventFormalParameters.parameters.forEach[ ep |
+			monitorTriggerClass.members += 
+				monitorTrigger.toMethod("build"+ep.name.toFirstUpper, 
+					ep.parameterType,
+					[
+						//add all available parameters to the method
+						monitorTrigger.params.parameters.forEach [ p |
+							parameters += monitorTrigger.toParameter(p.name, p.parameterType)
+						]		
+						
+						//this is the default implementation, if a where is defined, it will be overridden once the where declaration is processed
+						body = '''return «ep.name»;'''
+					]
+				)
+		]
 
 		acceptor.accept(
 			monitorTriggerClass
@@ -323,6 +389,40 @@ public class JavaInferrerHandler extends InferrerHandler {
 	}
 
 	override handleWhereClause(WhereClause whereClause) {
+		val containingEvent = findFirstAncestorOfType(whereClause, Event)
+		
+		//for each monitor trigger, override the declaration of the buildX() method with the where declaration
+		val buildMethodName = "build" + whereClause.whereId.toFirstUpper
+		var trigger = containingEvent.eventBody.trigger
+		var additionalTrigger = containingEvent.eventBody.additionalTrigger 
+		while (trigger != null)
+		{
+			//NOTE: assumes that the where declaration references a valid event parameters
+			
+			//TODO handle other types of triggers as necessary
+			if (trigger.monitorTrigger != null){
+				val buildMethod = trigger.monitorTrigger
+					.jvmElements
+					.filter(JvmOperation)
+					.filter [ op |
+						op.simpleName.equals(buildMethodName)
+					].head
+				
+				
+				if (whereClause.whereExpression.simple != null){
+					buildMethod.body = whereClause.whereExpression.simple	
+				} else {
+					buildMethod.body = whereClause.whereExpression.complex
+				}
+
+			} 
+			
+			//last step is to handle additional triggers
+			trigger = null
+			if (additionalTrigger != null){
+				trigger = additionalTrigger.trigger	
+			}
+		}
 	}
 
 	override handleWhenClauseStart(WhenClause whenClause) {
@@ -478,7 +578,11 @@ public class JavaInferrerHandler extends InferrerHandler {
 		val monitorIndex = monitorCounter++;
 		val String className = packageName + ".Monitor" + monitorIndex
 
-		val eventClass = basicRule.event.eventRefId.getJvmElements().filter(JvmGenericType).head
+		val eventClass = basicRule.event.eventRefId
+										.jvmElements
+										.filter(JvmGenericType)
+										.filter[t | t.superTypes.map[st | st.qualifiedName].contains("mt.edu.um.cs.rv.events.Event") ]
+										.head
 
 		if (eventClass == null) {
 			// TODO error nicely
