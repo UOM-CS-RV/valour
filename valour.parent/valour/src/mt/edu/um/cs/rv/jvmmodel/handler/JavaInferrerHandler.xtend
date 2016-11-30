@@ -330,7 +330,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 			className,
 			[
 				superTypes += typeRef(functionalInterfaceName)
-
+				
 				members += monitorTrigger.toMethod("accept", typeRef(void), [
 					static = false
 					visibility = JvmVisibility.PUBLIC
@@ -339,25 +339,51 @@ public class JavaInferrerHandler extends InferrerHandler {
 						parameters += monitorTrigger.toParameter(p.name, p.parameterType)
 					]
 					body = 
-					'''
-					mt.edu.um.cs.rv.eventmanager.observers.DirectInvocationEventObserver observer = mt.edu.um.cs.rv.eventmanager.observers.DirectInvocationEventObserver.getInstance();
+					'''			
+					if (shouldFireEvent(«monitorTrigger.params.parameters.stream.map[p | p.name].collect(Collectors.joining(", "))»)) {
 					
-					//TODO handle event parameters
-					«eventBuilderClass.qualifiedName» eventBuilder = new «eventBuilderClass.qualifiedName»();
-					
-					//for all event parameters
-					«FOR param : containingEvent.eventFormalParameters.parameters»
-						eventBuilder.set«param.name.toFirstUpper»(
-							build«param.name.toFirstUpper»(«monitorTrigger.params.parameters.stream.map[p | p.name].collect(Collectors.joining(", "))»)
-						);
-					«ENDFOR»
-					
-					mt.edu.um.cs.rv.events.Event event = eventBuilder.build();
-					
-					observer.observeEvent(event);
-					return;
+						«eventBuilderClass.qualifiedName» eventBuilder = new «eventBuilderClass.qualifiedName»();
+						
+						//for all event parameters
+						«FOR param : containingEvent.eventFormalParameters.parameters»
+							eventBuilder.set«param.name.toFirstUpper»(
+								build«param.name.toFirstUpper»(«monitorTrigger.params.parameters.stream.map[p | p.name].collect(Collectors.joining(", "))»)
+							);
+						«ENDFOR»
+						
+						mt.edu.um.cs.rv.events.Event event = eventBuilder.build();
+						
+						this.fireEvent(event);
+					}
 					'''
 				])
+				
+				members += monitorTrigger.toMethod("fireEvent", typeRef(void),[
+					static = false
+					visibility = JvmVisibility.PRIVATE
+					parameters += monitorTrigger.toParameter("event", typeRef("mt.edu.um.cs.rv.events.Event"))
+					
+					body = 
+					'''
+					mt.edu.um.cs.rv.eventmanager.observers.DirectInvocationEventObserver observer = mt.edu.um.cs.rv.eventmanager.observers.DirectInvocationEventObserver.getInstance();
+					observer.observeEvent(event);
+					'''	
+				]
+				)
+				
+				members += monitorTrigger.toMethod("shouldFireEvent", typeRef(boolean),[
+					static = false
+					visibility = JvmVisibility.PRIVATE
+					monitorTrigger.params.parameters.forEach [ p |
+						parameters += monitorTrigger.toParameter(p.name, p.parameterType)
+					]
+					//default implementation is to return true, otherwise this will be overridden by the when clause
+					body = 
+					'''
+					return true;
+					'''	
+				]
+				)
 			]
 		)
 		
@@ -428,6 +454,37 @@ public class JavaInferrerHandler extends InferrerHandler {
 	}
 
 	override handleWhenClauseStart(WhenClause whenClause) {
+		val containingEvent = findFirstAncestorOfType(whenClause, Event)
+		
+		//for each trigger, override the shouldFireEvent method
+		var trigger = containingEvent.eventBody.trigger
+		var additionalTrigger = containingEvent.eventBody.additionalTrigger 
+		while (trigger != null)
+		{	
+			//TODO handle other types of triggers as necessary
+			if (trigger.monitorTrigger != null){
+				val buildMethod = trigger.monitorTrigger
+					.jvmElements
+					.filter(JvmOperation)
+					.filter [ op |
+						op.simpleName.equals("shouldFireEvent")
+					].head
+				
+				
+				if (whenClause.condition.block.simple != null){
+					buildMethod.body = whenClause.condition.block.simple	
+				} else {
+					buildMethod.body = whenClause.condition.block.complex
+				}
+
+			} 
+			
+			//last step is to handle additional triggers
+			trigger = null
+			if (additionalTrigger != null){
+				trigger = additionalTrigger.trigger	
+			}
+		}
 	}
 
 	override handleWhenClauseEnd(WhenClause whenClause) {
