@@ -437,10 +437,12 @@ public class JavaInferrerHandler extends InferrerHandler {
 					].head
 				
 				
-				if (whereClause.whereExpression.simple != null){
-					buildMethod.body = whereClause.whereExpression.simple	
-				} else {
-					buildMethod.body = whereClause.whereExpression.complex
+				if (whereClause.whereExpression != null){
+					if (whereClause.whereExpression.simple != null){
+						buildMethod.body = whereClause.whereExpression.simple	
+					} else {
+						buildMethod.body = whereClause.whereExpression.complex
+					}
 				}
 
 			} 
@@ -471,10 +473,12 @@ public class JavaInferrerHandler extends InferrerHandler {
 					].head
 				
 				
-				if (whenClause.condition.block.simple != null){
-					buildMethod.body = whenClause.condition.block.simple	
-				} else {
-					buildMethod.body = whenClause.condition.block.complex
+				if ((whenClause.condition != null) && (whenClause.condition.block != null)){
+					if (whenClause.condition.block.simple != null){
+						buildMethod.body = whenClause.condition.block.simple	
+					} else {
+						buildMethod.body = whenClause.condition.block.complex
+					}
 				}
 
 			} 
