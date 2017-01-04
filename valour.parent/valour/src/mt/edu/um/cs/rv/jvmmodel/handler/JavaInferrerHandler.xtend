@@ -320,6 +320,11 @@ public class JavaInferrerHandler extends InferrerHandler {
 		)
 
 		val containingEvent = findFirstAncestorOfType(monitorTrigger, Event)
+		val JvmGenericType eventClass = containingEvent
+										.jvmElements
+										.filter(JvmGenericType)
+										.filter[t | t.superTypes.map[st | st.qualifiedName].exists[s | s.equals("mt.edu.um.cs.rv.events.Event")]]
+										.head
 		val JvmGenericType eventBuilderClass = containingEvent
 										.jvmElements
 										.filter(JvmGenericType)
@@ -339,22 +344,26 @@ public class JavaInferrerHandler extends InferrerHandler {
 						parameters += monitorTrigger.toParameter(p.name, p.parameterType)
 					]
 					body = 
-					'''			
-					if (shouldFireEvent(«monitorTrigger.params.parameters.stream.map[p | p.name].collect(Collectors.joining(", "))»)) {
+					'''				
+					«eventBuilderClass.qualifiedName» eventBuilder = new «eventBuilderClass.qualifiedName»();
 					
-						«eventBuilderClass.qualifiedName» eventBuilder = new «eventBuilderClass.qualifiedName»();
-						
-						//for all event parameters
-						«FOR param : containingEvent.eventFormalParameters.parameters»
-							eventBuilder.set«param.name.toFirstUpper»(
-								build«param.name.toFirstUpper»(«monitorTrigger.params.parameters.stream.map[p | p.name].collect(Collectors.joining(", "))»)
-							);
-						«ENDFOR»
-						
-						mt.edu.um.cs.rv.events.Event event = eventBuilder.build();
-						
-						this.fireEvent(event);
-					}
+					//for all event parameters
+					«FOR param : containingEvent.eventFormalParameters.parameters»
+						eventBuilder.set«param.name.toFirstUpper»(
+							build«param.name.toFirstUpper»(«monitorTrigger.params.parameters.stream.map[p | p.name].collect(Collectors.joining(", "))»)
+						);
+					«ENDFOR»
+					
+					«eventClass.qualifiedName» event = eventBuilder.build();
+					
+					if (
+						shouldFireEvent
+								(
+								«containingEvent.eventFormalParameters.parameters.stream.map[p | "event.get" + p.name.toFirstUpper + "()"].collect(Collectors.joining(", "))»
+								)
+						) {
+							this.fireEvent(event);
+						}
 					'''
 				])
 				
@@ -374,7 +383,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 				members += monitorTrigger.toMethod("shouldFireEvent", typeRef(boolean),[
 					static = false
 					visibility = JvmVisibility.PRIVATE
-					monitorTrigger.params.parameters.forEach [ p |
+					containingEvent.eventFormalParameters.parameters.forEach [ p |
 						parameters += monitorTrigger.toParameter(p.name, p.parameterType)
 					]
 					//default implementation is to return true, otherwise this will be overridden by the when clause
