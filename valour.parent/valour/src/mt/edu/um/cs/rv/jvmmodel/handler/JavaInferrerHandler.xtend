@@ -44,6 +44,7 @@ import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1
 import org.eclipse.xtext.xtype.XImportSection
 import java.util.stream.Collectors
+import mt.edu.um.cs.rv.valour.ExternalTrigger
 
 public class JavaInferrerHandler extends InferrerHandler {
 
@@ -417,6 +418,10 @@ public class JavaInferrerHandler extends InferrerHandler {
 		acceptor.accept(
 			monitorTriggerClass
 		)
+	}
+	
+	override handleExternaTrigger(ExternalTrigger externalTrigger, Boolean additionalTrigger){
+		
 	}
 
 	override handleWhereClausesStart(WhereClauses whereClauses) {
