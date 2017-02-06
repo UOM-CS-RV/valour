@@ -196,13 +196,15 @@ public class JavaInferrerHandler extends InferrerHandler {
 				constuctor.parameters += param.toParameter(param.name, param.parameterType)
 			]
 
-			// generate a getter method for each event parameter
+			// for each event parameter
 			event.eventFormalParameters.parameters.forEach [ param |
+				//generate a getter method in the event class
 				eventClass.members += event.toGetter(
 					param.name,
 					param.parameterType
 				)
 				
+				//generate a setter method in the event builder class
 				eventBuilderClass.members += event.toSetter(
 					param.name,
 					param.parameterType
@@ -225,6 +227,15 @@ public class JavaInferrerHandler extends InferrerHandler {
 			]
 		)
 		
+		
+		eventClass.members += event.toField("synchronous", typeRef(Boolean), [
+			static = false
+			visibility = JvmVisibility.PRIVATE
+			val Procedure1<ITreeAppendable> init = [
+					append('''Boolean.TRUE''')
+				]
+			initializer = init 
+		])
 
 		eventClass.members += event.toMethod(
 			"isSynchronous",
@@ -233,9 +244,11 @@ public class JavaInferrerHandler extends InferrerHandler {
 				static = false
 				visibility = JvmVisibility.PUBLIC
 				annotations += annotationRef(Override)
-				body = '''return true;'''
+				body = '''return synchronous;'''
 			]
 		)
+		
+		eventClass.members += event.toSetter("synchronous", typeRef(Boolean))
 
 		eventClass.members += event.toMethod(
 			"toString",
@@ -421,6 +434,119 @@ public class JavaInferrerHandler extends InferrerHandler {
 	}
 	
 	override handleExternaTrigger(ExternalTrigger externalTrigger, Boolean additionalTrigger){
+		val packageName = packageNameToUse(externalTrigger) + ".events.builders"
+		val containingEvent = findFirstAncestorOfType(externalTrigger, Event)
+		val eventClass = containingEvent
+								.jvmElements
+								.filter(JvmGenericType)
+								.filter[t | t.superTypes.map[st | st.qualifiedName].contains("mt.edu.um.cs.rv.events.Event") ]
+								.head
+								
+		val eventBuilderClass = containingEvent
+								.jvmElements
+								.filter(JvmGenericType)
+								.filter[t | t.superTypes.map[st | st.qualifiedName].forall[s | !s.equals("mt.edu.um.cs.rv.events.Event")]]
+								.head
+
+
+		val builderName = String.join("_", containingEvent.name.toFirstUpper, externalTrigger.triggerClass.simpleName, externalTrigger.dataClass.simpleName)
+		val String className = packageName + ".EventBuilder" + (builderName)
+		
+		val externalEventBuilderClass = externalTrigger.toClass(
+			className,
+			[
+				annotations += annotationRef("org.springframework.stereotype.Component")
+				
+				superTypes += typeRef("mt.edu.um.cs.rv.events.builders.EventBuilder", externalTrigger.dataClass, typeRef(eventClass))
+				
+				members += externalTrigger.toMethod("forEvent", typeRef(Class, typeRef(eventClass)), [
+					static = false
+					^default = false
+					abstract = false
+					visibility = JvmVisibility.PUBLIC
+					body = '''return «eventClass.qualifiedName».class;'''
+				])
+				members += externalTrigger.toMethod("forTrigger", typeRef(Class, externalTrigger.dataClass), [
+					static = false
+					^default = false
+					abstract = false
+					visibility = JvmVisibility.PUBLIC
+					body = '''return «externalTrigger.dataClass.qualifiedName».class;'''
+				])
+				members += externalTrigger.toMethod("build", typeRef(eventClass), [
+					static = false
+					^default = false
+					abstract = false
+					visibility = JvmVisibility.PUBLIC
+					parameters += externalTrigger.toParameter(externalTrigger.dataClassVariable, externalTrigger.dataClass)
+					parameters += externalTrigger.toParameter("synchronous", typeRef(Boolean))
+					body = '''
+						//create event builder
+						«eventBuilderClass.qualifiedName» eventBuilder = new «eventBuilderClass.qualifiedName»();
+
+						//for all event parameters
+						«FOR param : containingEvent.eventFormalParameters.parameters»
+							eventBuilder.set«param.name.toFirstUpper»(build«param.name.toFirstUpper»(«externalTrigger.dataClassVariable»));
+						«ENDFOR»
+						«eventClass.qualifiedName» event = eventBuilder.build();
+						event.setSynchronous(synchronous);
+						return event;
+					'''
+				])
+				members += externalTrigger.toMethod("shouldFireEvent", typeRef(Boolean), [
+					static = false
+					^default = false
+					abstract = false
+					visibility = JvmVisibility.PUBLIC
+					parameters += externalTrigger.toParameter("e", typeRef(eventClass))
+					body = '''
+						return _shouldFireEvent(«containingEvent.eventFormalParameters.parameters.stream.map[p | "e.get" + p.name.toFirstUpper + "()"].collect(Collectors.joining(", "))»);
+					'''
+				])
+				members += externalTrigger.toMethod("_shouldFireEvent", typeRef(Boolean), [
+					static = false
+					^default = false
+					abstract = false
+					visibility = JvmVisibility.PRIVATE
+					containingEvent.eventFormalParameters.parameters.forEach [ p |
+						parameters += externalTrigger.toParameter(p.name, p.parameterType)
+					]
+					
+					//if event declaration has a when block
+					val whenClause = containingEvent.eventBody.when
+					if ((whenClause != null) && (whenClause.condition != null) && (whenClause.condition.block != null)){
+						if (whenClause.condition.block.simple != null){
+							body = whenClause.condition.block.simple	
+						} else {
+							body = whenClause.condition.block.complex
+						}
+					}
+					else {
+						body = '''return true;'''
+					}
+				])
+				
+				containingEvent.eventFormalParameters.parameters.forEach[ ep |
+					members += 
+						externalTrigger.toMethod("build"+ep.name.toFirstUpper, 
+							ep.parameterType,
+							[
+								static = false
+								visibility = JvmVisibility.PRIVATE
+								//add all available parameters to the method
+								parameters += externalTrigger.toParameter(externalTrigger.dataClassVariable, externalTrigger.dataClass)
+								
+								//this is the default implementation, if a where is defined, it will be overridden once the where declaration is processed
+								body = '''return «externalTrigger.dataClassVariable»;'''
+							]
+						)
+				]
+			]
+		)
+
+		acceptor.accept(
+			externalEventBuilderClass
+		)
 		
 	}
 
@@ -442,15 +568,28 @@ public class JavaInferrerHandler extends InferrerHandler {
 			//NOTE: assumes that the where declaration references a valid event parameters
 			
 			//TODO handle other types of triggers as necessary
-			if (trigger.monitorTrigger != null){
-				val buildMethod = trigger.monitorTrigger
-					.jvmElements
-					.filter(JvmOperation)
-					.filter [ op |
-						op.simpleName.equals(buildMethodName)
-					].head
+			var JvmOperation buildMethod = null
+			if ((trigger.monitorTrigger != null) || (trigger.externalTrigger != null)){
 				
+				if (trigger.monitorTrigger != null) {
+					buildMethod = trigger.monitorTrigger
+						.jvmElements
+						.filter(JvmOperation)
+						.filter [ op |
+							op.simpleName.equals(buildMethodName)
+						].head	
+				} 
 				
+				if (trigger.externalTrigger != null) {
+					buildMethod = trigger.externalTrigger
+						.jvmElements
+						.filter(JvmOperation)
+						.filter [ op |
+							op.simpleName.equals(buildMethodName)
+						].head	
+				}
+				
+				//TODO fix the order of this block, this if should be on the outside for performance reasons
 				if (whereClause.whereExpression != null){
 					if (whereClause.whereExpression.simple != null){
 						buildMethod.body = whereClause.whereExpression.simple	
@@ -735,11 +874,11 @@ public class JavaInferrerHandler extends InferrerHandler {
 						if (basicRule.condition.ref != null) {
 							body = basicRule.condition.ref
 						} else if (basicRule.condition.block != null) {
-							if (basicRule.condition.block.simple != null) {
-								body = basicRule.condition.block.simple
-							} else if (basicRule.condition.block.complex != null) {
-								body = basicRule.condition.block.complex
-							}
+							body = '''
+							return this._evaluateCondition(
+								«basicRule.event.eventRefId.eventFormalParameters.parameters.stream.map[p | "e.get" + p.name.toFirstUpper + "()"].collect(Collectors.joining(", "))»
+							);
+						'''
 						}
 					} else {
 						// if no condition has been specified, then return true
@@ -747,7 +886,28 @@ public class JavaInferrerHandler extends InferrerHandler {
 					}
 				]
 			)
-
+			
+			if ((basicRule.condition != null) && (basicRule.condition.block != null)){
+				members += basicRule.toMethod(
+					"_evaluateCondition",
+					typeRef(boolean),
+					[
+						static = false
+						visibility = JvmVisibility.PRIVATE
+						basicRule.event.eventRefId.eventFormalParameters.parameters.forEach [ p |
+							parameters += basicRule.toParameter(p.name, p.parameterType)
+						]
+	
+		
+						if (basicRule.condition.block.simple != null) {
+							body = basicRule.condition.block.simple
+						} else if (basicRule.condition.block.complex != null) {
+							body = basicRule.condition.block.complex
+						}
+					]
+				)
+			}
+			
 			members += basicRule.toMethod(
 				"performEventActions",
 				typeRef(void),
@@ -756,8 +916,13 @@ public class JavaInferrerHandler extends InferrerHandler {
 					visibility = JvmVisibility.PRIVATE
 					parameters += basicRule.toParameter("e", typeRef(eventClass))
 
-					if (basicRule.ruleAction.actionBlock != null)
-						body = basicRule.ruleAction.actionBlock
+					if (basicRule.ruleAction.actionBlock != null) {
+						body = '''
+							this._performEventActions(
+								«basicRule.event.eventRefId.eventFormalParameters.parameters.stream.map[p | "e.get" + p.name.toFirstUpper + "()"].collect(Collectors.joining(", "))»
+							);
+						'''	
+					}
 					else if (basicRule.ruleAction.actionRefInvocation != null) {
 						body = basicRule.ruleAction.actionRefInvocation
 					} else if (basicRule.ruleAction.actionMonitorTriggerFire != null) {
@@ -766,6 +931,22 @@ public class JavaInferrerHandler extends InferrerHandler {
 					}
 				]
 			)
+			
+			if (basicRule.ruleAction.actionBlock != null) {
+				members += basicRule.toMethod(
+					"_performEventActions",
+					typeRef(void),
+					[
+						static = false
+						visibility = JvmVisibility.PRIVATE
+						basicRule.event.eventRefId.eventFormalParameters.parameters.forEach [ p |
+							parameters += basicRule.toParameter(p.name, p.parameterType)
+						]
+							
+						body = basicRule.ruleAction.actionBlock
+					]
+				)								
+			}
 
 			members += basicRule.toMethod(
 				"handleEvent",
@@ -1516,6 +1697,10 @@ public class JavaInferrerHandler extends InferrerHandler {
 			className,
 			[
 				annotations += annotationRef("org.springframework.context.annotation.Configuration")
+				annotations += model.toAnnotationRefWithStringPair(
+					"org.springframework.context.annotation.ComponentScan",
+					Pair.of("basePackages", (packageNameToUse(model) + ".events.builders"))
+				)
 				members += model.toField(
 					"monitorRegistry", 
 					typeRef("mt.edu.um.cs.rv.eventmanager.monitors.registry.MonitorRegistry"),
