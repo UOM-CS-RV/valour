@@ -10,6 +10,7 @@ import org.eclipse.xtext.common.types.JvmType
 import org.eclipse.xtext.common.types.JvmAnnotationType
 import java.util.HashMap
 import org.eclipse.xtext.common.types.JvmTypeAnnotationValue
+import org.eclipse.xtext.common.types.JvmStringAnnotationValue
 
 class ValourAnnotationDecorator {
 
@@ -49,4 +50,36 @@ class ValourAnnotationDecorator {
 
 		return result
 	}
+	
+	def toAnnotationRefWithStringPair(EObject context, String annotationTypeName, Pair<String, String> ... values) {
+		val JvmAnnotationReference result = typesFactory.createJvmAnnotationReference();
+		val JvmType jvmType = references.findDeclaredType(annotationTypeName, context);
+		if (jvmType == null) {
+			throw new IllegalArgumentException("The type " + annotationTypeName + " is not on the classpath.");
+		}
+		if (!(jvmType instanceof JvmAnnotationType)) {
+			throw new IllegalArgumentException("The given class " + annotationTypeName + " is not an annotation type.");
+		}
+		val jvmAnnotationType = jvmType as JvmAnnotationType
+
+		result.setAnnotation(jvmAnnotationType)
+
+		val valueMap = new HashMap()
+
+		for (value : values) {
+
+			val JvmStringAnnotationValue annoValue = valueMap.computeIfAbsent(value.key, [ k |
+				val JvmStringAnnotationValue annoValue = typesFactory.createJvmStringAnnotationValue
+				annoValue.operation = jvmAnnotationType.declaredOperations.findFirst[simpleName == value.key]
+				result.explicitValues.add(annoValue)
+				annoValue
+			])
+
+			annoValue.values += value.value
+
+		}
+
+		return result
+	}
+	
 }
