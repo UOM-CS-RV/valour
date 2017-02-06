@@ -63,7 +63,7 @@ MonitorTrigger:
 	'monitor' 'trigger' name=ID '(' params=FormalParameters ')';
 	
 ExternalTrigger:
-	'external' 'trigger' triggerClass=JvmTypeReference 'generates' dataClass=JvmTypeReference;
+	'external' 'trigger' triggerClass=JvmTypeReference 'generates' dataClass=JvmTypeReference dataClassVariable=ValidID;
 
 AdditionalTrigger:
 	(=> '||') trigger=SimpleTrigger (=> additionalTrigger=AdditionalTrigger)?;
