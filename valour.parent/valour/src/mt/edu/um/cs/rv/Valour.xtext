@@ -45,7 +45,8 @@ EventBody:
 SimpleTrigger:
 	(controlFlowTrigger=ControlFlowTrigger |
 	eventTrigger=EventTrigger |
-	monitorTrigger=MonitorTrigger)
+	monitorTrigger=MonitorTrigger |
+	externalTrigger=ExternalTrigger)
 	(=> whereClauses=WhereClauses)?;
 
 ControlFlowTrigger:
@@ -60,6 +61,9 @@ EventTrigger:
 
 MonitorTrigger:
 	'monitor' 'trigger' name=ID '(' params=FormalParameters ')';
+	
+ExternalTrigger:
+	'external' 'trigger' triggerClass=JvmTypeReference 'generates' dataClass=JvmTypeReference dataClassVariable=ValidID;
 
 AdditionalTrigger:
 	(=> '||') trigger=SimpleTrigger (=> additionalTrigger=AdditionalTrigger)?;

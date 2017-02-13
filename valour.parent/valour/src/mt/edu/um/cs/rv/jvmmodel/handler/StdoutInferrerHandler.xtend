@@ -31,6 +31,7 @@ import mt.edu.um.cs.rv.valour.StateBlock
 import mt.edu.um.cs.rv.valour.StateDeclaration
 import mt.edu.um.cs.rv.valour.ForEach
 import mt.edu.um.cs.rv.valour.ParForEach
+import mt.edu.um.cs.rv.valour.ExternalTrigger
 
 public class StdoutInferrerHandler extends InferrerHandler {
 
@@ -87,6 +88,15 @@ public class StdoutInferrerHandler extends InferrerHandler {
 			print('\t|| ')
 		}
 		println('event trigger ' + eventTrigger.onEvent + ' (' + formalParametersAsString(eventTrigger.params) + ')')
+	}
+	
+	override handleExternaTrigger(ExternalTrigger externalTrigger, Boolean additionalTrigger) {
+		if (additionalTrigger) {
+			println()
+			print('\t|| ')
+		}
+		println('external trigger ' + externalTrigger.triggerClass.qualifiedName + ' generates ' + externalTrigger.dataClass.qualifiedName)
+	
 	}
 
 	override handleEventDeclarationEnd(Event event) {

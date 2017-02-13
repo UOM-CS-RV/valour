@@ -178,6 +178,8 @@ class ValourJvmModelInferrer extends AbstractModelInferrer {
 			inferrerHandlers.forEach[handleEventTrigger(simpleTrigger.eventTrigger, additionalTrigger)]
 		} else if (simpleTrigger.monitorTrigger != null) {
 			inferrerHandlers.forEach[handleMonitorTrigger(simpleTrigger.monitorTrigger, additionalTrigger)]
+		} else if (simpleTrigger.externalTrigger != null) {
+			inferrerHandlers.forEach[handleExternaTrigger(simpleTrigger.externalTrigger, additionalTrigger)]
 		}
 
 		if (simpleTrigger.whereClauses != null) {

@@ -28,6 +28,7 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import com.google.inject.Inject
 import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
+import mt.edu.um.cs.rv.valour.ExternalTrigger
 
 public abstract class InferrerHandler {	
 	
@@ -48,6 +49,7 @@ public abstract class InferrerHandler {
 	def void handleControlFlowTrigger(ControlFlowTrigger controlFlowTrigger, Boolean additionalTrigger) 
 	def void handleEventTrigger(EventTrigger eventTrigger, Boolean additionalTrigger)
 	def void handleMonitorTrigger(MonitorTrigger monitorTrigger, Boolean additionalTrigger)
+	def void handleExternaTrigger(ExternalTrigger externalTrigger, Boolean additionalTrigger)
 	def void handleEventDeclarationEnd(Event event)	
 	def void handleWhereClausesStart(WhereClauses whereClauses) 
 	def void handleWhereClausesEnd(WhereClauses whereClauses)

@@ -11,6 +11,8 @@ import javax.inject.Inject
 import mt.edu.um.cs.rv.utils.ValourScriptTraverser
 import mt.edu.um.cs.rv.valour.ForEach
 import mt.edu.um.cs.rv.valour.Rule
+import mt.edu.um.cs.rv.valour.ExternalTrigger
+import org.eclipse.xtext.common.types.JvmDeclaredType
 
 /**
  * This class contains custom validation rules. 
@@ -20,7 +22,7 @@ import mt.edu.um.cs.rv.valour.Rule
 class ValourValidator extends AbstractValourValidator {
 
 	@Inject extension ValourScriptTraverser
-
+	
 	@Check
 	def checkEventRefParameterCount(EventRef eventRef) {
 
@@ -90,6 +92,34 @@ class ValourValidator extends AbstractValourValidator {
 					error(msg, r, ValourPackage.Literals.RULE__BASIC_RULE)
 				}
 			}
+		}
+	}
+	
+	@Check
+	def externalTriggerShouldExtendTrigger(ExternalTrigger externalTrigger){
+		val triggerClassRef = externalTrigger.triggerClass
+		if (triggerClassRef.type instanceof JvmDeclaredType){
+			val JvmDeclaredType declaredType = triggerClassRef.type as JvmDeclaredType
+			val valid = declaredType.superTypes.map[st | st.type.qualifiedName].contains("mt.edu.um.cs.rv.eventmanager.observers.ExternalEventObserver")
+       		
+       		if (!valid){
+       			val msg = '''External Event Trigger should have a class that extends from mt.edu.um.cs.rv.eventmanager.observers.ExternalEventObserver as an event trigger class'''
+				error(msg, ValourPackage.Literals.EXTERNAL_TRIGGER__TRIGGER_CLASS)
+       		}
+		}
+	}
+	
+	@Check
+	def externalTriggerDataShouldExtendTriggerData(ExternalTrigger externalTrigger){
+		val dataClassRef = externalTrigger.dataClass
+		if (dataClassRef.type instanceof JvmDeclaredType){
+			val JvmDeclaredType declaredType = dataClassRef.type as JvmDeclaredType
+       		val valid = declaredType.superTypes.map[st | st.type.qualifiedName].contains("mt.edu.um.cs.rv.events.triggers.TriggerData")
+       		
+       		if (!valid){
+       			val msg = '''External Event Trigger Data should have a class that extends from mt.edu.um.cs.rv.events.triggers.TriggerData as an event trigger data class'''
+				error(msg, ValourPackage.Literals.EXTERNAL_TRIGGER__DATA_CLASS)
+       		}
 		}
 	}
 }
