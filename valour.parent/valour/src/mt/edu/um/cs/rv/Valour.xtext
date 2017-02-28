@@ -158,7 +158,7 @@ ActionBlockStatement returns xbase::XExpression:
 	//TODO look at this to restrict the syntax here to just Java statements - https://typefox.io/tutorial-how-to-embed-java-in-an-xtext-dsl
 ActionRefInvocation:
 	actionRef=ActionRef '(' actionActualParameters=ActualParameters ')';
-	//ActionRef is split from ActionRefInvocation in order to enfore no spacing between the # and the action name
+	//ActionRef is split from ActionRefInvocation in order to enforce no spacing between the # and the action name
 ActionRef hidden():
 	'#' actionRefId=[Action];
 
