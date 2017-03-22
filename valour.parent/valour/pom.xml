@@ -30,6 +30,40 @@
 	<build>
 		<plugins>
 			<plugin>
+	         <groupId>org.apache.maven.plugins</groupId>
+	         <artifactId>maven-dependency-plugin</artifactId>
+	         <version>3.0.0</version>
+	         <executions>
+	           <execution>
+	             <id>unpack</id>
+	             <phase>initialize</phase>
+	             <goals>
+	               <goal>unpack</goal>
+	             </goals>
+	             <configuration>
+	               <artifactItems>
+	                 <artifactItem>
+	                   <groupId>mt.edu.um.cs.rv</groupId>
+					   <artifactId>monitors</artifactId>
+	                   <version>${rv.version}</version>
+	                   <type>jar</type>
+	                   <overWrite>false</overWrite>
+	                   <outputDirectory>${project.build.directory}/classes</outputDirectory>
+	                   <!-- <destFileName>optional-new-name.jar</destFileName> -->
+	                   <includes>**/*.class,**/*.xml</includes>
+	                   <excludes>**/*test.class</excludes>
+	                 </artifactItem>
+	               </artifactItems>
+	               <includes>**/*.java</includes>
+	               <excludes>**/*.properties</excludes>
+	               <outputDirectory>${project.build.directory}/wars</outputDirectory>
+	               <overWriteReleases>false</overWriteReleases>
+	               <overWriteSnapshots>true</overWriteSnapshots>
+	             </configuration>
+	           </execution>
+	         </executions>
+	       </plugin>
+			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
 				<version>1.4.0</version>

@@ -221,6 +221,11 @@
 			<artifactId>org.eclipse.xtend.lib</artifactId>
 			<version>${xtextVersion}</version>
 		</dependency>
+		<dependency>
+				<groupId>mt.edu.um.cs.rv</groupId>
+				<artifactId>monitors</artifactId>
+				<version>${rv.version}</version>
+			</dependency>
 	</dependencies>
 
 	<dependencyManagement>

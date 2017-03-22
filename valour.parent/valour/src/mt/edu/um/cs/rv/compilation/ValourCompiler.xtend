@@ -19,27 +19,27 @@ class ValourCompiler extends XbaseCompiler {
 
 	override protected doInternalToJavaStatement(XExpression obj, ITreeAppendable appendable, boolean isReferenced) {
 		if (obj instanceof ActionRefInvocation) {
-			appendable.trace(obj)
-			appendable.newLine
-			
-			val action = obj.actionRef.actionRefId
-			val actionParameters = obj.actionActualParameters
-			val actionClass = action.jvmElements.filter(JvmGenericType).filter[t|!t.isInterface].head
-			val objectName = "action" + uuidName()
-			
-			appendable.append('''«actionClass.fullyQualifiedName» «objectName» = new «actionClass.fullyQualifiedName»();''')
-			appendable.newLine
-			
-			appendable.append('''«objectName».accept(''')
-			appendable.newLine
-			
-			appendArguments(actionParameters.parameters, appendable)
-			
-			appendable.newLine
-			appendable.append(");")
-			appendable.newLine
-			
-			appendable.newLine
+//			appendable.trace(obj)
+//			appendable.newLine
+//			
+//			val action = obj.actionRef.actionRefId
+//			val actionParameters = obj.actionActualParameters
+//			val actionClass = action.jvmElements.filter(JvmGenericType).filter[t|!t.isInterface].head
+//			val objectName = "action" + uuidName()
+//			
+//			appendable.append('''«actionClass.fullyQualifiedName» «objectName» = new «actionClass.fullyQualifiedName»();''')
+//			appendable.newLine
+//			
+//			appendable.append('''«objectName».accept(''')
+//			appendable.newLine
+//			
+//			appendArguments(actionParameters.parameters, appendable)
+//			
+//			appendable.newLine
+//			appendable.append(");")
+//			appendable.newLine
+//			
+//			appendable.newLine
 			return
 		}
 		else if (obj instanceof MonitorTriggerFire) {
@@ -76,6 +76,7 @@ class ValourCompiler extends XbaseCompiler {
 	override void _toJavaExpression(XExpression obj, ITreeAppendable appendable) {
 		switch (obj) {
 			ConditionRefInvocation: _toJavaExpression(obj as ConditionRefInvocation, appendable)
+			ActionRefInvocation: _toJavaExpression(obj as ActionRefInvocation, appendable)
 			default: super._toJavaExpression(obj, appendable)
 		}
 	}
@@ -91,6 +92,24 @@ class ValourCompiler extends XbaseCompiler {
 			appendable.append('''new «conditionClass.fullyQualifiedName»().apply(''')
 			appendable.newLine
 			appendArguments(conditionParameters.parameters, appendable)
+			appendable.newLine
+			appendable.append(")")
+			appendable.newLine
+			
+			appendable.newLine
+	}
+	
+	def _toJavaExpression(ActionRefInvocation obj, ITreeAppendable appendable) {
+			appendable.trace(obj)
+			appendable.newLine
+			
+			val action = obj.actionRef.actionRefId
+			val actionParameteres = obj.actionActualParameters
+			val actionClass = action.jvmElements.filter(JvmGenericType).filter[t|!t.isInterface].head
+			
+			appendable.append('''new «actionClass.fullyQualifiedName»().accept(''')
+			appendable.newLine
+			appendArguments(actionParameteres.parameters, appendable)
 			appendable.newLine
 			appendable.append(")")
 			appendable.newLine

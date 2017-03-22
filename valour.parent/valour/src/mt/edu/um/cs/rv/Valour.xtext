@@ -139,7 +139,7 @@ Condition:
 	'condition' name=ID '(' conditionFormalParameters=FormalParameters ')' '=' conditionExpression=ConditionExpression;
 
 Action:
-	'action' name=ID '(' actionFormalParameters=FormalParameters ')' '=' action=ActionBlock;
+	'action' isVoid='void'? name=ID '(' actionFormalParameters=FormalParameters ')' '=' action=ActionBlock;
 
 RuleAction:
 	actionMonitorTriggerFire=MonitorTriggerFire |

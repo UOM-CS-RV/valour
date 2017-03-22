@@ -725,17 +725,18 @@ public class JavaInferrerHandler extends InferrerHandler {
 	}
 
 	override handleActionDeclarationActionBlock(Action action) {
+		
 		val packageName = packageNameToUse(action) + ".actions"
 		val actionId = actionCounter++
 		val String className = packageName + ".Action" + (actionId)
 		val String functionalInterfaceName = packageName + ".IAction" + (actionId)
-
+		 
 		val consumableFunctionalInterface = action.toClass(
 			functionalInterfaceName,
 			[
 				annotations += annotationRef(FunctionalInterface)
 				interface = true
-				members += action.toMethod("accept", typeRef(void), [
+				members += action.toMethod("accept", typeRef("mt.edu.um.cs.rv.monitors.results.MonitorResult"), [
 					static = false
 					^default = false
 					abstract = true
@@ -756,16 +757,41 @@ public class JavaInferrerHandler extends InferrerHandler {
 			[
 				superTypes += typeRef(functionalInterfaceName)
 
-				members += action.toMethod("accept", typeRef(void), [
+				members += action.toMethod("accept", typeRef("mt.edu.um.cs.rv.monitors.results.MonitorResult"), [
 					static = false
 					visibility = JvmVisibility.PUBLIC
 					annotations += annotationRef(Override)
 					action.actionFormalParameters.parameters.forEach [ p |
 						parameters += action.toParameter(p.name, p.parameterType)
 					]
-//					body = '''return;'''
-					body = action.action
+					//if the action is not returning a returning a result, then we need to wrap
+					if (action.isVoid != null) {
+						body = '''
+							this._accept(
+								«action.actionFormalParameters.parameters.stream.map[p | p.name].collect(Collectors.joining(", "))»
+							);
+							return mt.edu.um.cs.rv.monitors.results.MonitorResult.ok();
+						'''
+					}
+					//otherwise just use the action's body
+					else {
+						body = action.action
+					}
 				])
+				
+				//if the action is not returning a returning a result, then we need to wrap
+				if (action.isVoid != null) { 
+					members += action.toMethod("_accept", typeRef(void), [
+						static = false
+						visibility = JvmVisibility.PRIVATE
+						action.actionFormalParameters.parameters.forEach [ p |
+							parameters += action.toParameter(p.name, p.parameterType)
+						]
+						body = action.action
+					])	
+				}
+				
+				
 			]
 		)
 
@@ -910,7 +936,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 			
 			members += basicRule.toMethod(
 				"performEventActions",
-				typeRef(void),
+				typeRef("mt.edu.um.cs.rv.monitors.results.MonitorResult"),
 				[
 					static = false
 					visibility = JvmVisibility.PRIVATE
@@ -918,7 +944,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 
 					if (basicRule.ruleAction.actionBlock != null) {
 						body = '''
-							this._performEventActions(
+							return this._performEventActions(
 								«basicRule.event.eventRefId.eventFormalParameters.parameters.stream.map[p | "e.get" + p.name.toFirstUpper + "()"].collect(Collectors.joining(", "))»
 							);
 						'''	
@@ -935,7 +961,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 			if (basicRule.ruleAction.actionBlock != null) {
 				members += basicRule.toMethod(
 					"_performEventActions",
-					typeRef(void),
+					typeRef("mt.edu.um.cs.rv.monitors.results.MonitorResult"),
 					[
 						static = false
 						visibility = JvmVisibility.PRIVATE
@@ -950,7 +976,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 
 			members += basicRule.toMethod(
 				"handleEvent",
-				typeRef(void),
+				typeRef("mt.edu.um.cs.rv.monitors.results.MonitorResult"),
 				[
 					static = false
 					visibility = JvmVisibility.PUBLIC
@@ -960,7 +986,11 @@ public class JavaInferrerHandler extends InferrerHandler {
 						if (e instanceof «eventClass.qualifiedName») {
 							«eventClass.qualifiedName» event = («eventClass.qualifiedName») e;
 							if (evaluateCondition(event)) {
-								this.performEventActions(event);
+								return this.performEventActions(event);
+							}
+							else {
+								//TODO should we return a skipped status here?
+								return mt.edu.um.cs.rv.monitors.results.MonitorResult.ok();
 							}
 						}
 						else {
@@ -1260,7 +1290,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 				
 				members += stateBlock.toMethod(
 					"handleEvent",
-					typeRef(void),
+					typeRef("mt.edu.um.cs.rv.monitors.results.MonitorResult"),
 					[
 						static = false
 						visibility = JvmVisibility.PUBLIC
@@ -1275,6 +1305,8 @@ public class JavaInferrerHandler extends InferrerHandler {
 							}
 							
 							List<Class<? extends mt.edu.um.cs.rv.monitors.Monitor>> interestedMonitorTypes = getInterestedMonitorTypes(e);
+							
+							List<mt.edu.um.cs.rv.monitors.results.MonitorResult> results = new java.util.ArrayList();
 							
 							for (Class<? extends mt.edu.um.cs.rv.monitors.Monitor> c : interestedMonitorTypes){
 							    		
@@ -1294,9 +1326,9 @@ public class JavaInferrerHandler extends InferrerHandler {
 									monitors.put(c, monitor);
 							    }
 							    		
-							    monitor.handleEvent(e);
+							    results.add(monitor.handleEvent(e));
 							}
-							
+							return mt.edu.um.cs.rv.monitors.results.MonitorResultList.of(results);
 						'''
 					]
 				)
@@ -1486,7 +1518,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 
 				members += forEach.toMethod(
 					"handleEvent",
-					typeRef(void),
+					typeRef("mt.edu.um.cs.rv.monitors.results.MonitorResult"),
 					[
 						static = false
 						visibility = JvmVisibility.PUBLIC
@@ -1509,6 +1541,8 @@ public class JavaInferrerHandler extends InferrerHandler {
 								«keyType» key = («keyType») ce.categoriseEvent();
 								
 								List<Class<? extends mt.edu.um.cs.rv.monitors.Monitor>> interestedMonitorTypes = getInterestedMonitorTypes(e);
+								
+								List<mt.edu.um.cs.rv.monitors.results.MonitorResult> results = new java.util.ArrayList();
 								
 								for (Class<? extends mt.edu.um.cs.rv.monitors.Monitor> c : interestedMonitorTypes){
 									java.util.Map<«keyType», mt.edu.um.cs.rv.monitors.Monitor> map = getLookupTable(c);
@@ -1536,9 +1570,9 @@ public class JavaInferrerHandler extends InferrerHandler {
 										map.put(key, monitor);
 									}
 									
-									monitor.handleEvent(e);
+									results.add(monitor.handleEvent(e));
 								}
-							
+								return mt.edu.um.cs.rv.monitors.results.MonitorResultList.of(results);
 							}
 						'''
 					]

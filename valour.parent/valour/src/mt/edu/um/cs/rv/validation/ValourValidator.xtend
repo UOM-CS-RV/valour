@@ -85,7 +85,7 @@ class ValourValidator extends AbstractValourValidator {
 				
 				if ((eventCategorisation == null) || (eventCategorisation.category == null)){
 					val msg = '''Event «event.eventRefId» cannot be used within a for-each constructor without declaring which category it belongs to'''
-					error(msg, ValourPackage.Literals.EVENT__NAME)		
+					error(msg, ValourPackage.Literals.FOR_EACH__VALOUR_BODY)		
 				}
 				else if (eventCategorisation.category.category != forEachCategory){
 					val msg = '''Event «event.eventRefId.name» declares a different type of category [«eventCategorisation.category.category.name»], while the current for-each constructor expects category of [«forEachCategory.name»]'''
