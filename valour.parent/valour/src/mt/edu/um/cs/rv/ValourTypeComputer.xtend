@@ -16,16 +16,10 @@ class ValourTypeComputer extends XbaseTypeComputer  {
 			state.withNonVoidExpectation().computeTypes(ap);
 		}
         
-//        state.acceptActualType(getPrimitiveVoid(state))
-        
         val clazz = Class.forName("mt.edu.um.cs.rv.monitors.results.MonitorResult")
-//        val clazz = Class.forName("java.lang.Object")
         val monitorResultClassRef = getRawTypeForName(clazz, state)
         state.withExpectation(monitorResultClassRef)
         state.acceptActualType(monitorResultClassRef)
-
-//		state.withNonVoidExpectation.computeTypes(literal)
-//        state.acceptActualType(getPrimitiveVoid(state))
 
     }
     
@@ -34,7 +28,11 @@ class ValourTypeComputer extends XbaseTypeComputer  {
 			state.withNonVoidExpectation().computeTypes(ap);
 		}
         
-        state.acceptActualType(getPrimitiveVoid(state))
+		val clazz = Class.forName("mt.edu.um.cs.rv.monitors.results.MonitorResult")
+        val monitorResultClassRef = getRawTypeForName(clazz, state)
+        state.withExpectation(monitorResultClassRef)
+        state.acceptActualType(monitorResultClassRef)
+
     }
     
     def dispatch computeTypes(ConditionRefInvocation literal, ITypeComputationState state) {

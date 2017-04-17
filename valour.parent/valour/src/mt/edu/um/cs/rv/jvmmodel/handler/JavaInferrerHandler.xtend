@@ -227,6 +227,18 @@ public class JavaInferrerHandler extends InferrerHandler {
 			]
 		)
 		
+		eventBuilderClass.members += event.toMethod("build",
+			typeRef(eventClass),
+			[
+				parameters += event.toParameter("synchronous", typeRef(boolean))
+				body = '''
+				«eventClass.qualifiedName» event = this.build();
+				event.setSynchronous(synchronous);
+				return event;
+				'''
+			]
+		)
+		
 		
 		eventClass.members += event.toField("synchronous", typeRef(Boolean), [
 			static = false
@@ -317,7 +329,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 			[
 				annotations += annotationRef(FunctionalInterface)
 				interface = true
-				members += monitorTrigger.toMethod("accept", typeRef(void), [
+				members += monitorTrigger.toMethod("accept", typeRef("mt.edu.um.cs.rv.monitors.results.MonitorResult"), [
 					static = false
 					^default = false
 					abstract = true
@@ -350,7 +362,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 			[
 				superTypes += typeRef(functionalInterfaceName)
 				
-				members += monitorTrigger.toMethod("accept", typeRef(void), [
+				members += monitorTrigger.toMethod("accept", typeRef("mt.edu.um.cs.rv.monitors.results.MonitorResult"), [
 					static = false
 					visibility = JvmVisibility.PUBLIC
 					annotations += annotationRef(Override)
@@ -368,20 +380,26 @@ public class JavaInferrerHandler extends InferrerHandler {
 						);
 					«ENDFOR»
 					
-					«eventClass.qualifiedName» event = eventBuilder.build();
+					//build the event and mark it as a synchronous event
+					«eventClass.qualifiedName» event = eventBuilder.build(true);
 					
-					if (
-						shouldFireEvent
-								(
+					if 	(
+							shouldFireEvent
+							(
 								«containingEvent.eventFormalParameters.parameters.stream.map[p | "event.get" + p.name.toFirstUpper + "()"].collect(Collectors.joining(", "))»
-								)
-						) {
-							this.fireEvent(event);
+							)
+						) 
+						{
+							return this.fireEvent(event);
 						}
+					else {
+						return mt.edu.um.cs.rv.monitors.results.MonitorResult.ok(); 
+					}
+						
 					'''
 				])
 				
-				members += monitorTrigger.toMethod("fireEvent", typeRef(void),[
+				members += monitorTrigger.toMethod("fireEvent", typeRef("mt.edu.um.cs.rv.monitors.results.MonitorResult"),[
 					static = false
 					visibility = JvmVisibility.PRIVATE
 					parameters += monitorTrigger.toParameter("event", typeRef("mt.edu.um.cs.rv.events.Event"))
@@ -389,7 +407,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 					body = 
 					'''
 					mt.edu.um.cs.rv.eventmanager.observers.DirectInvocationEventObserver observer = mt.edu.um.cs.rv.eventmanager.observers.DirectInvocationEventObserver.getInstance();
-					observer.observeEvent(event);
+					return observer.observeEvent(event);
 					'''	
 				]
 				)
@@ -896,43 +914,37 @@ public class JavaInferrerHandler extends InferrerHandler {
 					visibility = JvmVisibility.PRIVATE
 					parameters += basicRule.toParameter("e", typeRef(eventClass))
 
-					if (basicRule.condition != null) {
-						if (basicRule.condition.ref != null) {
-							body = basicRule.condition.ref
-						} else if (basicRule.condition.block != null) {
-							body = '''
-							return this._evaluateCondition(
-								«basicRule.event.eventRefId.eventFormalParameters.parameters.stream.map[p | "e.get" + p.name.toFirstUpper + "()"].collect(Collectors.joining(", "))»
-							);
-						'''
-						}
-					} else {
-						// if no condition has been specified, then return true
-						body = '''return true;'''
-					}
+					body = '''
+						return this._evaluateCondition(
+							«basicRule.event.eventRefId.eventFormalParameters.parameters.stream.map[p | "e.get" + p.name.toFirstUpper + "()"].collect(Collectors.joining(", "))»
+						);
+					'''
 				]
 			)
 			
-			if ((basicRule.condition != null) && (basicRule.condition.block != null)){
-				members += basicRule.toMethod(
-					"_evaluateCondition",
-					typeRef(boolean),
-					[
-						static = false
-						visibility = JvmVisibility.PRIVATE
-						basicRule.event.eventRefId.eventFormalParameters.parameters.forEach [ p |
-							parameters += basicRule.toParameter(p.name, p.parameterType)
-						]
-	
-		
-						if (basicRule.condition.block.simple != null) {
-							body = basicRule.condition.block.simple
-						} else if (basicRule.condition.block.complex != null) {
-							body = basicRule.condition.block.complex
-						}
+			members += basicRule.toMethod(
+				"_evaluateCondition",
+				typeRef(boolean),
+				[
+					static = false
+					visibility = JvmVisibility.PRIVATE
+					basicRule.event.eventRefId.eventFormalParameters.parameters.forEach [ p |
+						parameters += basicRule.toParameter(p.name, p.parameterType)
 					]
-				)
-			}
+
+					if (basicRule.condition == null){
+						// if no condition has been specified, then return true
+						body = '''return true;'''
+					} else if ((basicRule.condition.block != null) && (basicRule.condition.block.simple != null)) { 
+						body = basicRule.condition.block.simple
+					} else if ((basicRule.condition.block != null) && (basicRule.condition.block.complex != null)) {
+						body = basicRule.condition.block.complex
+					} else if (basicRule.condition.ref != null) {
+						body = basicRule.condition.ref							
+					} 
+				]
+			)
+		
 			
 			members += basicRule.toMethod(
 				"performEventActions",
@@ -942,37 +954,34 @@ public class JavaInferrerHandler extends InferrerHandler {
 					visibility = JvmVisibility.PRIVATE
 					parameters += basicRule.toParameter("e", typeRef(eventClass))
 
-					if (basicRule.ruleAction.actionBlock != null) {
-						body = '''
-							return this._performEventActions(
-								«basicRule.event.eventRefId.eventFormalParameters.parameters.stream.map[p | "e.get" + p.name.toFirstUpper + "()"].collect(Collectors.joining(", "))»
-							);
-						'''	
-					}
-					else if (basicRule.ruleAction.actionRefInvocation != null) {
-						body = basicRule.ruleAction.actionRefInvocation
-					} else if (basicRule.ruleAction.actionMonitorTriggerFire != null) {
-						// TODO - see issue #20
-						body = '''System.out.println(e.toString());'''
-					}
+					body = '''
+						return this._performEventActions(
+							«basicRule.event.eventRefId.eventFormalParameters.parameters.stream.map[p | "e.get" + p.name.toFirstUpper + "()"].collect(Collectors.joining(", "))»
+						);
+					'''	
 				]
 			)
 			
-			if (basicRule.ruleAction.actionBlock != null) {
-				members += basicRule.toMethod(
-					"_performEventActions",
-					typeRef("mt.edu.um.cs.rv.monitors.results.MonitorResult"),
-					[
-						static = false
-						visibility = JvmVisibility.PRIVATE
-						basicRule.event.eventRefId.eventFormalParameters.parameters.forEach [ p |
-							parameters += basicRule.toParameter(p.name, p.parameterType)
-						]
-							
-						body = basicRule.ruleAction.actionBlock
+		
+			members += basicRule.toMethod(
+				"_performEventActions",
+				typeRef("mt.edu.um.cs.rv.monitors.results.MonitorResult"),
+				[
+					static = false
+					visibility = JvmVisibility.PRIVATE
+					basicRule.event.eventRefId.eventFormalParameters.parameters.forEach [ p |
+						parameters += basicRule.toParameter(p.name, p.parameterType)
 					]
-				)								
-			}
+						
+					if (basicRule.ruleAction.actionBlock != null) {
+						body = basicRule.ruleAction.actionBlock
+					} else if (basicRule.ruleAction.actionRefInvocation != null) {
+						body = basicRule.ruleAction.actionRefInvocation
+					} else if (basicRule.ruleAction.actionMonitorTriggerFire != null) {
+						body = basicRule.ruleAction.actionMonitorTriggerFire
+					}
+				]
+			)								
 
 			members += basicRule.toMethod(
 				"handleEvent",

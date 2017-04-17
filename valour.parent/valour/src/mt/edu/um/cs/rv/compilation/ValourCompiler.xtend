@@ -43,27 +43,27 @@ class ValourCompiler extends XbaseCompiler {
 			return
 		}
 		else if (obj instanceof MonitorTriggerFire) {
-			appendable.trace(obj)
-			appendable.newLine
-			
-			val monitorTrigger = obj.monitorTrigger
-			val monitorTriggerParemeters = obj.monitorTriggerActualParameters
-			val monitorTriggerClass = monitorTrigger.jvmElements.filter(JvmGenericType).filter[t|!t.isInterface].head
-			val objectName = "monitorTrigger" + uuidName()
-			
-			appendable.append('''«monitorTriggerClass.fullyQualifiedName» «objectName» = new «monitorTriggerClass.fullyQualifiedName»();''')
-			appendable.newLine
-			
-			appendable.append('''«objectName».accept(''')
-			appendable.newLine
-			
-			appendArguments(monitorTriggerParemeters.parameters, appendable)
-			
-			appendable.newLine
-			appendable.append(");")
-			appendable.newLine
-			
-			appendable.newLine
+//			appendable.trace(obj)
+//			appendable.newLine
+//			
+//			val monitorTrigger = obj.monitorTrigger
+//			val monitorTriggerParemeters = obj.monitorTriggerActualParameters
+//			val monitorTriggerClass = monitorTrigger.jvmElements.filter(JvmGenericType).filter[t|!t.isInterface].head
+//			val objectName = "monitorTrigger" + uuidName()
+//			
+//			appendable.append('''«monitorTriggerClass.fullyQualifiedName» «objectName» = new «monitorTriggerClass.fullyQualifiedName»();''')
+//			appendable.newLine
+//			
+//			appendable.append('''«objectName».accept(''')
+//			appendable.newLine
+//			
+//			appendArguments(monitorTriggerParemeters.parameters, appendable)
+//			
+//			appendable.newLine
+//			appendable.append(");")
+//			appendable.newLine
+//			
+//			appendable.newLine
 			return
 		}
 		else if (obj instanceof ConditionRefInvocation) {
@@ -77,6 +77,7 @@ class ValourCompiler extends XbaseCompiler {
 		switch (obj) {
 			ConditionRefInvocation: _toJavaExpression(obj as ConditionRefInvocation, appendable)
 			ActionRefInvocation: _toJavaExpression(obj as ActionRefInvocation, appendable)
+			MonitorTriggerFire: _toJavaExpression(obj as MonitorTriggerFire, appendable)
 			default: super._toJavaExpression(obj, appendable)
 		}
 	}
@@ -92,6 +93,24 @@ class ValourCompiler extends XbaseCompiler {
 			appendable.append('''new «conditionClass.fullyQualifiedName»().apply(''')
 			appendable.newLine
 			appendArguments(conditionParameters.parameters, appendable)
+			appendable.newLine
+			appendable.append(")")
+			appendable.newLine
+			
+			appendable.newLine
+	}
+	
+	def _toJavaExpression(MonitorTriggerFire obj, ITreeAppendable appendable) {
+			appendable.trace(obj)
+			appendable.newLine
+			
+			val monitorTrigger = obj.monitorTrigger
+			val monitorTriggerParemeters = obj.monitorTriggerActualParameters
+			val monitorTriggerClass = monitorTrigger.jvmElements.filter(JvmGenericType).filter[t|!t.isInterface].head
+			
+			appendable.append('''new «monitorTriggerClass.fullyQualifiedName»().accept(''')	
+			appendArguments(monitorTriggerParemeters.parameters, appendable)
+			
 			appendable.newLine
 			appendable.append(")")
 			appendable.newLine
