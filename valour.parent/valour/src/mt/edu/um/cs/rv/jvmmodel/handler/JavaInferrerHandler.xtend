@@ -45,6 +45,7 @@ import org.eclipse.xtext.xbase.lib.Procedures.Procedure1
 import org.eclipse.xtext.xtype.XImportSection
 import java.util.stream.Collectors
 import mt.edu.um.cs.rv.valour.ExternalTrigger
+import org.eclipse.xtext.common.types.JvmTypeReference
 
 public class JavaInferrerHandler extends InferrerHandler {
 
@@ -1132,11 +1133,17 @@ public class JavaInferrerHandler extends InferrerHandler {
 
 		val String stateClassName = packageName + ".State" + stateIndex
 
+		val parentStateClass = getParentStateClassIfExists(stateBlock)
 		val JvmGenericType stateClass = stateBlock.toClass(
 			stateClassName,
 			[
 				static = false
-
+				if (parentStateClass != null) {
+					superTypes += typeRef("mt.edu.um.cs.rv.monitors.state.State", parentStateClass)
+				}
+				else {
+					superTypes += typeRef("mt.edu.um.cs.rv.monitors.state.State")	
+				}
 				stateBlock.stateDec.forEach [ s |
 
 					members += stateBlock.toField(
@@ -1156,9 +1163,6 @@ public class JavaInferrerHandler extends InferrerHandler {
 
 			]
 		)
-
-		// check if class should have a parent field added to it
-		val parentStateClass = addParentToStateClassIfRequired(stateBlock, stateClass)
 		
 		acceptor.accept(
 			stateClass
@@ -1172,109 +1176,59 @@ public class JavaInferrerHandler extends InferrerHandler {
 			stateDelegatingMonitorClassName,
 			[
 				static = false
-				superTypes += typeRef("mt.edu.um.cs.rv.monitors.Monitor")
-				
-				members += stateBlock.toField(
-					"requiredEvents",
-					typeRef(Set, typeRef(Class, wildcardExtends(typeRef("mt.edu.um.cs.rv.events.Event")))),
-					[
-						visibility = JvmVisibility.PRIVATE
-						val Procedure1<ITreeAppendable> init = [
-							append('''new java.util.HashSet()''')
-						]
-						initializer = init
-					]
-				)
-				
-				members += stateBlock.toField(
-					"interestedMonitorTypesForEvent",
-					// Map<Class<? extends Event>, java.util.List<Class<? extends Monitor>>> map = new java.util.HashMap<>();
-					typeRef(Map, typeRef(Class, wildcardExtends(typeRef("mt.edu.um.cs.rv.events.Event"))), typeRef(List, typeRef(Class, wildcardExtends(typeRef("mt.edu.um.cs.rv.monitors.Monitor"))))),
-					[
-						visibility = JvmVisibility.PRIVATE
-						val Procedure1<ITreeAppendable> init = [
-							append('''new java.util.HashMap()''')
-						]
-						initializer = init
-					]
-				)
-				
-				members += stateBlock.toField(
-					"monitors",
-					// Map<Class<? extends Monitor>, Monitor> monitors = new java.util.HashMap<>();
-					typeRef(Map, typeRef(Class, wildcardExtends(typeRef("mt.edu.um.cs.rv.monitors.Monitor"))), typeRef("mt.edu.um.cs.rv.monitors.Monitor")),
-					[
-						visibility = JvmVisibility.PRIVATE
-						val Procedure1<ITreeAppendable> init = [
-							append('''new java.util.HashMap()''')
-						]
-						initializer = init
-					]
-				)
-				
-				members += stateBlock.toField(
-					"state",
-					typeRef(stateClass),
-					[
-						visibility = JvmVisibility.PUBLIC
-						//initialisation of this property is happening in the constructor as it depends on the parent state
-					]
-				)
-				
-				members += stateBlock.toConstructor[
-					if (!isTopLevelStateBlock(stateBlock)) {					
-						parameters += stateBlock.toParameter("parentState", typeRef(parentStateClass))
-						body = '''
-							this.state = new «stateClassName»();
-							this.state.parent = parentState;
-							initialise();
-						'''
-					}
-					else{
-						body = '''
-							this.state = new «stateClassName»();
-							initialise();
-						'''
-					}
-				]
+				superTypes += typeRef("mt.edu.um.cs.rv.monitors.StatefulMonitor")
 				
 				members += stateBlock.toMethod(
-					"initialise",
+					"initialiseRequiredEvents",
 					typeRef(void),
 					[
 						static = false
-						visibility = JvmVisibility.PUBLIC
-						// setting the body to empty, this is then set in handleForEachBlockEnd() using the content of monitorEventRequirementsStack
+						visibility = JvmVisibility.PROTECTED
+						// setting the body to empty, this is then set in handleStateBlockEnd() using the content of monitorEventRequirementsStack
 						body = ''''''
 					]
 				)
 				
 				members += stateBlock.toMethod(
-					"requiredEvents",
-					// Set<Class<? extends Event>> requiredEvents();
-					typeRef(Set, typeRef(Class, wildcardExtends(typeRef("mt.edu.um.cs.rv.events.Event")))),
+					"initialiseInterestedMonitorTypesForEvent",
+					typeRef(void),
 					[
 						static = false
-						visibility = JvmVisibility.PUBLIC
-						annotations += annotationRef(Override)
-						// setting the body to empty, this is then set in handleForEachBlockEnd() using the content of monitorEventRequirementsStack
-						body = '''return this.requiredEvents;'''
+						visibility = JvmVisibility.PROTECTED
+						// setting the body to empty, this is then set in handleStateBlockEnd() using the content of monitorEventRequirementsStack
+						body = ''''''
 					]
 				)
 				
 				members += stateBlock.toMethod(
-					"getInterestedMonitorTypes",
-					typeRef(List, typeRef(Class, wildcardExtends(typeRef("mt.edu.um.cs.rv.monitors.Monitor")))),
+					"initialisePersistenceProvider",
+					typeRef(void),
 					[
 						static = false
-						visibility = JvmVisibility.PRIVATE
-						parameters += stateBlock.toParameter("e", typeRef("mt.edu.um.cs.rv.events.Event"))
-						body = '''
-							return interestedMonitorTypesForEvent.get(e.getClass());
-						'''
+						visibility = JvmVisibility.PROTECTED
+						// setting the body to empty, this is then set in handleStateBlockEnd() using the content of monitorEventRequirementsStack
+						body = ''''''
 					]
 				)
 				
+				members += stateBlock.toMethod(
+					"initialiseNewState",
+					typeRef(parentStateClass),
+					[
+						static = false
+						visibility = JvmVisibility.PROTECTED
+						body = '''
+							try {
+								return «stateClassName».class.newInstance();
+							} catch (InstantiationException | IllegalAccessException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+								throw new RuntimeException("Unable to create new state instance of «stateClassName»");
+							}
+						'''
+					]
+				)
+			
 				members += stateBlock.toMethod(
 					"getName",
 					typeRef(String),
@@ -1296,52 +1250,6 @@ public class JavaInferrerHandler extends InferrerHandler {
 						body = '''return "«stateDelegatingMonitorClassName»";'''
 					]
 				)
-				
-				members += stateBlock.toMethod(
-					"handleEvent",
-					typeRef("mt.edu.um.cs.rv.monitors.results.MonitorResult"),
-					[
-						static = false
-						visibility = JvmVisibility.PUBLIC
-						annotations += annotationRef(Override)
-						parameters += stateBlock.toParameter("e", typeRef("mt.edu.um.cs.rv.events.Event"))
-						body = '''
-							
-							if (e == null){
-								//TODO this should never happen
-							    //TODO handle this cleanly ??
-							    throw new RuntimeException("Unable to handle null event");
-							}
-							
-							List<Class<? extends mt.edu.um.cs.rv.monitors.Monitor>> interestedMonitorTypes = getInterestedMonitorTypes(e);
-							
-							List<mt.edu.um.cs.rv.monitors.results.MonitorResult> results = new java.util.ArrayList();
-							
-							for (Class<? extends mt.edu.um.cs.rv.monitors.Monitor> c : interestedMonitorTypes){
-							    		
-								Monitor monitor = monitors.get(c);
-							    
-							    if (monitor == null){
-							    			
-							    	try {
-							    		//create new monitor with the given state object
-							    		java.lang.reflect.Constructor<? extends Monitor> cons = c.getConstructor(«stateClass».class);
-							    		monitor = cons.newInstance(this.state);
-									} catch (Exception e1) {
-							    		// TODO Auto-generated catch block
-							    		e1.printStackTrace();
-							    	}
-							    	
-									monitors.put(c, monitor);
-							    }
-							    		
-							    results.add(monitor.handleEvent(e));
-							}
-							return mt.edu.um.cs.rv.monitors.results.MonitorResultList.of(results);
-						'''
-					]
-				)
-				
 			]
 		)
 
@@ -1350,7 +1258,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 		)
 	}
 
-	def JvmGenericType addParentToStateClassIfRequired(EObject context, JvmGenericType clazz) {
+	def JvmTypeReference getParentStateClassIfExists(EObject context) {
 		val containingRule = findFirstAncestorOfType(context, Rule)
 		val parentRule = findParentRule(containingRule)
 		if (parentRule != null) {
@@ -1367,20 +1275,10 @@ public class JavaInferrerHandler extends InferrerHandler {
 			}
 
 			if (parentStateClass != null) {
-				clazz.members += context.toField(
-					"parent",
-					typeRef(parentStateClass),
-					[
-						visibility = JvmVisibility.PUBLIC
-					]
-				)
-
-				return parentStateClass
+				return typeRef(parentStateClass)
 			}
 		}
-
 		return null
-
 	}
 
 	override handleStateDeclaration(StateDeclaration sd) {
@@ -1395,15 +1293,21 @@ public class JavaInferrerHandler extends InferrerHandler {
 
 		val eventMonitors = eventMonitorsStack.pop
 
-		val initialiseMethod = block.jvmElements.filter(JvmOperation).filter [ op |
-			op.simpleName.equals("initialise")
+		val initialiseRequiredEventsMethod = block.jvmElements.filter(JvmOperation).filter [ op |
+			op.simpleName.equals("initialiseRequiredEvents")
 		].head
-		initialiseMethod.body = '''
+		initialiseRequiredEventsMethod.body = '''
 			//set all required events 
 			«FOR e : allEvents»
 				this.requiredEvents.add(«e».class);
 			«ENDFOR»
-			
+		'''
+
+
+		val initialiseInterestedMonitorTypesForEventMethod = block.jvmElements.filter(JvmOperation).filter [ op |
+			op.simpleName.equals("initialiseInterestedMonitorTypesForEvent")
+		].head
+		initialiseInterestedMonitorTypesForEventMethod.body = '''
 			//initialise map of events and the respective interested monitors
 			java.util.List<Class<? extends Monitor>> list;			
 			«FOR e : eventMonitors.keySet»
@@ -1438,11 +1342,17 @@ public class JavaInferrerHandler extends InferrerHandler {
 		eventMonitorsStack.push(ArrayListMultimap.create())
 
 		// create the state class
+		val parentStateClass = getParentStateClassIfExists(forEach)
 		val JvmGenericType forEachStateClass = forEach.toClass(
 			stateClassName,
 			[
 				static = false
-
+				if (parentStateClass != null) {
+					superTypes += typeRef("mt.edu.um.cs.rv.monitors.state.State", parentStateClass)
+				}
+				else {
+					superTypes += typeRef("mt.edu.um.cs.rv.monitors.state.State")	
+				}
 				forEach.stateDec.forEach [ s |
 
 					members += forEach.toField(
@@ -1462,7 +1372,6 @@ public class JavaInferrerHandler extends InferrerHandler {
 
 			]
 		)
-		val parentStateClass = addParentToStateClassIfRequired(forEach, forEachStateClass)
 
 		acceptor.accept(
 			forEachStateClass
@@ -1472,176 +1381,63 @@ public class JavaInferrerHandler extends InferrerHandler {
 			className,
 			[
 				static = false
-				superTypes += typeRef("mt.edu.um.cs.rv.monitors.Monitor")
-				
-				members += forEach.toConstructor[
-					if (!isTopLevelForEach(forEach)) {					
-						parameters += forEach.toParameter("parentState", typeRef(parentStateClass))
-						body = '''
-							this.state = parentState;
-							initialise();
-						'''
-					}
-					else{
-						body = '''
-							initialise();
-						'''
-					}
-				]
+				superTypes += typeRef("mt.edu.um.cs.rv.monitors.CategorisedStatefulMonitor", typeRef(forEachStateClass))
 				
 				members += forEach.toMethod(
-					"initialise",
+					"initialiseRequiredEvents",
 					typeRef(void),
 					[
 						static = false
-						visibility = JvmVisibility.PUBLIC
+						visibility = JvmVisibility.PROTECTED
+						annotations += annotationRef(Override)
 						// setting the body to empty, this is then set in handleForEachBlockEnd() using the content of monitorEventRequirementsStack
 						body = ''''''
 					]
 				)
-
-				members += forEach.toField(
-					"requiredEvents",
-					typeRef(Set, typeRef(Class, wildcardExtends(typeRef("mt.edu.um.cs.rv.events.Event")))),
-					[
-						visibility = JvmVisibility.PRIVATE
-						val Procedure1<ITreeAppendable> init = [
-							append('''new java.util.HashSet()''')
-						]
-						initializer = init
-					]
-				)
-
+				
 				members += forEach.toMethod(
-					"requiredEvents",
-					// Set<Class<? extends Event>> requiredEvents();
-					typeRef(Set, typeRef(Class, wildcardExtends(typeRef("mt.edu.um.cs.rv.events.Event")))),
+					"initialiseInterestedMonitorTypesForEvent",
+					typeRef(void),
 					[
 						static = false
-						visibility = JvmVisibility.PUBLIC
+						visibility = JvmVisibility.PROTECTED
 						annotations += annotationRef(Override)
 						// setting the body to empty, this is then set in handleForEachBlockEnd() using the content of monitorEventRequirementsStack
-						body = '''return this.requiredEvents;'''
+						body = ''''''
 					]
 				)
-
+				
 				members += forEach.toMethod(
-					"handleEvent",
-					typeRef("mt.edu.um.cs.rv.monitors.results.MonitorResult"),
+					"initialisePersistenceProvider",
+					typeRef(void),
 					[
 						static = false
-						visibility = JvmVisibility.PUBLIC
+						visibility = JvmVisibility.PROTECTED
 						annotations += annotationRef(Override)
-						parameters += forEach.toParameter("e", typeRef("mt.edu.um.cs.rv.events.Event"))
+						// setting the body to empty, this is then set in handleForEachBlockEnd() using the content of monitorEventRequirementsStack
+						body = ''''''
+					]
+				)
+				
+				members += forEach.toMethod(
+					"initialiseNewState",
+					typeRef(forEachStateClass),
+					[
+						static = false
+						visibility = JvmVisibility.PROTECTED
+						annotations += annotationRef(Override)
 						body = '''
-							
-							if (e == null){
-								//TODO this should never happen
-								//TODO handle this cleanly ??
-								throw new RuntimeException("Unable to null handle event of type " + e.getClass().getName() + " as categorisation returned null");
-							}
-							else{
-								if (!(e instanceof mt.edu.um.cs.rv.events.CategorisedEvent)){
-									//TODO handle this situation somehow
-									throw new RuntimeException("Cannot handle an un-categorised event in a for-each construct");
-								}
-								
-								mt.edu.um.cs.rv.events.CategorisedEvent ce = (mt.edu.um.cs.rv.events.CategorisedEvent) e;
-								«keyType» key = («keyType») ce.categoriseEvent();
-								
-								List<Class<? extends mt.edu.um.cs.rv.monitors.Monitor>> interestedMonitorTypes = getInterestedMonitorTypes(e);
-								
-								List<mt.edu.um.cs.rv.monitors.results.MonitorResult> results = new java.util.ArrayList();
-								
-								for (Class<? extends mt.edu.um.cs.rv.monitors.Monitor> c : interestedMonitorTypes){
-									java.util.Map<«keyType», mt.edu.um.cs.rv.monitors.Monitor> map = getLookupTable(c);
-									
-									mt.edu.um.cs.rv.monitors.Monitor monitor = map.get(key);
-																			
-									if (monitor == null){
-										
-										try {
-											//create state object to be passed to the new monitor
-											«IF (parentStateClass != null)»
-												«forEachStateClass» newState = «forEachStateClass».class.newInstance();
-												newState.parent = this.state;
-											«ELSE»
-												«forEachStateClass» newState = «forEachStateClass».class.newInstance();
-											«ENDIF»
-											
-											//create new monitor with the given state object
-											java.lang.reflect.Constructor<? extends Monitor> cons = c.getConstructor(«forEachStateClass».class);
-											monitor = cons.newInstance(newState);
-										} catch (Exception e1) {
-											// TODO Auto-generated catch block
-											e1.printStackTrace();
-										}
-										map.put(key, monitor);
-									}
-									
-									results.add(monitor.handleEvent(e));
-								}
-								return mt.edu.um.cs.rv.monitors.results.MonitorResultList.of(results);
+							try {
+								return «forEachStateClass».class.newInstance();
+							} catch (InstantiationException | IllegalAccessException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+								throw new RuntimeException("Unable to create new state instance of «stateClassName»");
 							}
 						'''
 					]
 				)
 			
-				members += forEach.toField(
-					"interestedMonitorTypesForEvent",
-					// Map<Class<? extends Event>, java.util.List<Class<? extends Monitor>>> map = new java.util.HashMap<>();
-					typeRef(Map, typeRef(Class, wildcardExtends(typeRef("mt.edu.um.cs.rv.events.Event"))), typeRef(List, typeRef(Class, wildcardExtends(typeRef("mt.edu.um.cs.rv.monitors.Monitor"))))),
-					[
-						visibility = JvmVisibility.PRIVATE
-						val Procedure1<ITreeAppendable> init = [
-							append('''new java.util.HashMap()''')
-						]
-						initializer = init
-					]
-				)
-
-				members += forEach.toMethod(
-					"getInterestedMonitorTypes",
-					typeRef(List, typeRef(Class, wildcardExtends(typeRef("mt.edu.um.cs.rv.monitors.Monitor")))),
-					[
-						static = false
-						visibility = JvmVisibility.PRIVATE
-						parameters += forEach.toParameter("e", typeRef("mt.edu.um.cs.rv.events.Event"))
-						body = '''
-							return interestedMonitorTypesForEvent.get(e.getClass());
-						'''
-					]
-				)
-
-				members += forEach.toField(
-					"lookupTables",
-					typeRef(Map, typeRef(Class, wildcardExtends(typeRef("mt.edu.um.cs.rv.monitors.Monitor"))), typeRef(Map, keyType, typeRef("mt.edu.um.cs.rv.monitors.Monitor"))),
-					[
-						visibility = JvmVisibility.PRIVATE
-						val Procedure1<ITreeAppendable> b = [
-							append('''new java.util.HashMap()''')
-						]
-						initializer = b
-					]
-				)
-
-				members +=
-					forEach.toMethod(
-						"getLookupTable",
-						typeRef(Map),
-//						typeRef(Map, typeRef(keyType), typeRef("mt.edu.um.cs.rv.monitors.Monitor")),
-						[
-							static = false
-							visibility = JvmVisibility.PRIVATE
-							parameters +=
-								forEach.toParameter("c",
-									typeRef(Class, wildcardExtends(typeRef("mt.edu.um.cs.rv.monitors.Monitor"))))
-							body = '''
-								return lookupTables.get(c);
-							'''
-						]
-					)
-
 				members += forEach.toMethod(
 					"getName",
 					typeRef(String),
@@ -1663,16 +1459,6 @@ public class JavaInferrerHandler extends InferrerHandler {
 						body = '''return "«className»";'''
 					]
 				)
-
-				if (parentStateClass != null) {
-					members += forEach.toField(
-						"state",
-						typeRef(parentStateClass),
-						[
-							visibility = JvmVisibility.PUBLIC
-						]
-					)
-				}
 			]
 		)
 
@@ -1689,29 +1475,31 @@ public class JavaInferrerHandler extends InferrerHandler {
 		val allEvents = requiredEventsStack.pop
 
 		val eventMonitors = eventMonitorsStack.pop
-
-		val initialiseMethod = forEach.jvmElements.filter(JvmOperation).filter [ op |
-			op.simpleName.equals("initialise")
+		
+		val initialiseRequiredEventsMethod = forEach.jvmElements.filter(JvmOperation).filter [ op |
+			op.simpleName.equals("initialiseRequiredEvents")
 		].head
-		initialiseMethod.body = '''
+		initialiseRequiredEventsMethod.body = '''
 			//set all required events 
 			«FOR e : allEvents»
-				this.requiredEvents.add(«e».class);
+				this.addRequiredEvent(«e».class);
 			«ENDFOR»
-			
+		'''
+		
+		val initialiseInterestedMonitorTypesForEventMethod = forEach.jvmElements.filter(JvmOperation).filter [ op |
+			op.simpleName.equals("initialiseInterestedMonitorTypesForEvent")
+		].head
+		initialiseInterestedMonitorTypesForEventMethod.body = '''
 			//initialise map of events and the respective interested monitors
-			java.util.List<Class<? extends Monitor>> list;			
+			java.util.List<Class<? extends mt.edu.um.cs.rv.monitors.Monitor>> list;			
 			«FOR e : eventMonitors.keySet»
 				list = new java.util.ArrayList();
 				«FOR m : eventMonitors.get(e)»
 					//prepare the list for the interestedMonitorTypesForEvent map
 					list.add(«m».class);
-
-					//initialise the lookupTables if required
-					lookupTables.putIfAbsent(«m».class, new java.util.HashMap());
 				«ENDFOR»
 				
-				interestedMonitorTypesForEvent.put(«e».class, list); 
+				this.addInterestedMonitorTypesForEvent(«e».class, list); 
 			«ENDFOR»
 		'''
 		
