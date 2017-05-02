@@ -46,6 +46,8 @@ import org.eclipse.xtext.xtype.XImportSection
 import java.util.stream.Collectors
 import mt.edu.um.cs.rv.valour.ExternalTrigger
 import org.eclipse.xtext.common.types.JvmTypeReference
+import org.eclipse.xtext.common.types.JvmFormalParameter
+import org.eclipse.xtext.common.types.JvmField
 
 public class JavaInferrerHandler extends InferrerHandler {
 
@@ -856,6 +858,8 @@ public class JavaInferrerHandler extends InferrerHandler {
 		// find the state class associated to this rule
 		val valourBody = findFirstAncestorOfType(basicRule, ValourBody)
 		val valourBodyContainer = valourBody.eContainer
+		
+		
 		val JvmGenericType stateClass = valourBodyContainer.jvmElements
 											.filter(JvmGenericType)
 											.filter[c | c.simpleName.contains("State") && !c.simpleName.contains("Monitor")]
@@ -863,26 +867,60 @@ public class JavaInferrerHandler extends InferrerHandler {
 
 		var JvmGenericType monitorClass = basicRule.toClass(className, [
 			static = false
-			superTypes += typeRef("mt.edu.um.cs.rv.monitors.Monitor")
-
-			if (!isTopLevelRule(basicRule)) {
-				members += basicRule.toField(
-					"state",
-					typeRef(stateClass),
-					[
-						visibility = JvmVisibility.PUBLIC
-						final = true
-					]
-				)
+			if (stateClass != null) {
+				superTypes += typeRef("mt.edu.um.cs.rv.monitors.Monitor", typeRef(stateClass))
 			}
-
-			members += basicRule.toConstructor [
-				visibility = JvmVisibility.PUBLIC
-				if (!isTopLevelRule(basicRule)) {
-					parameters += basicRule.toParameter("state", typeRef(stateClass))
-					body = '''this.state = state;'''
+			else {
+				superTypes += typeRef("mt.edu.um.cs.rv.monitors.Monitor")
+			}
+			
+	
+			val Set<String> allParamNames = newHashSet()
+			val List<Pair<String, JvmTypeReference>> allParams = newArrayList()
+			val List<String> allActualParams = newArrayList()
+			basicRule.event.eventRefId.eventFormalParameters.parameters.forEach [ eventParam |
+				if (!allParamNames.contains(eventParam.name)) {
+					allParams.add(new Pair<String, JvmTypeReference>(eventParam.name, eventParam.parameterType))
+					allParamNames.add(eventParam.name)
+					allActualParams.add("e.get" + eventParam.name.toFirstUpper + "()")
 				}
 			]
+			
+			if (stateClass != null) {
+				allParams.add(new Pair<String, JvmTypeReference>("state", typeRef(stateClass)))
+				allParamNames.add("state")
+				allActualParams.add("state")
+			}
+			
+//			stateClass.allFeatures
+//				.filter(JvmField)
+//				.filter[field | field.simpleName != "parentState"]
+//				.forEach[ field |
+//				if (!allParamNames.contains(field.simpleName)) {
+//					allParams.add(new Pair<String, JvmTypeReference>(field.simpleName, field.type))
+//					allParamNames.add(field.simpleName)
+//					allActualParams.add("s." + field.simpleName)
+//				}
+//			]
+
+//			if (!isTopLevelRule(basicRule)) {
+//				members += basicRule.toField(
+//					"state",
+//					typeRef(stateClass),
+//					[
+//						visibility = JvmVisibility.PUBLIC
+//						final = true
+//					]
+//				)
+//			}
+
+//			members += basicRule.toConstructor [
+//				visibility = JvmVisibility.PUBLIC
+//				if (!isTopLevelRule(basicRule)) {
+//					parameters += basicRule.toParameter("state", typeRef(stateClass))
+//					body = '''this.state = state;'''
+//				}
+//			]
 
 			members += basicRule.toMethod(
 				"requiredEvents",
@@ -914,10 +952,16 @@ public class JavaInferrerHandler extends InferrerHandler {
 					static = false
 					visibility = JvmVisibility.PRIVATE
 					parameters += basicRule.toParameter("e", typeRef(eventClass))
+					if (stateClass != null) {
+						parameters += basicRule.toParameter("state", typeRef(stateClass))
+					}
+					else {
+						parameters += basicRule.toParameter("state", typeRef("mt.edu.um.cs.rv.monitors.state.State"))
+					}
 
 					body = '''
 						return this._evaluateCondition(
-							«basicRule.event.eventRefId.eventFormalParameters.parameters.stream.map[p | "e.get" + p.name.toFirstUpper + "()"].collect(Collectors.joining(", "))»
+							«allActualParams.stream.collect(Collectors.joining(", "))»
 						);
 					'''
 				]
@@ -929,9 +973,10 @@ public class JavaInferrerHandler extends InferrerHandler {
 				[
 					static = false
 					visibility = JvmVisibility.PRIVATE
-					basicRule.event.eventRefId.eventFormalParameters.parameters.forEach [ p |
-						parameters += basicRule.toParameter(p.name, p.parameterType)
-					]
+//					basicRule.event.eventRefId.eventFormalParameters.parameters.forEach [ p |
+//						parameters += basicRule.toParameter(p.name, p.parameterType)
+//					]
+					allParams.forEach[p| parameters += basicRule.toParameter(p.key, p.value)]
 
 					if (basicRule.condition == null){
 						// if no condition has been specified, then return true
@@ -954,10 +999,16 @@ public class JavaInferrerHandler extends InferrerHandler {
 					static = false
 					visibility = JvmVisibility.PRIVATE
 					parameters += basicRule.toParameter("e", typeRef(eventClass))
+					if (stateClass != null) {
+						parameters += basicRule.toParameter("state", typeRef(stateClass))
+					}
+					else {
+						parameters += basicRule.toParameter("state", typeRef("mt.edu.um.cs.rv.monitors.state.State"))
+					}
 
 					body = '''
 						return this._performEventActions(
-							«basicRule.event.eventRefId.eventFormalParameters.parameters.stream.map[p | "e.get" + p.name.toFirstUpper + "()"].collect(Collectors.joining(", "))»
+							«allActualParams.stream.collect(Collectors.joining(", "))»
 						);
 					'''	
 				]
@@ -970,9 +1021,10 @@ public class JavaInferrerHandler extends InferrerHandler {
 				[
 					static = false
 					visibility = JvmVisibility.PRIVATE
-					basicRule.event.eventRefId.eventFormalParameters.parameters.forEach [ p |
-						parameters += basicRule.toParameter(p.name, p.parameterType)
-					]
+//					basicRule.event.eventRefId.eventFormalParameters.parameters.forEach [ p |
+//						parameters += basicRule.toParameter(p.name, p.parameterType)
+//					]
+					allParams.forEach[p| parameters += basicRule.toParameter(p.key, p.value)]
 						
 					if (basicRule.ruleAction.actionBlock != null) {
 						body = basicRule.ruleAction.actionBlock
@@ -992,11 +1044,17 @@ public class JavaInferrerHandler extends InferrerHandler {
 					visibility = JvmVisibility.PUBLIC
 					annotations += annotationRef(Override)
 					parameters += basicRule.toParameter("e", typeRef("mt.edu.um.cs.rv.events.Event"))
+					if (stateClass != null) {
+						parameters += basicRule.toParameter("s", typeRef(stateClass))
+					}
+					else {
+						parameters += basicRule.toParameter("s", typeRef("mt.edu.um.cs.rv.monitors.state.State"))
+					}
 					body = '''
 						if (e instanceof «eventClass.qualifiedName») {
 							«eventClass.qualifiedName» event = («eventClass.qualifiedName») e;
-							if (evaluateCondition(event)) {
-								return this.performEventActions(event);
+							if (evaluateCondition(event, s)) {
+								return this.performEventActions(event, s);
 							}
 							else {
 								//TODO should we return a skipped status here?
@@ -1184,6 +1242,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 					[
 						static = false
 						visibility = JvmVisibility.PROTECTED
+						annotations += annotationRef(Override)
 						// setting the body to empty, this is then set in handleStateBlockEnd() using the content of monitorEventRequirementsStack
 						body = ''''''
 					]
@@ -1195,17 +1254,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 					[
 						static = false
 						visibility = JvmVisibility.PROTECTED
-						// setting the body to empty, this is then set in handleStateBlockEnd() using the content of monitorEventRequirementsStack
-						body = ''''''
-					]
-				)
-				
-				members += stateBlock.toMethod(
-					"initialisePersistenceProvider",
-					typeRef(void),
-					[
-						static = false
-						visibility = JvmVisibility.PROTECTED
+						annotations += annotationRef(Override)
 						// setting the body to empty, this is then set in handleStateBlockEnd() using the content of monitorEventRequirementsStack
 						body = ''''''
 					]
@@ -1213,10 +1262,11 @@ public class JavaInferrerHandler extends InferrerHandler {
 				
 				members += stateBlock.toMethod(
 					"initialiseNewState",
-					typeRef(parentStateClass),
+					typeRef(stateClass),
 					[
 						static = false
 						visibility = JvmVisibility.PROTECTED
+						annotations += annotationRef(Override)
 						body = '''
 							try {
 								return «stateClassName».class.newInstance();
@@ -1266,7 +1316,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 
 			if (parentRule instanceof StateBlock) {
 				val StateBlock sb = parentRule as StateBlock
-				parentStateClass = sb.jvmElements.filter(JvmGenericType).head
+				parentStateClass = sb.jvmElements.filter(JvmGenericType).filter[t|t.simpleName.startsWith("State")].head
 			} else if (parentRule instanceof ForEach) {
 				val ForEach fe = parentRule as ForEach
 				parentStateClass = fe.jvmElements.filter(JvmGenericType).filter[t|t.simpleName.startsWith("State")].head
@@ -1299,7 +1349,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 		initialiseRequiredEventsMethod.body = '''
 			//set all required events 
 			«FOR e : allEvents»
-				this.requiredEvents.add(«e».class);
+				this.addRequiredEvent(«e».class);
 			«ENDFOR»
 		'''
 
@@ -1309,7 +1359,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 		].head
 		initialiseInterestedMonitorTypesForEventMethod.body = '''
 			//initialise map of events and the respective interested monitors
-			java.util.List<Class<? extends Monitor>> list;			
+			java.util.List<Class<? extends mt.edu.um.cs.rv.monitors.Monitor>> list;			
 			«FOR e : eventMonitors.keySet»
 				list = new java.util.ArrayList();
 				«FOR m : eventMonitors.get(e)»
@@ -1317,7 +1367,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 					list.add(«m».class);
 				«ENDFOR»
 				
-				interestedMonitorTypesForEvent.put(«e».class, list); 
+				this.addInterestedMonitorTypesForEvent(«e».class, list); 
 			«ENDFOR»
 		'''
 		
@@ -1397,18 +1447,6 @@ public class JavaInferrerHandler extends InferrerHandler {
 				
 				members += forEach.toMethod(
 					"initialiseInterestedMonitorTypesForEvent",
-					typeRef(void),
-					[
-						static = false
-						visibility = JvmVisibility.PROTECTED
-						annotations += annotationRef(Override)
-						// setting the body to empty, this is then set in handleForEachBlockEnd() using the content of monitorEventRequirementsStack
-						body = ''''''
-					]
-				)
-				
-				members += forEach.toMethod(
-					"initialisePersistenceProvider",
 					typeRef(void),
 					[
 						static = false
@@ -1541,6 +1579,15 @@ public class JavaInferrerHandler extends InferrerHandler {
 					]
 				)
 				
+				members += model.toField(
+					"monitorPersistenceProvider", 
+					typeRef("mt.edu.um.cs.rv.monitors.persistence.MonitorPersistenceProvider"),
+					[
+						visibility = JvmVisibility.PRIVATE
+						annotations += model.toAnnotationRefWithStringBooleanPair("org.springframework.beans.factory.annotation.Autowired", Pair.of("required", false))
+					]
+				)
+				
 				members += model.toMethod("init", typeRef(void), [
 					static = false
 					visibility = JvmVisibility.PUBLIC
@@ -1554,6 +1601,9 @@ public class JavaInferrerHandler extends InferrerHandler {
 							
 							«IF (monitorClass != null)»
 								monitor = new «monitorClass.qualifiedName»();
+								if (monitor instanceof mt.edu.um.cs.rv.monitors.StatefulMonitor) {
+									((mt.edu.um.cs.rv.monitors.StatefulMonitor) monitor).setMonitorPersistenceProvider(this.monitorPersistenceProvider);
+								}
 								this.monitorRegistry.registerNewMonitor(monitor);
 							«ENDIF»
 						«ENDFOR»
