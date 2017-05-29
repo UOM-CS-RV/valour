@@ -47,6 +47,31 @@
 					   <artifactId>monitors</artifactId>
 	                   <version>${rv.version}</version>
 	                   <type>jar</type>
+	                   <!-- force override? if false, will overwrite only if a newer dependency is found -->
+	                   <overWrite>false</overWrite>
+	                   <outputDirectory>${project.build.directory}/classes</outputDirectory>
+	                   <!-- <destFileName>optional-new-name.jar</destFileName> -->
+	                   <includes>**/*.class,**/*.xml</includes>
+	                   <excludes>**/*test.class</excludes>
+	                 </artifactItem>
+	                 <artifactItem>
+	                   <groupId>mt.edu.um.cs.rv</groupId>
+					   <artifactId>events</artifactId>
+	                   <version>${rv.version}</version>
+	                   <type>jar</type>
+	                   <!-- force override? if false, will overwrite only if a newer dependency is found -->
+	                   <overWrite>false</overWrite>
+	                   <outputDirectory>${project.build.directory}/classes</outputDirectory>
+	                   <!-- <destFileName>optional-new-name.jar</destFileName> -->
+	                   <includes>**/*.class,**/*.xml</includes>
+	                   <excludes>**/*test.class</excludes>
+	                 </artifactItem>
+	                 <artifactItem>
+	                   <groupId>mt.edu.um.cs.rv</groupId>
+					   <artifactId>event-manager</artifactId>
+	                   <version>${rv.version}</version>
+	                   <type>jar</type>
+	                   <!-- force override? if false, will overwrite only if a newer dependency is found -->
 	                   <overWrite>false</overWrite>
 	                   <outputDirectory>${project.build.directory}/classes</outputDirectory>
 	                   <!-- <destFileName>optional-new-name.jar</destFileName> -->
