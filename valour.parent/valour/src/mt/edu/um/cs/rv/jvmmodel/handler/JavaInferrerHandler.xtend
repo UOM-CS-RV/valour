@@ -410,7 +410,17 @@ public class JavaInferrerHandler extends InferrerHandler {
 					body = 
 					'''
 					mt.edu.um.cs.rv.eventmanager.observers.DirectInvocationEventObserver observer = mt.edu.um.cs.rv.eventmanager.observers.DirectInvocationEventObserver.getInstance();
-					return observer.observeEvent(event);
+					
+					java.util.concurrent.Future<mt.edu.um.cs.rv.monitors.results.MonitorResult<?>> monitorResultFuture = observer.observeEvent(event);
+					try {
+						return monitorResultFuture.get();
+					} catch (InterruptedException ex) {
+					    //TODO LOGGER.error("InterruptedException while getting monitor result", ex);
+					    return MonitorResult.failure(null, ex);
+					} catch (Throwable t) {
+					    //TOOD LOGGER.error("Unexpected Throwable while getting monitor result", t);
+					    return MonitorResult.failure(null, t);
+					}
 					'''	
 				]
 				)
