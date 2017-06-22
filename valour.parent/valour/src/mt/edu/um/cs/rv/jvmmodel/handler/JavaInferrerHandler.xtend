@@ -488,7 +488,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 			[
 				annotations += annotationRef("org.springframework.stereotype.Component")
 				
-				superTypes += typeRef("mt.edu.um.cs.rv.events.builders.EventBuilder", externalTrigger.dataClass, typeRef(eventClass))
+				superTypes += typeRef("mt.edu.um.cs.rv.events.builders.EventBuilder", externalTrigger.dataClass, typeRef(eventClass), typeRef(Class, externalTrigger.triggerClass))
 				
 				members += externalTrigger.toMethod("forEvent", typeRef(Class, typeRef(eventClass)), [
 					static = false
@@ -497,12 +497,19 @@ public class JavaInferrerHandler extends InferrerHandler {
 					visibility = JvmVisibility.PUBLIC
 					body = '''return «eventClass.qualifiedName».class;'''
 				])
-				members += externalTrigger.toMethod("forTrigger", typeRef(Class, externalTrigger.dataClass), [
+				members += externalTrigger.toMethod("forTriggerData", typeRef(Class, externalTrigger.dataClass), [
 					static = false
 					^default = false
 					abstract = false
 					visibility = JvmVisibility.PUBLIC
 					body = '''return «externalTrigger.dataClass.qualifiedName».class;'''
+				])
+				members += externalTrigger.toMethod("forTrigger", typeRef(Class, externalTrigger.triggerClass), [
+					static = false
+					^default = false
+					abstract = false
+					visibility = JvmVisibility.PUBLIC
+					body = '''return «externalTrigger.triggerClass.qualifiedName».class;'''
 				])
 				members += externalTrigger.toMethod("build", typeRef(eventClass), [
 					static = false
