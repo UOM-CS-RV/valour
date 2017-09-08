@@ -155,7 +155,9 @@ public class JavaInferrerHandler extends InferrerHandler {
 
 	override handleEventDeclarationBegin(Event event) {
 		val packageName = packageNameToUse(event) + ".events"
-		val String className = packageName + ".Event" + (eventCounter++)
+		//The event class name is made up of a prefix "Event", followed by the event name as declared in valour, followed by an event counter.
+		//The event name should be unique across all the script, but if this changes, the event counter guarantees class name uniqueness.
+		val String className = packageName + ".Event" + "_" + event.name.toFirstUpper + "_" + (eventCounter++)
 
 		val eventDecName = event.name + ' (' + formalParametersAsString(event.eventFormalParameters) + ')'
 
@@ -701,10 +703,12 @@ public class JavaInferrerHandler extends InferrerHandler {
 	}
 
 	override handleConditionDeclarationExpression(Condition condition) {
+		//The condition class name is made up of a prefix "Condition", followed by the condition name as declared in valour, followed by a condition counter.
+		//The counter is used to avoid duplicate name in case the condition name is not unique.
 		val packageName = packageNameToUse(condition) + ".conditions"
 		val conditionId = conditionCounter++
-		val String className = packageName + ".Condition" + (conditionId)
-		val String functionalInterfaceName = packageName + ".ICondition" + (conditionId)
+		val String className = packageName + ".Condition_" + condition.name.toFirstUpper + "_" + (conditionId)
+		val String functionalInterfaceName = packageName + ".ICondition_" + condition.name + "_" + (conditionId)
 
 		val functionalInterface = condition.toClass(
 			functionalInterfaceName,
@@ -766,8 +770,10 @@ public class JavaInferrerHandler extends InferrerHandler {
 		
 		val packageName = packageNameToUse(action) + ".actions"
 		val actionId = actionCounter++
-		val String className = packageName + ".Action" + (actionId)
-		val String functionalInterfaceName = packageName + ".IAction" + (actionId)
+		//The action class name is made up of a prefix "Action", followed by the action name as declared in valour, followed by a action counter.
+		//The counter is used to avoid duplicate class names in case the action name is not unique.
+		val String className = packageName + ".Action_" + action.name.toFirstUpper + "_" + (actionId)
+		val String functionalInterfaceName = packageName + ".IAction_" + action.name.toFirstUpper + "_" + (actionId)
 		 
 		val consumableFunctionalInterface = action.toClass(
 			functionalInterfaceName,
@@ -856,7 +862,9 @@ public class JavaInferrerHandler extends InferrerHandler {
 
 		val packageName = packageNameToUse(basicRule) + ".monitors"
 		val monitorIndex = monitorCounter++;
-		val String className = packageName + ".Monitor" + monitorIndex
+		//The monitor class name is made up of a prefix "Monitor", followed by the event name as required by the BasicRule, followed by a monitor counter.
+		//The counter ensures class name uniqueness if there are multiple rules using the same input event
+		val String className = packageName + ".Monitor_" + basicRule.event.eventRefId.name.toFirstUpper + "_" + monitorIndex
 
 		val eventClass = basicRule.event.eventRefId
 										.jvmElements
@@ -879,7 +887,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 		
 		val JvmGenericType stateClass = valourBodyContainer.jvmElements
 											.filter(JvmGenericType)
-											.filter[c | c.simpleName.contains("State") && !c.simpleName.contains("Monitor")]
+											.filter[c | c.superTypes.map[st | st.qualifiedName].exists[s | s.equals("mt.edu.um.cs.rv.monitors.state.State")]]
 											.head
 
 		var JvmGenericType monitorClass = basicRule.toClass(className, [
@@ -1206,7 +1214,8 @@ public class JavaInferrerHandler extends InferrerHandler {
 		val packageName = packageNameToUse(stateBlock) + ".state"
 		val stateIndex = stateCounter++;
 
-		val String stateClassName = packageName + ".State" + stateIndex
+		val String stateDelegatingMonitorClassName = "StateDelegatingMonitor" + stateIndex
+		val String stateClassName = packageName + ".State_" + stateDelegatingMonitorClassName
 
 		val parentStateClass = getParentStateClassIfExists(stateBlock)
 		val JvmGenericType stateClass = stateBlock.toClass(
@@ -1246,9 +1255,9 @@ public class JavaInferrerHandler extends InferrerHandler {
 		
 		//create the monitor to be used to delegate events to monitors declared within
 		val stateDelegatingMonitorPackage = packageNameToUse(stateBlock) + ".monitors.state" 
-		val String stateDelegatingMonitorClassName = stateDelegatingMonitorPackage + ".StateDelegatingMonitor" + stateIndex
+		val String stateDelegatingMonitorFullClassName = stateDelegatingMonitorPackage + "." + stateDelegatingMonitorClassName
 		val JvmGenericType stateDelegatingMonitorClass = stateBlock.toClass(
-			stateDelegatingMonitorClassName,
+			stateDelegatingMonitorFullClassName,
 			[
 				static = false
 				superTypes += typeRef("mt.edu.um.cs.rv.monitors.StatefulMonitor")
@@ -1314,7 +1323,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 						static = false
 						visibility = JvmVisibility.PUBLIC
 						annotations += annotationRef(Override)
-						body = '''return "«stateDelegatingMonitorClassName»";'''
+						body = '''return "«stateDelegatingMonitorFullClassName»";'''
 					]
 				)
 			]
@@ -1399,8 +1408,9 @@ public class JavaInferrerHandler extends InferrerHandler {
 		val basePackageName = packageNameToUse(forEach)
 		val packageName = basePackageName + ".monitors.foreach"
 
-		val String className = packageName + ".ForEachDelegatingMonitor" + (monitorCounter++)
-		val String stateClassName = basePackageName + ".state.State" + (stateCounter++)
+		val String forEachDelegatingMonitorClassName = "ForEachDelegatingMonitor" + (monitorCounter++)
+		val String className = packageName + "." + forEachDelegatingMonitorClassName
+		val String stateClassName = basePackageName + ".state.State_" + forEachDelegatingMonitorClassName
 
 		val keyType = forEach.category.category.keyType
 
@@ -1638,8 +1648,7 @@ public class JavaInferrerHandler extends InferrerHandler {
 		e.jvmElements
 			.filter(JvmGenericType)
 			.filter[c | c.superTypes.size > 0]
-			.filter[c | c.simpleName.contains("Monitor")]
-//			.filter[c | c.superTypes.exists[t | t.equals(typeRef("mt.edu.um.cs.rv.monitors.Monitor"))]]
+			.filter[c | c.superTypes.map[st | st.qualifiedName].exists[s | s.contains("Monitor")]]
 			.head
 	}
 
