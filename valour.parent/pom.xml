@@ -124,7 +124,7 @@
 				<configuration>
 					<target>
 						<artifact>
-							<groupId>valour</groupId>
+							<groupId>mt.edu.um.cs.rv.valour</groupId>
 							<artifactId>valour.target</artifactId>
 							<version>${project.version}</version>
 						</artifact>
