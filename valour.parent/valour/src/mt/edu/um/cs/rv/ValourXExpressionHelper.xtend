@@ -2,7 +2,6 @@ package mt.edu.um.cs.rv
 
 import org.eclipse.xtext.xbase.util.XExpressionHelper
 import org.eclipse.xtext.xbase.XExpression
-import mt.edu.um.cs.rv.valour.ActionRef
 import mt.edu.um.cs.rv.valour.ActionRefInvocation
 import mt.edu.um.cs.rv.valour.ConditionRefInvocation
 import mt.edu.um.cs.rv.valour.MonitorTriggerFire

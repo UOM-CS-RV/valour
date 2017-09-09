@@ -1,11 +1,11 @@
 package mt.edu.um.cs.rv.utils
 
+import java.util.List
+import mt.edu.um.cs.rv.valour.Declarations
+import mt.edu.um.cs.rv.valour.Rule
+import mt.edu.um.cs.rv.valour.StateBlock
 import mt.edu.um.cs.rv.valour.ValourBody
 import org.eclipse.emf.ecore.EObject
-import mt.edu.um.cs.rv.valour.Declarations
-import mt.edu.um.cs.rv.valour.StateBlock
-import java.util.List
-import mt.edu.um.cs.rv.valour.Rule
 
 class ValourScriptTraverser {
 

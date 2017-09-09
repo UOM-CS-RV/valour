@@ -3,31 +3,24 @@
  */
 package mt.edu.um.cs.rv.scoping
 
+import javax.inject.Inject
+import mt.edu.um.cs.rv.utils.ValourScriptTraverser
 import mt.edu.um.cs.rv.valour.Action
 import mt.edu.um.cs.rv.valour.ActionRef
+import mt.edu.um.cs.rv.valour.Category
+import mt.edu.um.cs.rv.valour.CategoryRef
+import mt.edu.um.cs.rv.valour.Condition
+import mt.edu.um.cs.rv.valour.ConditionRef
 import mt.edu.um.cs.rv.valour.Event
 import mt.edu.um.cs.rv.valour.EventRef
+import mt.edu.um.cs.rv.valour.MonitorTriggerFire
+import mt.edu.um.cs.rv.valour.SimpleTrigger
+import mt.edu.um.cs.rv.valour.WhereClause
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.scoping.IScope
 import org.eclipse.xtext.scoping.Scopes
-import mt.edu.um.cs.rv.valour.Category
-import mt.edu.um.cs.rv.valour.ConditionRef
-import mt.edu.um.cs.rv.valour.Condition
-import mt.edu.um.cs.rv.valour.CategoryRef
-import mt.edu.um.cs.rv.utils.ValourScriptTraverser
-import javax.inject.Inject
-import mt.edu.um.cs.rv.valour.MonitorTriggerFire
-import mt.edu.um.cs.rv.valour.MonitorTrigger
-import mt.edu.um.cs.rv.valour.SimpleTrigger
-import mt.edu.um.cs.rv.valour.WhereClause
-import mt.edu.um.cs.rv.valour.ComplexValueExpression
-import mt.edu.um.cs.rv.valour.SimpleValueExpression
-import mt.edu.um.cs.rv.valour.CategorisationClause
-import mt.edu.um.cs.rv.valour.StateDeclaration
-import mt.edu.um.cs.rv.valour.FormalParameters
-import mt.edu.um.cs.rv.valour.ValueExpression
 
 /**
  * This class contains custom scoping description.

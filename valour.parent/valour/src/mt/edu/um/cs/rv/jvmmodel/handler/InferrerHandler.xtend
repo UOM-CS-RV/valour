@@ -1,34 +1,30 @@
 package mt.edu.um.cs.rv.jvmmodel.handler;
 
-import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
-import mt.edu.um.cs.rv.valour.Model
-import org.eclipse.xtext.xtype.XImportSection
-import mt.edu.um.cs.rv.valour.Category
-import mt.edu.um.cs.rv.valour.Event
-import mt.edu.um.cs.rv.valour.FormalParameters
-import mt.edu.um.cs.rv.valour.EventTrigger
-import mt.edu.um.cs.rv.valour.ControlFlowTrigger
-import mt.edu.um.cs.rv.valour.MonitorTrigger
-import mt.edu.um.cs.rv.valour.EventBody
-import mt.edu.um.cs.rv.valour.WhereClauses
-import mt.edu.um.cs.rv.valour.WhereClause
-import mt.edu.um.cs.rv.valour.WhenClause
-import mt.edu.um.cs.rv.valour.CategorisationClause
-import mt.edu.um.cs.rv.valour.Condition
 import mt.edu.um.cs.rv.valour.Action
-import mt.edu.um.cs.rv.valour.Rule
-import mt.edu.um.cs.rv.valour.BasicRule
-import mt.edu.um.cs.rv.valour.StateBlock
 import mt.edu.um.cs.rv.valour.ActualParameters
-import mt.edu.um.cs.rv.valour.StateDeclaration
-import mt.edu.um.cs.rv.valour.ForEach
-import mt.edu.um.cs.rv.valour.ParForEach
-import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
-import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
-import com.google.inject.Inject
-import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
+import mt.edu.um.cs.rv.valour.BasicRule
+import mt.edu.um.cs.rv.valour.CategorisationClause
+import mt.edu.um.cs.rv.valour.Category
+import mt.edu.um.cs.rv.valour.Condition
+import mt.edu.um.cs.rv.valour.ControlFlowTrigger
+import mt.edu.um.cs.rv.valour.Event
+import mt.edu.um.cs.rv.valour.EventTrigger
 import mt.edu.um.cs.rv.valour.ExternalTrigger
+import mt.edu.um.cs.rv.valour.ForEach
+import mt.edu.um.cs.rv.valour.FormalParameters
+import mt.edu.um.cs.rv.valour.Model
+import mt.edu.um.cs.rv.valour.MonitorTrigger
+import mt.edu.um.cs.rv.valour.ParForEach
+import mt.edu.um.cs.rv.valour.Rule
+import mt.edu.um.cs.rv.valour.StateBlock
+import mt.edu.um.cs.rv.valour.StateDeclaration
+import mt.edu.um.cs.rv.valour.WhenClause
+import mt.edu.um.cs.rv.valour.WhereClause
+import mt.edu.um.cs.rv.valour.WhereClauses
+import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
+import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
+import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
+import org.eclipse.xtext.xtype.XImportSection
 
 public abstract class InferrerHandler {	
 	

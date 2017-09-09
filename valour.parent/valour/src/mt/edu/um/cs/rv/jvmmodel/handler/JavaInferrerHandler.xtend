@@ -5,9 +5,9 @@ import com.google.common.collect.Multimap
 import java.util.ArrayList
 import java.util.HashSet
 import java.util.List
-import java.util.Map
 import java.util.Set
 import java.util.Stack
+import java.util.stream.Collectors
 import javax.inject.Inject
 import mt.edu.um.cs.rv.compilation.ValourAnnotationDecorator
 import mt.edu.um.cs.rv.utils.ValourScriptTraverser
@@ -19,6 +19,7 @@ import mt.edu.um.cs.rv.valour.Condition
 import mt.edu.um.cs.rv.valour.ControlFlowTrigger
 import mt.edu.um.cs.rv.valour.Event
 import mt.edu.um.cs.rv.valour.EventTrigger
+import mt.edu.um.cs.rv.valour.ExternalTrigger
 import mt.edu.um.cs.rv.valour.ForEach
 import mt.edu.um.cs.rv.valour.Model
 import mt.edu.um.cs.rv.valour.MonitorTrigger
@@ -33,6 +34,7 @@ import mt.edu.um.cs.rv.valour.WhereClauses
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.common.types.JvmGenericType
 import org.eclipse.xtext.common.types.JvmOperation
+import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
@@ -43,11 +45,6 @@ import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1
 import org.eclipse.xtext.xtype.XImportSection
-import java.util.stream.Collectors
-import mt.edu.um.cs.rv.valour.ExternalTrigger
-import org.eclipse.xtext.common.types.JvmTypeReference
-import org.eclipse.xtext.common.types.JvmFormalParameter
-import org.eclipse.xtext.common.types.JvmField
 
 public class JavaInferrerHandler extends InferrerHandler {
 

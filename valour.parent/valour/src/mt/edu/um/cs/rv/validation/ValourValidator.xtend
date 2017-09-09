@@ -3,16 +3,16 @@
  */
 package mt.edu.um.cs.rv.validation
 
-import org.eclipse.xtext.validation.Check
-import mt.edu.um.cs.rv.valour.Event
-import mt.edu.um.cs.rv.valour.EventRef
-import mt.edu.um.cs.rv.valour.ValourPackage
 import javax.inject.Inject
 import mt.edu.um.cs.rv.utils.ValourScriptTraverser
+import mt.edu.um.cs.rv.valour.Event
+import mt.edu.um.cs.rv.valour.EventRef
+import mt.edu.um.cs.rv.valour.ExternalTrigger
 import mt.edu.um.cs.rv.valour.ForEach
 import mt.edu.um.cs.rv.valour.Rule
-import mt.edu.um.cs.rv.valour.ExternalTrigger
+import mt.edu.um.cs.rv.valour.ValourPackage
 import org.eclipse.xtext.common.types.JvmDeclaredType
+import org.eclipse.xtext.validation.Check
 
 /**
  * This class contains custom validation rules. 
