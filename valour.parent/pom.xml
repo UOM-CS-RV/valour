@@ -139,6 +139,11 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
+	          		<groupId>org.eclipse.tycho</groupId>
+	          		<artifactId>tycho-versions-plugin</artifactId>
+	          		<version>1.0.0</version>
+	        	</plugin>
+				<plugin>
 					<groupId>org.eclipse.xtend</groupId>
 					<artifactId>xtend-maven-plugin</artifactId>
 					<version>${xtextVersion}</version>
@@ -293,10 +298,10 @@
 			<version>${xtextVersion}</version>
 		</dependency>
 		<dependency>
-				<groupId>mt.edu.um.cs.rv</groupId>
-				<artifactId>monitors</artifactId>
-				<version>${rv.version}</version>
-			</dependency>
+			<groupId>mt.edu.um.cs.rv</groupId>
+			<artifactId>monitors</artifactId>
+			<version>${rv.version}</version>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
