@@ -2,7 +2,7 @@
 <feature
       id="valour.sdk"
       label="Valour SDK Feature "
-      version="1.0.0">
+      version="1.0.1.qualifier">
 
    <requires>
       <import feature="org.eclipse.xtext.runtime" version="2.9.0" match="greaterOrEqual"/>
