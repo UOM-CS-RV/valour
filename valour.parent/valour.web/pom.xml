@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>mt.edu.um.cs.rv.valour</groupId>
 		<artifactId>valour.parent</artifactId>
-		<version>1.0.1-SNAPSHOT</version>
+		<version>1.0.1</version>
 	</parent>
 	<artifactId>valour.web</artifactId>
 	<packaging>war</packaging>

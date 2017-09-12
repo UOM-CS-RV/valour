@@ -22,7 +22,7 @@ subprojects {
 	apply plugin: 'idea'
 	
 	group = 'mt.edu.um.cs.rv.valour'
-	version = '1.0.1-SNAPSHOT'
+	version = '1.0.1'
 	
 	sourceCompatibility = '1.8'
 	targetCompatibility = '1.8'
