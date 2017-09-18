@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: valour.ui
 Bundle-Vendor: Computer Science Department, University of Malta
-Bundle-Version: 1.0.2.qualifier
+Bundle-Version: 1.0.2
 Bundle-SymbolicName: valour.ui; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: valour,
